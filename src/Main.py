@@ -1,17 +1,27 @@
 import random
 from opcode import *
 
-
 INSTRUCTION_LENGTH = 4
-NUM_INSTRUCTIONS_IN_SOUP = 10000
+NUM_INSTRUCTIONS_IN_SOUP = 10
 
 class Simulation:
-    soup = " " * INSTRUCTION_LENGTH * NUM_INSTRUCTIONS_IN_SOUP
+    soup = []
     ats = [] # each one executes code!
-    
+        
+    def __init__(self, s=None):
+        if s is not None:
+            import re
+            s = re.sub(r'(\d+)', r'\1_', s)
+            s = re.sub(r'(\d)',  r'_\1', s)
+            s = re.split(r'_', s)
+            del s[-1]
+            self.soup = s
+        else:
+            self.soup = ["_"] * INSTRUCTION_LENGTH * NUM_INSTRUCTIONS_IN_SOUP
+            self.initialize()
+        
     
     def run(self):
-        self.initialize()
         for i in range(20):
             for at in self.ats:
                 ip = self.execute(at.index + int(self.soup[at.index+1:at.index+INSTRUCTION_LENGTH]))
@@ -20,16 +30,21 @@ class Simulation:
             self.display()
         
         
-    def display(self, wrapLen=64):
-        print('->\n'+'\n'.join([self.soup[i:i+wrapLen] for i in range(0, len(self.soup), wrapLen)]))
+    def display(self, wrapLen=64, full=False):
+        if not full:
+            soupDisp = ''.join(self.soup[i] for i in range(0, len(self.soup), INSTRUCTION_LENGTH))
+        else:
+            soupDisp = ''.join(self.soup)
+        print('\n'.join([soupDisp[i:i+wrapLen] for i in range(0, len(soupDisp), wrapLen)]))
+            
         
             
     def initialize(self):
-        instr = set(key for key in INSTRUCTIONS)
-        for i in range(len(self.soup), INSTRUCTION_LENGTH):
-            if self.soup[i] == ' ':
+        instr = list(key for key in INSTRUCTIONS)
+        for i in range(0, len(self.soup), INSTRUCTION_LENGTH):
+            if self.soup[i] == '_':
                 self.soup[i] = random.choice(instr)
-                self.soup[i+1:i+INSTRUCTION_LENGTH] = [""+random.randint(0,9) for j in range(INSTRUCTION_LENGTH-1)]
+                self.soup[i+1:i+INSTRUCTION_LENGTH] = [str(random.randint(0,9)) for j in range(INSTRUCTION_LENGTH-1)]
             if self.soup[i] == '@':
                 self.ats.append(At(i))
         
@@ -74,3 +89,16 @@ class At:
     def __init__(self, i):
         self.index = i
         self.registers[10] = 1000
+        
+        
+        
+        
+if __name__ == "__main__":   
+    sim = Simulation(None)
+    sim.display()
+    sim.display(full=True)
+    #sim.run()
+        
+        
+        
+        
