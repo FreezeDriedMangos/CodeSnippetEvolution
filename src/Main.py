@@ -18,16 +18,21 @@ class Simulation:
             self.soup = s
         else:
             self.soup = ["_"] * INSTRUCTION_LENGTH * NUM_INSTRUCTIONS_IN_SOUP
-            self.initialize()
+        
+        self.initialize()
         
     
-    def run(self):
-        for i in range(20):
+    def run(self, numFrames=20):
+        for i in range(numFrames):
             for at in self.ats:
-                ip = self.execute(at.index + int(self.soup[at.index+1:at.index+INSTRUCTION_LENGTH]))
-                ip += int(self.soup[at.index+1:at.index+4])
-                self.soup[at.index+1:at.index+4] = str.format(ip, '03d')
-            self.display()
+                atIp = ''.join(self.soup[at.index+1:at.index+INSTRUCTION_LENGTH]) # the value of this @'s main register; aka, the address in the soup of what instruction this @ wants to run, relative to itself
+                atIp = int(atIp)
+                
+                atIp += self.execute(at.index + atIp, at)
+                atIp = max(0, atIp)
+                
+                self.soup[at.index+1:at.index+INSTRUCTION_LENGTH] = [d for d in '{0:03d}'.format(atIp)] # update this @'s register
+            self.display(full=True)
         
         
     def display(self, wrapLen=64, full=False):
@@ -94,10 +99,12 @@ class At:
         
         
 if __name__ == "__main__":   
-    sim = Simulation(None)
+    sim = Simulation('s651̐i844a067a593s669@000å351j̀545.269a278')
+    print("regs: " + str(sim.ats[0].registers))
     sim.display()
     sim.display(full=True)
-    #sim.run()
+    sim.run(numFrames=2)
+    print("regs: " + str(sim.ats[0].registers))
         
         
         

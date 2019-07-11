@@ -1,3 +1,4 @@
+_ = 0
 
 def takeFromDump(amt, at):
     retval = min(amt, at.registers[10])
@@ -10,6 +11,7 @@ def emptyRegister(a, b=0, c=0, at=None, soup=[], myIndex=0):
         a = int(a[1:])
     at.registers[10] += at.registers[a]
     at.registers[a] = 0
+
 
 def add(a, b, c, at, soup, myIndex):
     # if a is a register index, empty that register into temp1, otherwise take a amount from the dump
@@ -25,6 +27,10 @@ def add(a, b, c, at, soup, myIndex):
         emptyRegister(b, _, _, at, _, _)
     else:
         temp2 = takeFromDump(b, at)
+        
+    # argument c should always specify a register
+    if type(c) == str and c[0] == 'r':
+        c = at.registers[int(c[1:])]
 
     # prepare register c to recieve the sum
     emptyRegister(c, _, _, at, _, _)
@@ -32,10 +38,10 @@ def add(a, b, c, at, soup, myIndex):
 
     # if a or b were register indecies, refill those registers
     if type(a) == str and a[0] == 'r':
-        at.registers[a] += takeFromDump(temp1, at)
+        at.registers[int(a[1:])] += takeFromDump(temp1, at)
 
     if type(b) == str and b[0] == 'r':
-        at.registers[b] += takeFromDump(temp2, at)
+        at.registers[int(b[1:])] += takeFromDump(temp2, at)
 
     return 1
 
