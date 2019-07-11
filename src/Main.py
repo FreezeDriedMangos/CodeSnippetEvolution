@@ -58,12 +58,12 @@ class Simulation:
             elif decodeKey == '2':
                 args[i] = args[1]
             elif decodeKey == '+':  # combine the remaining digits into one number
-                _ignore_me_ = 0
+                args[i] = int(''.join(args[i:]))
             elif decodeKey == '-':  # combine the remaining digits into one negative number
-                _ignore_me_ = 0
+                args[i] = -int(''.join(args[i:]))
 
         function = INSTRUCTIONS[instructionCode][0]
-        return INSTRUCTION_LENGTH * function(*args, at, self.soup)
+        return INSTRUCTION_LENGTH * function(*args, at, self.soup, ip)
             
                 
 class At:
@@ -73,3 +73,4 @@ class At:
 
     def __init__(self, i):
         self.index = i
+        self.registers[10] = 1000
