@@ -30,7 +30,7 @@ def add(a, b, c, at, soup, myIndex):
         
     # argument c should always specify a register
     if type(c) == str and c[0] == 'r':
-        c = at.registers[int(c[1:])]
+        c = int(c[1:])
 
     # prepare register c to recieve the sum
     emptyRegister(c, _, _, at, _, _)
@@ -61,16 +61,20 @@ def subtract(a, b, c, at, soup, myIndex):
     else:
         temp2 = takeFromDump(b, at)
 
+    # argument c should always specify a register
+    if type(c) == str and c[0] == 'r':
+        c = int(c[1:])
+        
     # prepare register c to recieve the new total
     emptyRegister(c, _, _, at, _, _)
     at.registers[c] += temp1 - temp2
 
     # if a or b were register indecies, refill those registers
     if type(a) == str and a[0] == 'r':
-        at.registers[a] += takeFromDump(temp1, at)
+        at.registers[int(a[1:])] += takeFromDump(temp1, at)
 
     if type(b) == str and b[0] == 'r':
-        at.registers[b] += takeFromDump(temp2, at)
+        at.registers[int(b[1:])] += takeFromDump(temp2, at)
 
     return 1
 

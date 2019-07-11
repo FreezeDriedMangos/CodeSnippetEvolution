@@ -81,7 +81,8 @@ class Simulation:
                 args[i] = int(''.join(args[i:]))
             elif decodeKey == '-':  # combine the remaining digits into one negative number
                 args[i] = -int(''.join(args[i:]))
-
+            
+        print('\t' + instructionCode + ":" + str(args))
         function = INSTRUCTIONS[instructionCode][0]
         return INSTRUCTION_LENGTH * function(*args, at, self.soup, ip)
             
@@ -103,7 +104,7 @@ if __name__ == "__main__":
     print("regs: " + str(sim.ats[0].registers))
     sim.display()
     sim.display(full=True)
-    sim.run(numFrames=2)
+    sim.run(numFrames=3)
     print("regs: " + str(sim.ats[0].registers))
         
         
