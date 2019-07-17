@@ -12,11 +12,14 @@ OPCODE_VER = 'v1.0'
 # the unmodified queue is [0,1,2,3,4,5,6,7,8,9]
 # so the instructions +25 would correspond to ([r2] = [r5] + [r0])
 # and                 +00 would correspond to ([r0] = [r0] + [r1])
+NOOP = {"name": "NOOP", "symbol": ' ', "arg count": 0, "function": noOp, "description": "No operation"}
 
 INSTRUCTIONS = [
     {"name": "NOOP", "symbol": ' ', "arg count": 0, "function": noOp, "description": "No operation"},
     {"name": "ARG_", "symbolrange": '0123', "arg count": 0, "function": noOp, "description": "No operation. Modifies registers to be used by previous instruction"},
     
+    {"name": "JMPR", "symbol": 'j', "arg count": 1, "function": jumpR, "description": "Jump to the address in r0."},
+        
     {"name": "JMPB", "symbol": '(', "arg count": 0, "function": jumpB, "description": "Jump backwards to the first lock matching the following key"},
     {"name": "JMPF", "symbol": ')', "arg count": 0, "function": jumpF, "description": "Jump forwards to the first lock matching the following key"},
     {"name": "ADRB", "symbol": '[', "arg count": 1, "function": addressOfJumpB, "description": "Look backwards to the first lock matching the following key, store its address in r0"},
@@ -98,24 +101,24 @@ for i in range(len(INSTRUCTIONS)):
 FLAG_NAMES = ["special", "isRegister", "isNonNull"]
     
 FLAG_CODES = {
-    binaryToInt('000'): {"symbol": '░',  "name": "uninitialized block", "execute?": None, "spawn?": False},
+    '000': {"symbol": '░', "type": "uninitialized", "name": "uninitialized block", "execute?": False, "interpret body": lambda s : None},
     
-    binaryToInt('011'): {"symbol": '#',  "name": "register", "execute?": dumpContents, "spawn?": True},
-    binaryToInt('010'): {"symbol": '_',  "name": "register with a null value", "execute?": noOp, "spawn?": False},
+    '011': {"symbol": '#', "type": "register", "name": "register", "execute?": False, "interpret body": lambda s : binaryToInt(s)},
+    '010': {"symbol": '_', "type": "register", "name": "register with a null value", "execute?": False, "interpret body": lambda s : None},
     
-    binaryToInt('111'): {"symbol": '▯',  "name": "dump register", "execute?": dumpContents, "spawn?": True},
-    binaryToInt('110'): {"symbol": '█',  "name": "dump register with a null value", "execute?": noOp, "spawn?": False}, # these should never exist in an actual simulation
+    '111': {"symbol": '▯', "type": "dump register", "name": "dump register", "execute?": 'dump', "interpret body": lambda s : binaryToInt(s, unsigned=True)},
+    '110': {"symbol": '█', "type": "dump register", "name": "dump register with a null value", "execute?": False, "interpret body": lambda s : None}, # these should never exist in an actual simulation
     
-    binaryToInt('101'): {"symbol": '◈',  "name": "executor", "execute?": noOp, "spawn?": False}, # the core, driving life force of an organism. This is what makes the organism alive (it reads and executes instructions, basically)
-    binaryToInt('100'): {"symbol": '◇',  "name": "dormant executor", "execute?": noOp, "spawn?": True}, # a dormant executor. May be part of a dead organism. Can be reawakened if moved or otherwise interacted with
+    '101': {"symbol": '◈', "type": "executor", "name": "executor", "execute?": False, "interpret body": lambda s : binaryToInt(s, unsigned=True)}, # the core, driving life force of an organism. This is what makes the organism alive (it reads and executes instructions, basically)
+    '100': {"symbol": '◇', "type": "executor", "name": "dormant executor", "execute?": False, "interpret body": lambda s : None}, # a dormant executor. May be part of a dead organism. Can be reawakened if moved or otherwise interacted with
     
-    binaryToInt('001'): {"symbol": None, "name": "instruction block", "execute?": True, "spawn?": False},
+    '001': {"symbol": None, "type": "instruction", "name": "instruction block", "execute?": True, "interpret body": lambda s : INSTRUCTIONS[binaryToInt(s, unsigned=True)]},
 }
 
-SPAWN_LIST = set(
+SPAWN_LIST = list(
     '011' + '0' * BODY_LEN, # an empty register - may be initialized with a random value later
     '100' + '0' * BODY_LEN, # a dormant executor 
     '111' + '0' + '1' * (BODY_LEN-1)  # a dump register with the maximum value
-).union(set('001' + intToBinaryUnsigned(i, BODY_LEN) for i in range(len(INSTRUCTIONS)))) # all instructions
+).append(list('001' + intToBinaryUnsigned(i, BODY_LEN) for i in range(len(INSTRUCTIONS)))) # all instructions
 
 
