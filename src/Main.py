@@ -89,6 +89,7 @@ class Simulation:
         ancestorLoc = random.randrange(0, NUM_MEMORY_BLOCKS_IN_SOUP-len(ancestor))
         self.data.soup.overwrite('0b'+ancestor, MEM_BLOCK_LEN*ancestorLoc)
         
+        
         # find ancestor's executor
         for loc in ancestorExecutorLocs:
             loc = loc + ancestorLoc
@@ -109,12 +110,11 @@ if __name__ == "__main__":
     import utils
     exeAddr = sim.data.executorAddrList[0]
     #print("executor addr: ", exeAddr)
-    claimData = utils.getClaimData(sim.data, exeAddr)
-    pp.pprint(claimData)
+    pp.pprint(utils.getClaimData(sim.data, exeAddr))
     
     sim.cycle()
     sim.cycle()
     sim.cycle()
-    pp.pprint(claimData)
+    pp.pprint(utils.getClaimData(sim.data, exeAddr))
     
         
