@@ -198,6 +198,5 @@ SPAWN_LIST = [
     '011' + '0' * BODY_LEN, # an empty register - may be initialized with a random value later
     '100' + '0' * BODY_LEN, # a dormant executor 
     '111' + '1' * (BODY_LEN)  # a dump register with the maximum value (note: dump registers are unsigned)
-].append(list('001' + intToBinaryUnsigned(i, BODY_LEN) for i in range(len(INSTRUCTIONS)))) # all instructions
-
-
+]
+SPAWN_LIST.extend('001' + intToBinaryUnsigned(i, BODY_LEN) for i in range(len(INSTRUCTIONS))) # all instructions
