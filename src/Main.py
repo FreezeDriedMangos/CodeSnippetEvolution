@@ -3,7 +3,7 @@ import const
 class SimulationData:
     soup = BitArray('0b' + '0'*TOTAL_MEM_LEN)
     executorAddrList = []
-    checkedAddresses = []
+    checkedAddresses = [] # list of tuples (checked, checkedBy)
 
     def addCheckedAddress(addr):
         checkedAddresses.append(*addr)
@@ -39,8 +39,9 @@ class Simulation:
             if "executor deinit" in retval:
                 executorAddrList.remove(retval["executor deinit"])
             if "active executor move" in retval:
-                executorAddrList.remove(retval["active executor move"][0])
-                executorAddrList.append(retval["active executor move"][1])
+                for pair in retval["active executor move"]:
+                    executorAddrList.remove(pair[0])
+                    executorAddrList.append(pair[1])
             
             # instruction pointer updating
             if "jump" in retval:

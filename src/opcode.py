@@ -16,9 +16,9 @@ NOOP = {"name": "NOOP", "symbol": ' ', "arg count": 0, "function": noOp, "descri
 
 INSTRUCTIONS = [
     {"name": "NOOP", "symbol": ' ', "arg count": 0, "function": noOp, "description": "No operation"},
-    {"name": "ARG_", "symbolrange": '0123', "arg count": 0, "function": noOp, "description": "No operation. Modifies registers to be used by previous instruction"},
+    {"name": "ARG_", "symbolrange": '0123456789', "arg count": 0, "function": noOp, "description": "No operation. Modifies registers to be used by previous instruction"},
     
-    {"name": "JMPR", "symbol": 'j', "arg count": 1, "function": jumpR, "description": "Jump to the address in r0."},
+    {"name": "JMPR", "symbol": '%', "arg count": 1, "function": jumpR, "description": "Jump to the address in r0."},
         
     {"name": "JMPB", "symbol": '(', "arg count": 0, "function": jumpB, "description": "Jump backwards to the first lock matching the following key"},
     {"name": "JMPF", "symbol": ')', "arg count": 0, "function": jumpF, "description": "Jump forwards to the first lock matching the following key"},
@@ -27,8 +27,10 @@ INSTRUCTIONS = [
     
     {"name": "IFNZ", "symbol": '?', "arg count": 1, "function": skipIfZero, "description": "if [r0] is not 0, execute the following instruction, otherwise, skip to the next non-argument instruction"},
     {"name": "IFNN", "symbol": '‽', "arg count": 1, "function": skipIfNull, "description": "if [r0] is not null, execute the following instruction, otherwise, skip to the next non-argument instruction"},
-    {"name": "IFMB", "symbol": '¿', "arg count": 2, "function": skipUnlessEquiv, "description": "if the instruction at the address in r0 is the same as the instruction at the address in r1 (or if they're both registers, dump registers, or executors), execute the next instruction, otherwise, skip to the next non-argument instruction"},
-    
+    {"name": "IFDZ", "symbol": '¿', "arg count": 0, "function": skipIfDumpIsZero, "description": "if the instruction at the address in r0 is the same as the instruction at the address in r1 (or if they're both registers, dump registers, or executors), execute the next instruction, otherwise, skip to the next non-argument instruction"},
+    {"name": "IFBE", "symbol": '⸘', "arg count": 2, "function": skipUnlessEquiv, "description": "if the instruction at the address in r0 is the same as the instruction at the address in r1 (or if they're both registers, dump registers, or executors), execute the next instruction, otherwise, skip to the next non-argument instruction"},
+    {"name": "IFEQ", "symbol": '=', "arg count": 2, "function": skipUnlessEqual, "description": "if [r0] == [r1], execute the next instruction, otherwise, skip to the next non-argument instruction"},
+     
     {"name": "ADDr", "symbol": '+', "arg count": 3, "function": add,      "description": "Add registers' contents ([r0] = [r1] + [r2])"},
     {"name": "SUBr", "symbol": '-', "arg count": 3, "function": subtract, "description": "Subtract registers' contents ([r0] = [r1] - [r2])"},
     {"name": "MULr", "symbol": '*', "arg count": 3, "function": multiply, "description": "Multiply registers' contents ([r0] = [r1] * [r2])"},
@@ -37,33 +39,37 @@ INSTRUCTIONS = [
     {"name": "INCr", "symbol": '^', "arg count": 1, "function": increment, "description": "Increment register's contents ([r0]++)"},
     {"name": "DECr", "symbol": 'v', "arg count": 1, "function": decrement, "description": "Decrement register's contents ([r0]--)"},
     
-    {"name": "NOTr", "symbol": '!', "arg count": 1, "function": bitwiseInverse,   "description": "Bitwise NOT register's contents ([r0] = ![r0])"},
-    {"name": "SHFL", "symbol": '«', "arg count": 1, "function": bitwiseShiftLeft, "description": "Bitwise left shift register's contents ([r0] = [r0] << 1)"},
-    {"name": "SHFR", "symbol": '»', "arg count": 1, "function": bitwiseInverse,   "description": "Bitwise right shift register's contents ([r0] = [r0] >> 1)"},
+    {"name": "NOTr", "symbol": '!', "arg count": 1, "function": bitwiseInverse,    "description": "Bitwise NOT register's contents ([r0] = ![r0])"},
+    {"name": "SHFL", "symbol": '«', "arg count": 1, "function": bitwiseShiftLeft,  "description": "Bitwise left shift register's contents ([r0] = [r0] << 1)"},
+    {"name": "SHFR", "symbol": '»', "arg count": 1, "function": bitwiseShiftRight, "description": "Bitwise right shift register's contents ([r0] = [r0] >> 1)"},
 
     {"name": "ANDr", "symbol": '&', "arg count": 3, "function": bitwiseAND, "description": "Bitwise AND register's contents ([r0] = [r1] & [r2])"},
-    {"name": "ORr",  "symbol": '|', "arg count": 3, "function": bitwiseOR,  "description": "Bitwise OR register's contents ([r0] = [r1] | [r2])"},
+    {"name": "ORr-", "symbol": '|', "arg count": 3, "function": bitwiseOR,  "description": "Bitwise OR register's contents ([r0] = [r1] | [r2])"},
     {"name": "XORr", "symbol": '⊕', "arg count": 3, "function": bitwiseXOR, "description": "Bitwise XOR register's contents ([r0] = [r1] ^ [r2])"},
     
     {"name": "ZERO", "symbol": 'z', "arg count": 1, "function": setToZero, "description": "Set register contents to 0 ([r0] = 0)"},
     {"name": "UNIT", "symbol": 'u', "arg count": 1, "function": setToOne,  "description": "Set register contents to 1 ([r0] = 1)"},
+    {"name": "RAND", "symbol": 'r', "arg count": 1, "function": setToRand, "description": "Sets [r0] to a random valid address."}
+    {"name": "NULL", "symbol": 'n', "arg count": 1, "function": setToNull, "description": "Sets [r0] to null."}
         
     {"name": "CPYr", "symbol": '"', "arg count": 2, "function": copy, "description": "Copy [r0] into r1"},
     {"name": "SWPr", "symbol": 'x', "arg count": 2, "function": swap, "description": "Swap [r0] into r1 and [r1] into r0"},
     
     {"name": "POPr", "symbol": '↑', "arg count": 1, "function": pop,  "description": "Pop into r0 a value from the first stack found immediately after the first matching lock found after this executor"},
     {"name": "PSHr", "symbol": '↓', "arg count": 1, "function": push, "description": "Push [r0] to the first stack found immediately after the first matching lock found after this executor"},
+    # consider adding a 'stack lock' a special lock like the claim lock and the only valid lock that signifies a stack. symbol 'S'
+    
+    {"name": "CLAM", "symbol": 'T', "arg count": 0, "function": noOp,             "description": "A claim marker, used to stake an executor's territory; the boundaries of an organism. Also functions as lock."},
+    {"name": "CLMk", "symbol": 't', "arg count": 0, "function": noOp,             "description": "A claim marker key, matches to a claim marker."},
+    {"name": "MNTR", "symbol": '~', "arg count": 2, "function": monitor,          "description": "Sets [r0] to the address most recently checked within this executor's claim boundaries, and [r1] to the address of the instruction that checked it. Both are set to null if no checks have been recently made."},
     
     {"name": "ADRS", "symbol": '$', "arg count": 2, "function": swapMemoryBlocks, "description": "Swap the memory block at [r0] with the block at [r1]"},
-    {"name": "CLAM", "symbol": 'T', "arg count": 0, "function": noOp, "description": "A claim marker, used to stake an executor's territory; the boundaries of an organism. Also functions as lock."},
-    {"name": "CLMk", "symbol": 't', "arg count": 0, "function": noOp, "description": "A claim marker key, matches to a claim marker."},
-    {"name": "MNTR", "symbol": '~', "arg count": 2, "function": monitor, "description": "Sets [r0] to the address most recently checked within this executor's claim boundaries, and [r1] to the address of the instruction that checked it. Both are set to null if no checks have been recently made."},
     
     {"name": "INIT", "symbol": ':', "arg count": 1, "function": initializeExecutor, "description": "Initializes the executor at the address contained in r0. (Sets it to non-dormant and sets its instruction pointer to itself.)"},
     {"name": "DINT", "symbol": '.', "arg count": 1, "function": denitializeExecutor, "description": "Denitializes the executor at the address contained in r0. (Sets it to dormant.)"},
     
-    {"name": "KEY_", "abcdefghijklmn", "arg count": 0, "function": noOp, "description": "A key used by some instructions to find a matching upper case lock"},
-    {"name": "LOK_", "ABCDEFGHIJKLMN", "arg count": 0, "function": noOp, "description": "A lock used by some instructions to match to a lower case key"}
+    {"name": "KEY_", "abcdefghijklm", "arg count": 0, "function": noOp, "description": "A key used by some instructions to find a matching upper case lock"},
+    {"name": "LOK_", "ABCDEFGHIJKLM", "arg count": 0, "function": noOp, "description": "A lock used by some instructions to match to a lower case key"}
     
 ]
 
@@ -106,7 +112,7 @@ FLAG_CODES = {
     '011': {"symbol": '#', "type": "register", "name": "register", "execute?": False, "interpret body": lambda s : binaryToInt(s)},
     '010': {"symbol": '_', "type": "register", "name": "register with a null value", "execute?": False, "interpret body": lambda s : None},
     
-    '111': {"symbol": '▯', "type": "dump register", "name": "dump register", "execute?": 'dump', "interpret body": lambda s : binaryToInt(s, unsigned=True)},
+    '111': {"symbol": '▯', "type": "dump register", "name": "dump register", "execute?": setSelfToZero, "interpret body": lambda s : binaryToInt(s, unsigned=True)},
     '110': {"symbol": '█', "type": "dump register", "name": "dump register with a null value", "execute?": False, "interpret body": lambda s : None}, # these should never exist in an actual simulation
     
     '101': {"symbol": '◈', "type": "executor", "name": "executor", "execute?": False, "interpret body": lambda s : binaryToInt(s, unsigned=True)}, # the core, driving life force of an organism. This is what makes the organism alive (it reads and executes instructions, basically)
@@ -118,7 +124,7 @@ FLAG_CODES = {
 SPAWN_LIST = list(
     '011' + '0' * BODY_LEN, # an empty register - may be initialized with a random value later
     '100' + '0' * BODY_LEN, # a dormant executor 
-    '111' + '0' + '1' * (BODY_LEN-1)  # a dump register with the maximum value
+    '111' + '1' * (BODY_LEN)  # a dump register with the maximum value (note: dump registers are unsigned)
 ).append(list('001' + intToBinaryUnsigned(i, BODY_LEN) for i in range(len(INSTRUCTIONS)))) # all instructions
 
 

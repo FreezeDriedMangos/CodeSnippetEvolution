@@ -50,7 +50,66 @@ def intToBinaryUnsigned(val, length):
     return retval
     
     
-          
+def bitwiseInverse(intVal, bitLen, unsigned=False):
+    assert(type(intVal) is int)    
+    binary = intToBinary(intVal, bitLen, unsigned=unsigned)
+    binary = ''.join('1' if bit is '0' else '0' for bit in binary)
+    
+    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    
+    
+def bitwiseShiftLeft(intVal, bitLen, unsigned=False):
+    assert(type(intVal) is int)    
+    binary = intToBinary(intVal, bitLen, unsigned=unsigned)
+    binary = binary[1:] + binary[-1]
+    
+    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    
+    
+def bitwiseShiftRight(intVal, bitLen, unsigned=False):
+    assert(type(intVal) is int)    
+    binary = intToBinary(intVal, bitLen, unsigned=unsigned)
+    binary = binary[0] + binary[0:-1]
+    
+    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    
+  
+def bitwiseAND(intVal1, intVal2, bitLen, unsigned=False):
+    assert(type(intVal1) is int)   
+    assert(type(intVal2) is int)    
+    
+    binary1 = [bit is '1' for bit in intToBinary(intVal1, bitLen, unsigned=unsigned)]
+    binary2 = [bit is '1' for bit in intToBinary(intVal2, bitLen, unsigned=unsigned)]
+    
+    binary = ''.join('1' if (a and b) else '0' for a, b in zip(binary1, binary2))
+    
+    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    
+   
+def bitwiseOR(intVal1, intVal2, bitLen, unsigned=False):
+    assert(type(intVal1) is int)   
+    assert(type(intVal2) is int)    
+    
+    binary1 = [bit is '1' for bit in intToBinary(intVal1, bitLen, unsigned=unsigned)]
+    binary2 = [bit is '1' for bit in intToBinary(intVal2, bitLen, unsigned=unsigned)]
+    
+    binary = ''.join('1' if (a or b) else '0' for a, b in zip(binary1, binary2))
+    
+    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    
+     
+def bitwiseXOR(intVal1, intVal2, bitLen, unsigned=False):
+    assert(type(intVal1) is int)   
+    assert(type(intVal2) is int)    
+    
+    binary1 = [bit is '1' for bit in intToBinary(intVal1, bitLen, unsigned=unsigned)]
+    binary2 = [bit is '1' for bit in intToBinary(intVal2, bitLen, unsigned=unsigned)]
+    
+    binary = ''.join('1' if (a is not b) else '0' for a, b in zip(binary1, binary2))
+    
+    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    
+         
 #
 # Non-modifying utility functions
 #
@@ -133,15 +192,20 @@ def decodeArgs(soup, address, count):
 #
 # Modifying utility functions
 #
+def registerWriteIgnoreDumpMechanics(soup, executorAddress, registerAddress, val, unsigned=False):
+    binary = "0b" + intToBinary(val, BODY_LEN, unsigned=unsigned)
+    soup.overwrite(binary, MEM_BLOCK_LEN*registerAddress+HEADER_LEN)
+    return 
+
 
 def registerWrite(soup, executorAddress, registerAddress, val, unsigned=False):
     if val is None:
         val = readBlock(soup, registerAddress)["body"]
         addToDump(soup, executorAddress, abs(val))
         
-        binary = "0b" + intToBinary(0, BODY_LEN, unsigned=unsigned)
-        soup.overwrite(binary, registerAddress+HEADER_LEN)
-        soup.overwrite("0b"+'010', registerAddress)
+        binary = "0b" + '0'*BODY_LEN 
+        soup.overwrite(binary, MEM_BLOCK_LEN*registerAddress+HEADER_LEN)
+        soup.overwrite("0b"+'010', MEM_BLOCK_LEN*registerAddress)
         return
         
     # take the neccessary difference from the dump register
@@ -150,12 +214,21 @@ def registerWrite(soup, executorAddress, registerAddress, val, unsigned=False):
     success = takeFromDump(soup, executorAddress, diff)
     
     if not success:
-        killExecutor(soup, executorAddress)
+        return False
     
     # the actual writing
     binary = "0b" + intToBinary(val, BODY_LEN, unsigned=unsigned)
-    soup.overwrite(binary, registerAddress+HEADER_LEN)
+    soup.overwrite(binary, MEM_BLOCK_LEN*registerAddress+HEADER_LEN)
         
+    return True    
+
+
+def registerInitialize(soup, registerAddress):
+    block = readBlock(soup, registerAddress)
+    assert(block["header"]["name"] == "register with a null value")
+    
+    soup.overwrite("0b"+'011' + ('0'*BODY_LEN), MEM_BLOCK_LEN*registerAddress)
+
 
 # returns False if there was an error
 def takeFromDump(soup, executorAddress, val):
@@ -170,7 +243,7 @@ def takeFromDump(soup, executorAddress, val):
         return False
         
     binary = "0b" + intToBinary(dump["body"] - val, BODY_LEN, unsigned=unsigned)
-    soup.overwrite(binary, dumpAddr+HEADER_LEN)
+    soup.overwrite(binary, MEM_BLOCK_LEN*dumpAddr+HEADER_LEN)
     
     return True
 
@@ -179,15 +252,59 @@ def addToDump(soup, executorAddress, val):
     return takeFromDump(soup, executorAddress, -val)
     
 
+def stackPush(soup, executorAddress, stackAddress, val):
+    addr = stackAddress+1
+    block = readBlock(soup, addr)
+    
+    while block is not None and block["header"]["type"] is "register":
+        if block["name"] is "register with a null value":
+            registerInitialize(soup, addr)
+            return registerWrite(soup, executorAddress, val)
+        addr += 1
+        block = readBlock(soup, addr)
+    return 'fail safe'
+        
+
+def stackPop(soup, executorAddress, stackAddress, registerAddress):
+    addr = stackAddress+1
+    block = readBlock(soup, addr)
+    
+    while block is not None and block["header"]["type"] is "register":
+        if block["name"] is "register with a null value":
+            break
+        addr += 1
+        block = readBlock(soup, addr)
+    
+    addr -= 1
+    block = readBlock(soup, addr)
+
+    if block is None or block["header"]["name"] is not "register":    
+        return 'fail safe'
+        
+    val = block["body"]
+    registerWrite(soup, executorAddress, addr, None) # always successful
+    return registerWrite(soup, executorAddress, registerAddress, val)
+        
+
 def killExecutor(soup, executorAddress):
     binary = "0b" + '100'
-    soup.overwrite(binary, executorAddress)
+    soup.overwrite(binary, MEM_BLOCK_LEN*executorAddress)
         
 
 def awakenExecutor(soup, executorAddress):
     binary = "0b" + '101'
-    soup.overwrite(binary, executorAddress)
+    soup.overwrite(binary, MEM_BLOCK_LEN*executorAddress)
  
+
+def swapMemoryBlocks(soup, addr1, addr2):
+    cut = soup.cut(MEM_BLOCK_LEN)
+    
+    block1 = cut[addr1].bin
+    block2 = cut[addr2].bin
+    
+    soup.overwrite(block1, MEM_BLOCK_LEN*addr2)
+    soup.overwrite(block2, MEM_BLOCK_LEN*addr2)
+    
  
 #
 # Other

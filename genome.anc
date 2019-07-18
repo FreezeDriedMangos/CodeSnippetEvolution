@@ -1,0 +1,50 @@
+SYMB
+// the first line of these files must be either SYMB or CODE
+// depending on whether this is written with symbols or opcodes (the "name" fields)
+
+// regex for linearizing this file: /(\/\/ .*\n)|(\/\/ .*)| |\n/g
+// just delete everything this regex matches
+
+// r0 will walk down the length of this genome
+// r2 will walk down the length of the child as it's built
+// r3 will search for the pieces
+// r1 will store the address of the end of this genome
+// r4 will store the start address of the child and be responsible for awakening it
+
+T       // begin claim marker, begining of organism
+        // header stuff I suppose
+◈▯      // live executor and dump register
+#####   // registers, get cleared out when executed
+        // a stack would go here like so "A____" if I needed one
+        
+        // initialization
+[t      // find the first claim marker, store address in r0
+]t1     // find the end claim marker, store address in r1
+r2      // generate a random address, store it in r2 - this will be the start address of the child
+"23     // copy [r2] into r3
+"24     // now r2, r3, and r4 hold the start address of the new child
+
+B       // lock - marker of the find loop
+⸘03     // if mem[r0] == mem[r3]
+)c      //     skip to the swap function
+^3      // otherwise, increment r3
+(b      //     and return to the start of the loop
+
+C       // lock - marker of the swap function
+$32     // swap mem[r2] and mem[r3] - the main purpose of this function
+=01     // if [r0] == [r1]   aka if we've just swapped the last piece
+)d      //     awaken the child
+^0      // otherwise, increment r0, r2, and r3
+^2      //     which prepares us to find the next block item
+^3
+(b      // return to the find loop
+
+D       // lock - marker of the awaken child function
+^4      // increment r4 so it now points to the child's executor
+:4      // awaken the child
+(t      // start over and make a new child
+
+T       // end of the genome
+
+// genome laid out linearly, without comments:
+// T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=01)d^0^2^3(bD^4:4(tT
