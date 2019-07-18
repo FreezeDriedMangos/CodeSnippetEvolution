@@ -123,10 +123,22 @@ def skipUnlessEquiv(simData, executorAddress, myAddress, arg0, arg1):
     if ins1["header"]["type"] is "instruction":
         if ins1["symbol"] == ins2["symbol"]:
             return {"checked address": [register1["body"], register2["body"]]}
-    elif ins1["header"]["type"] == ins2["header"]["type"]:
+    elif ins1["header"]["type"] == ins2["header"]["type"]: # will match (live executor, dormant executor) and (register, register with null) pairs
         return {"checked address": [register1["body"], register2["body"]]}
     return {"ip increment": 2, "checked address": [register1["body"], register2["body"]]}
+   
     
+def skipUnlessEqual(simData, executorAddress, myAddress, arg0, arg1):
+    register1 = utils.readRegister(simData.soup, executorAddress, arg0)
+    register2 = utils.readRegister(simData.soup, executorAddress, arg1)
+    
+    if register1 is None or register2 is None:
+        return {"fault": True}
+    
+    if register1["body"] == register2["body"]:
+        return {}
+    return {"ip increment": 2}
+       
 
 def add(simData, executorAddress, myAddress, arg0, arg1, arg2):
     return simpleOp(simData, executorAddress, myAddress, arg0, arg1, arg2, lambda a, b: a+b)
@@ -256,6 +268,17 @@ def setToZero(simData, executorAddress, myAddress, arg0):
     else:
         return {"fault": True, "executor deinit": executorAddress}
         
+        
+def setToNull(simData, executorAddress, myAddress, arg0):   
+    addr = utils.findRegister(simData.soup, executorAddress, arg0)
+    success = utils.registerWrite(simData.soup, executorAddress, addr, None)    
+
+    if success:
+        return {}
+    else:
+        return {"fault": True, "executor deinit": executorAddress}
+        
+
 
 def setToRand(simData, executorAddress, myAddress, arg0):   
     addr = utils.findRegister(simData.soup, executorAddress, arg0)

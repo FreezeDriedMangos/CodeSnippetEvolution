@@ -54,9 +54,7 @@ class Simulation:
             registerWrite(self.data.soup, executorAddress, blockAddress, unsigned=True)
             
         elif block["header"]["type"] is "register":
-            val = abs(block["body"])
-            addToDump(executorAddress, val)
-            setRegisterValue(blockAddress, 0)
+            registerWrite(blockAddress, 0)
             setRegisterValue(executorAddress, blockAddress+1)
         else
             setRegisterValue(executorAddress, blockAddress+1)

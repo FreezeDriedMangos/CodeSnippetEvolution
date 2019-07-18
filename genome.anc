@@ -1,6 +1,6 @@
 SYMB
 // the first line of these files must be either SYMB or CODE
-// depending on whether this is written with symbols or opcodes (the "name" fields)
+// depending on whether this is written with symbols or opcodes (the "code" fields)
 
 // regex for linearizing this file: /(\/\/ .*\n)|(\/\/ .*)| |\n/g
 // just delete everything this regex matches
