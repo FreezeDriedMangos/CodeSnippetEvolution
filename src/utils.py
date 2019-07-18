@@ -1,4 +1,7 @@
 
+import const
+from const import *
+
 def binaryToInt(string, unsigned=False):
     signedPlace = len(string)-1
     if unsigned:
@@ -141,15 +144,19 @@ def findRegister(soup, executorAddress, regNum):
 
 
 def readBlock(soup, blockIndex):
-    if blockIndex < 0 or blockIndex >=  NUM_BLOCKS_IN_SOUP
+    import opcode
+    from opcode import FLAG_CODES
+    
+    if blockIndex < 0 or blockIndex >=  NUM_MEMORY_BLOCKS_IN_SOUP:
         return None
         
-    block = soup.cut(MEM_BLOCK_LEN)[blockIndex]
+    block = list(soup.cut(MEM_BLOCK_LEN))[blockIndex]
+    block = block.bin
     header = block[0:HEADER_LEN]
     body = block[HEADER_LEN:]
     
-    headerInfo = FLAG_CODES[header.bin[2:]]
-    bodyInfo   = headerInfo["interpret body"](body.bin[2:])
+    headerInfo = FLAG_CODES[header].copy()
+    bodyInfo   = headerInfo["interpret body"](body)
     
     if headerInfo["symbol"] is None:
         headerInfo["symbol"] = bodyInfo["symbol"]
@@ -319,7 +326,7 @@ def keyCheck(key):
     if not (keyName[0:3] is "KEY" or keyName is "CLMk"):
         return False
         
-   return True
+    return True
     
 
 # returns true if the lock really is a lock, false otherwise
@@ -331,7 +338,7 @@ def lockCheck(lock):
     if not (lockName[0:3] is "LOK" or lockName is "CLAM"):
         return False
         
-   return True
+    return True
    
    
 def keyLockMatch(key, lock):

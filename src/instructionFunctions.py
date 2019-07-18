@@ -1,4 +1,4 @@
-from Main import SimulationData
+#from Main import SimulationData
 import utils
 
 
@@ -21,7 +21,7 @@ def jumpB(simData, executorAddress, myAddress):
     i = myAddress
     while i >= 0:
         block = utils.readBlock(i)
-        if utils.keyLockMatch(key, block)
+        if utils.keyLockMatch(key, block):
             return {"jump": i}
         i -= 1
     
@@ -36,7 +36,7 @@ def jumpF(simData, executorAddress, myAddress):
     i = myAddress
     while i < TOTAL_MEM_LEN:
         block = utils.readBlock(sim, i)
-        if utils.keyLockMatch(key, block)
+        if utils.keyLockMatch(key, block):
             return {"jump": i}
         i += 1
     
@@ -259,7 +259,7 @@ def setToZero(simData, executorAddress, myAddress, arg0):
         return {"fault": True, "executor deinit": executorAddress}
         
  
- def setToOne(simData, executorAddress, myAddress, arg0):   
+def setToOne(simData, executorAddress, myAddress, arg0):   
     addr = utils.findRegister(simData.soup, executorAddress, arg0)
     success = utils.registerWrite(simData.soup, executorAddress, addr, 1)    
 
@@ -392,9 +392,9 @@ def swapMemoryBlocks(simData, executorAddress, myAddress, arg0, arg1):
     
     executorMoves = []
     if ins1["name"] is "executor":
-        executorMoves.append(set(register1["body"], register2["body"]))
+        executorMoves.append(tuple(register1["body"], register2["body"]))
     if ins2["name"] is "executor":
-        executorMoves.append(set(register2["body"], register1["body"]))
+        executorMoves.append(tuple(register2["body"], register1["body"]))
         
     if len(executorMoves) > 0:
         return {"checked address": [register1["body"], register2["body"]], "active executor move": executorMoves}
@@ -411,8 +411,7 @@ def monitor(simData, executorAddress, myAddress, arg0, arg1):
         if claim[0] <= check[0] and check[0] <= claim[1]:
             if not (claim[0] <= check[1] and check[1] <= claim[1]):
                 # if the check was within claim bounds and wasn't made from within bounds
-                success = utils.registerWrite(simData.soup, executorAddress, addr0, claim[0])
-                          and utils.registerWrite(simData.soup, executorAddress, addr1, claim[1])
+                success = utils.registerWrite(simData.soup, executorAddress, addr0, claim[0]) and utils.registerWrite(simData.soup, executorAddress, addr1, claim[1])
                 
                 if success:
                     return {}
@@ -424,7 +423,7 @@ def monitor(simData, executorAddress, myAddress, arg0, arg1):
     return {}
     
     
-def initExecutor(simData, executorAddress, myAddress, arg0):
+def initializeExecutor(simData, executorAddress, myAddress, arg0):
     reg = utils.readRegister(simData.soup, executorAddress, arg0)
     block = utils.readBlock(simData.soup, reg["body"])
     
@@ -433,7 +432,7 @@ def initExecutor(simData, executorAddress, myAddress, arg0):
     return {"executor init": reg["body"]}
     
     
-def deinitExecutor(simData, executorAddress, myAddress, arg0):
+def denitializeExecutor(simData, executorAddress, myAddress, arg0):
     reg = utils.readRegister(simData.soup, executorAddress, arg0)
     block = utils.readBlock(simData.soup, reg["body"])
     

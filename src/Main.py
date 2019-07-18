@@ -1,4 +1,6 @@
 import const
+from const import *
+from bitstring import BitArray
 
 class SimulationData:
     soup = BitArray('0b' + '0'*TOTAL_MEM_LEN)
@@ -6,9 +8,11 @@ class SimulationData:
     checkedAddresses = [] # list of tuples (checked, checkedBy)
 
     def addCheckedAddress(addr):
-        checkedAddresses.append(*addr)
+        for a in addr:
+            checkedAddresses.insert(a, 0)
+            
         while len(checkedAdresses) >= CHECKED_ADDRESS_STACK_SIZE:
-            checkedAdresses.pop()
+            checkedAdresses.pop(-1)
     
 
 class Simulation:
@@ -56,7 +60,7 @@ class Simulation:
         elif block["header"]["type"] is "register":
             registerWrite(blockAddress, 0)
             setRegisterValue(executorAddress, blockAddress+1)
-        else
+        else:
             setRegisterValue(executorAddress, blockAddress+1)
     
     

@@ -2,6 +2,7 @@ from instructionFunctions import *
 from utils import binaryToInt
 from utils import intToBinaryUnsigned
 import const
+from const import *
 
 # this is important because once a genome is assembled, it can only be interpreted or dissasembled
 # using the exact version it was assembled with
@@ -73,22 +74,31 @@ INSTRUCTIONS = [
 ]
 
 # unpack compressed instruction lists
+removeList = []
+insertList = []
 for i in range(len(INSTRUCTIONS)):
     instructionEntry = INSTRUCTIONS[i]
     
-    if instructionEntry["symbol list"] is not None:
-        INSRUCTIONS.removeIndex(i)
+    if "symbolrange" in instructionEntry:
+        #INSTRUCTIONS.pop(i)
+        removeList.append(instructionEntry)
         
-        for symbol in instructionEntry["symbol list"]:
+        for symbol in instructionEntry["symbolrange"]:
             instruction = {
-                "name": instructionEntry["name"].replaceAll('_', symbol.upper()), 
+                "code": instructionEntry["code"].replace('_', symbol.upper()), 
                 "symbol": symbol, 
                 "arg count": instructionEntry["arg count"], 
                 "function": instructionEntry["function"], 
                 "description": instructionEntry["description"]
             }
-            INSTRUCTIONS.add(i, instruction)
+            # INSTRUCTIONS.insert(i, instruction)
+            insertList.append([i+len(insertList), instruction])
 
+for elem in insertList:
+    INSTRUCTIONS.insert(elem[0], elem[1])
+
+for elem in removeList:
+    INSTRUCTIONS.remove(elem)
 
 # the simulation's simulated RAM is segmented into blocks. Each block is made of a header and body
 #
@@ -184,10 +194,10 @@ FLAG_CODES = {
         },
 }
 
-SPAWN_LIST = list(
+SPAWN_LIST = [
     '011' + '0' * BODY_LEN, # an empty register - may be initialized with a random value later
     '100' + '0' * BODY_LEN, # a dormant executor 
     '111' + '1' * (BODY_LEN)  # a dump register with the maximum value (note: dump registers are unsigned)
-).append(list('001' + intToBinaryUnsigned(i, BODY_LEN) for i in range(len(INSTRUCTIONS)))) # all instructions
+].append(list('001' + intToBinaryUnsigned(i, BODY_LEN) for i in range(len(INSTRUCTIONS)))) # all instructions
 
 
