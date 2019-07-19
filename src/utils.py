@@ -317,7 +317,6 @@ def awakenExecutor(simData, executorAddress):
 def swapMemoryBlocks(simData, addr1, addr2):
     #FOR SOME REASON, I DON'T THINK THIS WORKS
     
-    print("swapping ", addr1, addr2)
     if addr1 < 0 or addr1 >= NUM_MEMORY_BLOCKS_IN_SOUP:
         return False
     if addr2 < 0 or addr2 >= NUM_MEMORY_BLOCKS_IN_SOUP:

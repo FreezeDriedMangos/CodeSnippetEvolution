@@ -114,7 +114,7 @@ if __name__ == "__main__":
     import pprint  
     pp = pprint.PrettyPrinter(indent=4)
 
-    ancestor = '''T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=01)d^0^2"23(bD^4:4(tT'''
+    ancestor = '''T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=)d^^2"23(bD^4:4(tT'''
     sim = Simulation()
     sim.init(ancestor)       
     #print(sim.data.soup)
@@ -164,7 +164,15 @@ if __name__ == "__main__":
         pp.pprint(utils.getSymbolRange(sim.data, childAddress, childAddress + len(ancestor)))
         
         # now we're actually doing the copying
-        for i in range(1000):
+        for i in range(1, 5000+1):
+            if i % 100 == 0:
+                print("=====================Begining cycle num ", i, "=========================")
+                print("\n=====ancestor=====")
+                pp.pprint(utils.getClaimData(sim.data, exeAddr))
+                
+                print("\n-------child---------")
+                pp.pprint(utils.getSymbolRange(sim.data, childAddress, childAddress + len(ancestor)))
+    
             sim.cycle()
         
         print("\n=====ancestor=====")

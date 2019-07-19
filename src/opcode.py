@@ -24,6 +24,9 @@ INSTRUCTIONS = [
     {"code": "JMPF", "symbol": ')', "type": "jump", "arg count": 0, "function": jumpF, "description": "Jump forwards to the first lock matching the following key"},
     {"code": "ADRB", "symbol": '[', "type": "lookaround", "arg count": 1, "function": addressOfJumpB, "description": "Look backwards to the first lock matching the following key, store its address in r0"},
     {"code": "ADRF", "symbol": ']', "type": "lookaround", "arg count": 1, "function": addressOfJumpF, "description": "Look forwards to the first lock matching the following key, store its address in r0"},
+    # consider adding '<' and '>' which search after or before matching lock for the instruction in r0, storing the address in r1
+    #{"code": "SERB", "symbol": '<', "type": "lookaround", "arg count": 3, "function": addressOfInstructionB, "description": "Starting from [r0], look backwards for the first instruction matching the instruction at [r1], store its address in r2"},
+    #{"code": "SERF", "symbol": '>', "type": "lookaround", "arg count": 3, "function": addressOfInstructionF, "description": "Starting from [r0], look forwards for the first instruction matching the instruction at [r1], store its address in r2"},
     
     {"code": "IFNZ", "symbol": '?', "type": "if", "arg count": 1, "function": skipIfZero, "description": "if [r0] is not 0, execute the following instruction, otherwise, skip to the next non-argument instruction"},
     {"code": "IFNN", "symbol": '‽', "type": "if", "arg count": 1, "function": skipIfNull, "description": "if [r0] is not null, execute the following instruction, otherwise, skip to the next non-argument instruction"},
@@ -58,10 +61,12 @@ INSTRUCTIONS = [
     {"code": "POPr", "symbol": '↑', "type": "stack", "arg count": 1, "function": pop,  "description": "Pop into r0 a value from the first stack found immediately after the first matching lock found after this executor"},
     {"code": "PSHr", "symbol": '↓', "type": "stack", "arg count": 1, "function": push, "description": "Push [r0] to the first stack found immediately after the first matching lock found after this executor"},
     # consider adding a 'stack lock' a special lock like the claim lock and the only valid lock that signifies a stack. symbol 'S'
+    #{"code": "STAC", "symbol": 'S', "type": "lock", "arg count": 0, "function": noOp, "description": "A stack marker, used to mark the base of a stack. Also functions as lock."},
+    #{"code": "STCk", "symbol": 's', "type": "key",  "arg count": 0, "function": noOp, "description": "A stack marker key, matches to a stack marker."},
     
-    {"code": "CLAM", "symbol": 'T', "type": "lock", "arg count": 0, "function": noOp,             "description": "A claim marker, used to stake an executor's territory; the boundaries of an organism. Also functions as lock."},
-    {"code": "CLMk", "symbol": 't', "type": "key", "arg count": 0, "function": noOp,             "description": "A claim marker key, matches to a claim marker."},
-    {"code": "MNTR", "symbol": '~', "type": "monitor", "arg count": 2, "function": monitor,          "description": "Sets [r0] to the address most recently checked within this executor's claim boundaries, and [r1] to the address of the instruction that checked it. Both are set to null if no checks have been recently made."},
+    {"code": "CLAM", "symbol": 'T', "type": "lock", "arg count": 0, "function": noOp,       "description": "A claim marker, used to stake an executor's territory; the boundaries of an organism. Also functions as lock."},
+    {"code": "CLMk", "symbol": 't', "type": "key",  "arg count": 0, "function": noOp,       "description": "A claim marker key, matches to a claim marker."},
+    {"code": "MNTR", "symbol": '~', "type": "monitor", "arg count": 2, "function": monitor, "description": "Sets [r0] to the address most recently checked within this executor's claim boundaries, and [r1] to the address of the instruction that checked it. Both are set to null if no checks have been recently made."},
     
     {"code": "ADRS", "symbol": '$', "type": "memwrite", "arg count": 2, "function": swapMemoryBlocks, "description": "Swap the memory block at [r0] with the block at [r1]"},
     
