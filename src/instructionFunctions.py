@@ -1,5 +1,7 @@
 #from Main import SimulationData
 import utils
+import const
+from const import *
 
 
 def noOp(simData, executorAddress, myAddress):
@@ -14,13 +16,13 @@ def jumpR(simData, executorAddress, myAddress, arg0):
     
     
 def jumpB(simData, executorAddress, myAddress):
-    key = utils.readBlock(sim.soup, myAddress+1)
+    key = utils.readBlock(simData, myAddress+1)
     if not utils.keyCheck(key):
         return {"fault": True}
     
     i = myAddress
     while i >= 0:
-        block = utils.readBlock(i)
+        block = utils.readBlock(simData, i)
         if utils.keyLockMatch(key, block):
             return {"jump": i}
         i -= 1
@@ -34,8 +36,8 @@ def jumpF(simData, executorAddress, myAddress):
         return {"fault": True}
     
     i = myAddress
-    while i < TOTAL_MEM_LEN:
-        block = utils.readBlock(sim, i)
+    while i < NUM_MEMORY_BLOCKS_IN_SOUP:
+        block = utils.readBlock(simData, i)
         if utils.keyLockMatch(key, block):
             return {"jump": i}
         i += 1
@@ -78,7 +80,7 @@ def skipIfZero(simData, executorAddress, myAddress, arg0):
         return {"fault": True}
     
     if register["body"] == 0:
-        return {"ip increment": 2}
+        return {"skip": 1}
     return {}    
         
         
@@ -89,7 +91,7 @@ def skipIfNull(simData, executorAddress, myAddress, arg0):
         return {"fault": True}
     
     if register["body"] == None:
-        return {"ip increment": 2}
+        return {"skip": 1}
     return {}    
 
 
@@ -101,7 +103,7 @@ def skipIfDumpIsZero(simData, executorAddress, myAddress):
         return {"fault": True}
     
     if dump["body"] == 0:
-        return {"ip increment": 2}
+        return {"skip": 1}
     return {}    
                 
     
@@ -112,20 +114,24 @@ def skipUnlessEquiv(simData, executorAddress, myAddress, arg0, arg1):
     if register1 == None or register2 == None:
         return {"fault": True}
     
-    ins1 = readBlock(simData, register1["body"])
-    ins2 = readBlock(simData, register2["body"])
+    ins1 = utils.readBlock(simData, register1["body"])
+    ins2 = utils.readBlock(simData, register2["body"])
         
     if ins1 == None:
         return {"fault": True}
     if ins2 == None:
         return {"fault": True}
     
+    #print(ins1["header"]["symbol"], "=?=", ins2["header"]["symbol"])
+    
     if ins1["header"]["type"] == "instruction":
-        if ins1["symbol"] == ins2["symbol"]:
+        if ins1["header"]["symbol"] == ins2["header"]["symbol"]:
             return {"checked address": [register1["body"], register2["body"]]}
-    elif ins1["header"]["type"] == ins2["header"]["type"]: # will match (live executor, dormant executor) and (register, register with null) pairs
+        return {"skip": 1, "checked address": [register1["body"], register2["body"]]}
+        
+    if ins1["header"]["type"] == ins2["header"]["type"]: # will match (live executor, dormant executor) and (register, register with null) pairs
         return {"checked address": [register1["body"], register2["body"]]}
-    return {"ip increment": 2, "checked address": [register1["body"], register2["body"]]}
+    return {"skip": 1, "checked address": [register1["body"], register2["body"]]}
    
     
 def skipUnlessEqual(simData, executorAddress, myAddress, arg0, arg1):
@@ -137,7 +143,7 @@ def skipUnlessEqual(simData, executorAddress, myAddress, arg0, arg1):
     
     if register1["body"] == register2["body"]:
         return {}
-    return {"ip increment": 2}
+    return {"skip": 1}
        
 
 def add(simData, executorAddress, myAddress, arg0, arg1, arg2):
@@ -175,7 +181,7 @@ def simpleOp(simData, executorAddress, myAddress, arg0, arg1, arg2, operaton):
     reg3 = utils.readRegister(simData, executorAddress, arg2)
     
     val = operation(reg2["body"], reg3["body"])
-    success = utils.registerWrite(simData, addr, val)
+    success = utils.registerWrite(simData, executorAddress, addr, val)
     
     if success:
         return {}
@@ -187,7 +193,7 @@ def increment(simData, executorAddress, myAddress, arg0):
     addr = utils.findRegister(simData, executorAddress, arg0)
     reg  = utils.readBlock(simData, addr)
     
-    success = utils.registerWrite(simData, addr, reg["body"]+1)
+    success = utils.registerWrite(simData, executorAddress, addr, reg["body"]+1)
     
     if success:
         return {}
@@ -199,7 +205,7 @@ def decrement(simData, executorAddress, myAddress, arg0):
     addr = utils.findRegister(simData, executorAddress, arg0)
     reg  = utils.readBlock(simData, addr)
     
-    success = utils.registerWrite(simData, addr, reg["body"]-1)
+    success = utils.registerWrite(simData, executorAddress, addr, reg["body"]-1)
     
     if success:
         return {}
@@ -213,7 +219,7 @@ def bitwiseInverse(simData, executorAddress, myAddress, arg0):
     
     inverse = utils.bitwiseInverse(reg["body"], BODY_LEN, unsigned=False)
     
-    success = utils.registerWrite(simData, addr, inverse)
+    success = utils.registerWrite(simData, executorAddress, addr, inverse)
     
     if success:
         return {}
@@ -227,7 +233,7 @@ def bitwiseShiftLeft(simData, executorAddress, myAddress, arg0):
     
     shift = utils.bitwiseShiftLeft(reg["body"], BODY_LEN, unsigned=False)
     
-    success = utils.registerWrite(simData, addr, inverse)
+    success = utils.registerWrite(simData, executorAddress, addr, inverse)
     
     if success:
         return {}
@@ -241,7 +247,7 @@ def bitwiseShiftRight(simData, executorAddress, myAddress, arg0):
     
     shift = utils.bitwiseShiftRight(reg["body"], BODY_LEN, unsigned=False)
     
-    success = utils.registerWrite(simData, addr, inverse)
+    success = utils.registerWrite(simData, executorAddress, addr, inverse)
     
     if success:
         return {}
@@ -280,9 +286,10 @@ def setToNull(simData, executorAddress, myAddress, arg0):
         
 
 
-def setToRand(simData, executorAddress, myAddress, arg0):   
+def setToRand(simData, executorAddress, myAddress, arg0): 
+    import random  
     addr = utils.findRegister(simData, executorAddress, arg0)
-    success = utils.registerWrite(simData, executorAddress, addr, rand.nextInt(0, NUM_MEM_BLOCKS_IN_SOUP))    
+    success = utils.registerWrite(simData, executorAddress, addr, random.randrange(0, NUM_MEMORY_BLOCKS_IN_SOUP))    
 
     if success:
         return {}
@@ -380,20 +387,23 @@ def swapMemoryBlocks(simData, executorAddress, myAddress, arg0, arg1):
     if register1 == None or register2 == None:
         return {"fault": True}
     
-    ins1 = readBlock(simData, register1["body"])
-    ins2 = readBlock(simData, register2["body"])
+    ins1 = utils.readBlock(simData, register1["body"])
+    ins2 = utils.readBlock(simData, register2["body"])
         
     if ins1 == None:
         return {"fault": True}
     if ins2 == None:
         return {"fault": True}
     
-    utils.swapMemoryBlocks(simData, register1["body"], register2["body"])
+    success = utils.swapMemoryBlocks(simData, register1["body"], register2["body"])
+    
+    if not success:
+        return {"fault": True}
     
     executorMoves = []
-    if ins1["name"] == "executor":
+    if ins1["header"]["name"] == "executor":
         executorMoves.append(tuple(register1["body"], register2["body"]))
-    if ins2["name"] == "executor":
+    if ins2["header"]["name"] == "executor":
         executorMoves.append(tuple(register2["body"], register1["body"]))
         
     if len(executorMoves) > 0:
@@ -427,7 +437,7 @@ def initializeExecutor(simData, executorAddress, myAddress, arg0):
     reg = utils.readRegister(simData, executorAddress, arg0)
     block = utils.readBlock(simData, reg["body"])
     
-    if block == None or block["name"] != "dormant executor":
+    if block == None or block["header"]["name"] != "dormant executor":
         return {"fault": True}
     return {"executor init": reg["body"]}
     
@@ -436,7 +446,7 @@ def denitializeExecutor(simData, executorAddress, myAddress, arg0):
     reg = utils.readRegister(simData, executorAddress, arg0)
     block = utils.readBlock(simData, reg["body"])
     
-    if block == None or block["name"] != "executor":
+    if block == None or block["header"]["name"] != "executor":
         return {"fault": True}
     return {"executor deinit": reg["body"]}
     

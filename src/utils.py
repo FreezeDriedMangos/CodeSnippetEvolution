@@ -129,7 +129,7 @@ def findDump(simData, executorAddress):
 
 def findRegister(simData, executorAddress, regNum):
     regCount = -1
-    addr = executorAddress+1
+    addr = executorAddress
     
     while addr < NUM_MEMORY_BLOCKS_IN_SOUP:
         block = readBlock(simData, addr)
@@ -148,7 +148,7 @@ def readBlock(simData, blockIndex):
     from opcode import FLAG_CODES
     
     if blockIndex < 0 or blockIndex >= NUM_MEMORY_BLOCKS_IN_SOUP:
-        print("readBlock: index out of bounds ", blockIndex, " max val ", NUM_MEMORY_BLOCKS_IN_SOUP)
+        #print("readBlock: index out of bounds ", blockIndex, " max val ", NUM_MEMORY_BLOCKS_IN_SOUP)
         return None
         
     block = list(simData.soup.cut(MEM_BLOCK_LEN))[blockIndex]
@@ -174,6 +174,14 @@ def decodeArgs(simData, address, count):
     queue = [0,1,2,3,4,5,6,7,8,9]
     arglist = []
     
+    # any keys immediately after an instruction are ignored while decoding args
+    start = 1
+    block = readBlock(simData, address + start)
+    while block['header']['type'] == "instruction" and block["body"]["type"] == "key":
+        start += 1
+        block = readBlock(simData, address + start)
+        
+    
     # the acceptMemArgs variable is used to make sure that only consecutive arguments are considered
     # ie: 
     # +235    here, all arguments are counted
@@ -181,16 +189,16 @@ def decodeArgs(simData, address, count):
     # +x863   here, no arguments are counted
     # without the acceptMemArgs variable, in all three examples, all 3 arguments would be counted
     acceptMemArgs = True
-    for i in range(1, block["body"]["arg count"]+1):
+    for i in range(start, count+start):
         if acceptMemArgs:
-            nextMemArg = readBlock(blockAddress + i)
+            nextMemArg = readBlock(simData, address + i)
             if nextMemArg["header"]["type"] == "instruction" and nextMemArg["body"]["code"][0:3] == "ARG":
                 arg = int(nextMemArg["body"]["code"][3])
                 arglist.append(arg)
                 queue.remove(arg)
             else:
                 acceptMemArgs = False
-                arglist.append(queue.pop())
+                arglist.append(queue.pop(0))
         else:
             arglist.append(queue.pop())
             
@@ -228,7 +236,7 @@ def registerWrite(simData, executorAddress, registerAddress, val, unsigned=False
     binary = "0b" + intToBinary(val, BODY_LEN, unsigned=unsigned)
     simData.soup.overwrite(binary, MEM_BLOCK_LEN*registerAddress+HEADER_LEN)
        
-    print(oldVal, " -> ", readBlock(simData, registerAddress)["body"])   
+    #print(oldVal, " -> ", readBlock(simData, registerAddress)["body"])   
         
     return True    
 
@@ -307,13 +315,25 @@ def awakenExecutor(simData, executorAddress):
  
 
 def swapMemoryBlocks(simData, addr1, addr2):
-    cut = simData.soup.cut(MEM_BLOCK_LEN)
+    #FOR SOME REASON, I DON'T THINK THIS WORKS
     
-    block1 = cut[addr1].bin
-    block2 = cut[addr2].bin
+    print("swapping ", addr1, addr2)
+    if addr1 < 0 or addr1 >= NUM_MEMORY_BLOCKS_IN_SOUP:
+        return False
+    if addr2 < 0 or addr2 >= NUM_MEMORY_BLOCKS_IN_SOUP:
+        return False
+
+    cut = list(simData.soup.cut(MEM_BLOCK_LEN))
+    
+    block1 = cut[addr1]
+    block2 = cut[addr2]
+    
+    print("swapping ", addr1, addr2, " | ", block1, "<->", block2)
     
     simData.soup.overwrite(block1, MEM_BLOCK_LEN*addr2)
-    simData.soup.overwrite(block2, MEM_BLOCK_LEN*addr2)
+    simData.soup.overwrite(block2, MEM_BLOCK_LEN*addr1)
+    
+    return True
     
  
 #
@@ -374,28 +394,58 @@ def getClaimBoundaries(simData, executorAddress):
     
     return (start, end)
     
-    
+   
+# WARNING: SLOW FUNCTION 
 def getClaimData(simData, executorAddress):
     boundaries = getClaimBoundaries(simData, executorAddress)
+    return getSymbolRange(simData, *boundaries)
+    
+
+# WARNING: SLOW FUNCTION   
+def getSymbolRange(simData, start, stop): 
+    if start < 0:
+        start = 0
+    if start > NUM_MEMORY_BLOCKS_IN_SOUP:
+        start = NUM_MEMORY_BLOCKS_IN_SOUP
+    if stop < 0:
+        stop = 0
+    if stop > NUM_MEMORY_BLOCKS_IN_SOUP:
+        stop = NUM_MEMORY_BLOCKS_IN_SOUP
+        
+
+    boundaries = (start, stop)    
     blocks = [readBlock(simData, i) for i in range(boundaries[0], boundaries[1]+1)]
+    blocks = [block for block in blocks if block is not None]
     
     symbolString = ''.join(e["header"]["symbol"] for e in blocks)
     registerValues = [block["body"] for block in blocks if block["header"]["type"] == "register"]
     dumpRegisterValues = [block["body"] for block in blocks if block["header"]["type"] == "dump register"]
-    ip = readBlock(simData, executorAddress)["body"]
-
+    
+    
+    executors = [{
+                "address": i+start, 
+                "ip": blocks[i]["body"], 
+                "next instruction": None
+                } for i in range(len(blocks)) if blocks[i]["header"]["type"] == "executor"]
+    
+    for i in range(len(executors)):
+        addr = executors[i]["address"] - start
+        ins = None
+        try:
+            ins = readBlock(simData, blocks[addr]["body"])["header"]["symbol"]
+        except:
+            ins = "out of bounds"
+        executors[i].update({"next instruction": ins})
+    
+    
     return {
-        "executor address": executorAddress,
         "boundaries": boundaries,
         "symbols": symbolString,
         "register values": registerValues,
         "dump register values": dumpRegisterValues,
-        "instruction pointer": ip
+        "executors": executors
         }
     
-     
-     
-     
      
      
      

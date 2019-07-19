@@ -1,6 +1,10 @@
 // regex for linearizing this file: /(\/\/ .*\n)|(\/\/ .*)| |\n/g
 // just delete everything this regex matches
 
+// strategy: assemble the child in order - ie, walk down this genome, 
+// for each instruction, find a copy in the soup and swap it onto the child, 
+// then advance to the next instruction in this genome
+
 // r0 will walk down the length of this genome
 // r2 will walk down the length of the child as it's built
 // r3 will search for the pieces
@@ -30,9 +34,9 @@ C       // lock - marker of the swap function
 $32     // swap mem[r2] and mem[r3] - the main purpose of this function
 =01     // if [r0] == [r1]   aka if we've just swapped the last piece
 )d      //     awaken the child
-^0      // otherwise, increment r0, r2, and r3
+^0      // otherwise, increment r0 and r2, and reset r3 to the current end of the child (so we don't miss any potentially good pieces)
 ^2      //     which prepares us to find the next block item
-^3
+"23
 (b      // return to the find loop
 
 D       // lock - marker of the awaken child function
@@ -43,7 +47,7 @@ D       // lock - marker of the awaken child function
 T       // end of the genome
 
 // genome laid out linearly, without comments:
-// T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=01)d^0^2^3(bD^4:4(tT
+// T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=01)d^0^2"23(bD^4:4(tT
 
 
 

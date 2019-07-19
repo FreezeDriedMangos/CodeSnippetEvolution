@@ -7,12 +7,12 @@ class SimulationData:
     executorAddrList = []
     checkedAddresses = [] # list of tuples (checked, checkedBy)
 
-    def addCheckedAddress(addr):
+    def addCheckedAddresses(self, addr):
         for a in addr:
-            checkedAddresses.insert(a, 0)
+            self.checkedAddresses.insert(a, 0)
             
-        while len(checkedAdresses) >= CHECKED_ADDRESS_STACK_SIZE:
-            checkedAdresses.pop(-1)
+        while len(self.checkedAddresses) >= CHECKED_ADDRESS_STACK_SIZE:
+            self.checkedAddresses.pop(-1)
     
 
 class Simulation:
@@ -33,27 +33,38 @@ class Simulation:
         block = utils.readBlock(self.data, blockAddress)
         
         if block["header"]["execute?"]:
-            args = decodeArgs(self.data, blockAddress, block["body"]["arg count"])
+            args = utils.decodeArgs(self.data, blockAddress, block["body"]["arg count"])
             retval = block["body"]["function"](self.data, executorAddress, blockAddress, *args)
             
             if "checked address" in retval:
-                data.addCheckedAddress(retval["checked address"])
+                addresses = retval["checked address"]
+                self.data.addCheckedAddresses(addresses)
             
             # handle executor death, rebirth, and moving
             if "executor init" in retval:
-                executorAddrList.append(retval["executor init"])
+                self.data.executorAddrList.append(retval["executor init"])
             if "executor deinit" in retval:
-                executorAddrList.remove(retval["executor deinit"])
+                self.data.executorAddrList.remove(retval["executor deinit"])
             if "active executor move" in retval:
                 for pair in retval["active executor move"]:
-                    executorAddrList.remove(pair[0])
-                    executorAddrList.append(pair[1])
+                    self.data.executorAddrList.remove(pair[0])
+                    self.data.executorAddrList.append(pair[1])
             
             # instruction pointer updating
             if "jump" in retval:
                 blockAddress = retval["jump"]
-            elif "ip increment" in retval:
-                blockAddress += retval["ip increment"]
+            elif "skip" in retval:
+                blockAddress += 1
+                # skip the next retval["skip"] number of non-arg instructions
+                while retval["skip"] > 0 and blockAddress < NUM_MEMORY_BLOCKS_IN_SOUP:
+                    thisBlock = utils.readBlock(self.data, blockAddress)
+                    if thisBlock["header"]["type"] == "instruction":
+                        if thisBlock["body"]["type"] != "arg":
+                            retval["skip"] -= 1
+                    else:
+                        retval["skip"] -= 1
+                        
+                    blockAddress += 1
             else:
                 blockAddress += 1
                 
@@ -103,18 +114,63 @@ if __name__ == "__main__":
     import pprint  
     pp = pprint.PrettyPrinter(indent=4)
 
+    ancestor = '''T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=01)d^0^2"23(bD^4:4(tT'''
     sim = Simulation()
-    sim.init('''T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=01)d^0^2^3(bD^4:4(tT''')       
+    sim.init(ancestor)       
     #print(sim.data.soup)
     
     import utils
     exeAddr = sim.data.executorAddrList[0]
-    #print("executor addr: ", exeAddr)
-    pp.pprint(utils.getClaimData(sim.data, exeAddr))
     
-    sim.cycle()
-    sim.cycle()
-    sim.cycle()
-    pp.pprint(utils.getClaimData(sim.data, exeAddr))
+    
+    
+        
+    if False:
+        print("\n=====ancestor=====")
+        pp.pprint(utils.getClaimData(sim.data, exeAddr))
+        utils.swapMemoryBlocks(sim.data, exeAddr+1, exeAddr+7)
+        
+        pp.pprint(utils.getClaimData(sim.data, exeAddr))
+        utils.swapMemoryBlocks(sim.data, exeAddr+1, exeAddr+7)
+        
+        print("Done testing!")
+        
+    elif False:
+        print("\n=====ancestor=====")
+        pp.pprint(utils.getClaimData(sim.data, exeAddr))
+        
+        for i in range(80):
+            sim.cycle()
+            claimData = utils.getClaimData(sim.data, exeAddr)
+            print(claimData["symbols"])
+            print(" " * (claimData["executors"][0]["ip"] - claimData["executors"][0]["address"]), "↑")
+        
+    else:
+        
+        #print("executor addr: ", exeAddr)
+        print("\n=====ancestor=====")
+        pp.pprint(utils.getClaimData(sim.data, exeAddr))
+        
+        # 20 instructions gets us through all of the setup
+        for i in range(20):
+            sim.cycle()
+        
+        print("\n=====ancestor=====")
+        claimData = utils.getClaimData(sim.data, exeAddr)
+        pp.pprint(claimData)
+        
+        print("\n-------child---------")
+        childAddress = claimData["register values"][2]
+        pp.pprint(utils.getSymbolRange(sim.data, childAddress, childAddress + len(ancestor)))
+        
+        # now we're actually doing the copying
+        for i in range(1000):
+            sim.cycle()
+        
+        print("\n=====ancestor=====")
+        pp.pprint(utils.getClaimData(sim.data, exeAddr))
+        
+        print("\n-------child---------")
+        pp.pprint(utils.getSymbolRange(sim.data, childAddress, childAddress + len(ancestor)))
     
         

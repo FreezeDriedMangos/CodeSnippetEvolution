@@ -15,61 +15,61 @@ OPCODE_VER = 'v1.0'
 # and                 +00 would correspond to ([r0] = [r0] + [r1])
 
 INSTRUCTIONS = [
-    {"code": "NOOP", "symbol": ' ', "arg count": 0, "function": noOp, "description": "No operation"},
-    {"code": "ARG_", "symbolrange": '0123456789', "arg count": 0, "function": noOp, "description": "No operation. Modifies registers to be used by previous instruction"},
+    {"code": "NOOP", "symbol": ' ', "type": "noop", "arg count": 0, "function": noOp, "description": "No operation"},
+    {"code": "ARG_", "symbolrange": '0123456789', "type": "arg", "arg count": 0, "function": noOp, "description": "No operation. Modifies registers to be used by previous instruction"},
     
-    {"code": "JMPR", "symbol": '%', "arg count": 1, "function": jumpR, "description": "Jump to the address in r0."},
+    {"code": "JMPR", "symbol": '%', "type": "jump", "arg count": 1, "function": jumpR, "description": "Jump to the address in r0."},
         
-    {"code": "JMPB", "symbol": '(', "arg count": 0, "function": jumpB, "description": "Jump backwards to the first lock matching the following key"},
-    {"code": "JMPF", "symbol": ')', "arg count": 0, "function": jumpF, "description": "Jump forwards to the first lock matching the following key"},
-    {"code": "ADRB", "symbol": '[', "arg count": 1, "function": addressOfJumpB, "description": "Look backwards to the first lock matching the following key, store its address in r0"},
-    {"code": "ADRF", "symbol": ']', "arg count": 1, "function": addressOfJumpF, "description": "Look forwards to the first lock matching the following key, store its address in r0"},
+    {"code": "JMPB", "symbol": '(', "type": "jump", "arg count": 0, "function": jumpB, "description": "Jump backwards to the first lock matching the following key"},
+    {"code": "JMPF", "symbol": ')', "type": "jump", "arg count": 0, "function": jumpF, "description": "Jump forwards to the first lock matching the following key"},
+    {"code": "ADRB", "symbol": '[', "type": "lookaround", "arg count": 1, "function": addressOfJumpB, "description": "Look backwards to the first lock matching the following key, store its address in r0"},
+    {"code": "ADRF", "symbol": ']', "type": "lookaround", "arg count": 1, "function": addressOfJumpF, "description": "Look forwards to the first lock matching the following key, store its address in r0"},
     
-    {"code": "IFNZ", "symbol": '?', "arg count": 1, "function": skipIfZero, "description": "if [r0] is not 0, execute the following instruction, otherwise, skip to the next non-argument instruction"},
-    {"code": "IFNN", "symbol": '‽', "arg count": 1, "function": skipIfNull, "description": "if [r0] is not null, execute the following instruction, otherwise, skip to the next non-argument instruction"},
-    {"code": "IFDZ", "symbol": '¿', "arg count": 0, "function": skipIfDumpIsZero, "description": "if the instruction at the address in r0 is the same as the instruction at the address in r1 (or if they're both registers, dump registers, or executors), execute the next instruction, otherwise, skip to the next non-argument instruction"},
-    {"code": "IFBE", "symbol": '⸘', "arg count": 2, "function": skipUnlessEquiv, "description": "if the instruction at the address in r0 is the same as the instruction at the address in r1 (or if they're both registers, dump registers, or executors), execute the next instruction, otherwise, skip to the next non-argument instruction"},
-    {"code": "IFEQ", "symbol": '=', "arg count": 2, "function": skipUnlessEqual, "description": "if [r0] == [r1], execute the next instruction, otherwise, skip to the next non-argument instruction"},
+    {"code": "IFNZ", "symbol": '?', "type": "if", "arg count": 1, "function": skipIfZero, "description": "if [r0] is not 0, execute the following instruction, otherwise, skip to the next non-argument instruction"},
+    {"code": "IFNN", "symbol": '‽', "type": "if", "arg count": 1, "function": skipIfNull, "description": "if [r0] is not null, execute the following instruction, otherwise, skip to the next non-argument instruction"},
+    {"code": "IFDZ", "symbol": '¿', "type": "if", "arg count": 0, "function": skipIfDumpIsZero, "description": "if the instruction at the address in r0 is the same as the instruction at the address in r1 (or if they're both registers, dump registers, or executors), execute the next instruction, otherwise, skip to the next non-argument instruction"},
+    {"code": "IFBE", "symbol": '⸘', "type": "if", "arg count": 2, "function": skipUnlessEquiv, "description": "if the instruction at the address in r0 is the same as the instruction at the address in r1 (or if they're both registers, dump registers, or executors), execute the next instruction, otherwise, skip to the next non-argument instruction"},
+    {"code": "IFEQ", "symbol": '=', "type": "if", "arg count": 2, "function": skipUnlessEqual, "description": "if [r0] == [r1], execute the next instruction, otherwise, skip to the next non-argument instruction"},
      
-    {"code": "ADDr", "symbol": '+', "arg count": 3, "function": add,      "description": "Add registers' contents ([r0] = [r1] + [r2])"},
-    {"code": "SUBr", "symbol": '-', "arg count": 3, "function": subtract, "description": "Subtract registers' contents ([r0] = [r1] - [r2])"},
-    {"code": "MULr", "symbol": '*', "arg count": 3, "function": multiply, "description": "Multiply registers' contents ([r0] = [r1] * [r2])"},
-    {"code": "DIVr", "symbol": '÷', "arg count": 3, "function": divide,   "description": "Divide registers' contents ([r0] = [r1] ÷ [r2])"},
+    {"code": "ADDr", "symbol": '+', "type": "arithmetic", "arg count": 3, "function": add,      "description": "Add registers' contents ([r0] = [r1] + [r2])"},
+    {"code": "SUBr", "symbol": '-', "type": "arithmetic", "arg count": 3, "function": subtract, "description": "Subtract registers' contents ([r0] = [r1] - [r2])"},
+    {"code": "MULr", "symbol": '*', "type": "arithmetic", "arg count": 3, "function": multiply, "description": "Multiply registers' contents ([r0] = [r1] * [r2])"},
+    {"code": "DIVr", "symbol": '÷', "type": "arithmetic", "arg count": 3, "function": divide,   "description": "Divide registers' contents ([r0] = [r1] ÷ [r2])"},
     
-    {"code": "INCr", "symbol": '^', "arg count": 1, "function": increment, "description": "Increment register's contents ([r0]++)"},
-    {"code": "DECr", "symbol": 'v', "arg count": 1, "function": decrement, "description": "Decrement register's contents ([r0]--)"},
+    {"code": "INCr", "symbol": '^', "type": "arithmetic", "arg count": 1, "function": increment, "description": "Increment register's contents ([r0]++)"},
+    {"code": "DECr", "symbol": 'v', "type": "arithmetic", "arg count": 1, "function": decrement, "description": "Decrement register's contents ([r0]--)"},
     
-    {"code": "NOTr", "symbol": '!', "arg count": 1, "function": bitwiseInverse,    "description": "Bitwise NOT register's contents ([r0] = ![r0])"},
-    {"code": "SHFL", "symbol": '«', "arg count": 1, "function": bitwiseShiftLeft,  "description": "Bitwise left shift register's contents ([r0] = [r0] << 1)"},
-    {"code": "SHFR", "symbol": '»', "arg count": 1, "function": bitwiseShiftRight, "description": "Bitwise right shift register's contents ([r0] = [r0] >> 1)"},
+    {"code": "NOTr", "symbol": '!', "type": "bitwise", "arg count": 1, "function": bitwiseInverse,    "description": "Bitwise NOT register's contents ([r0] = ![r0])"},
+    {"code": "SHFL", "symbol": '«', "type": "bitwise", "arg count": 1, "function": bitwiseShiftLeft,  "description": "Bitwise left shift register's contents ([r0] = [r0] << 1)"},
+    {"code": "SHFR", "symbol": '»', "type": "bitwise", "arg count": 1, "function": bitwiseShiftRight, "description": "Bitwise right shift register's contents ([r0] = [r0] >> 1)"},
 
-    {"code": "ANDr", "symbol": '&', "arg count": 3, "function": bitwiseAND, "description": "Bitwise AND register's contents ([r0] = [r1] & [r2])"},
-    {"code": "ORr-", "symbol": '|', "arg count": 3, "function": bitwiseOR,  "description": "Bitwise OR register's contents ([r0] = [r1] | [r2])"},
-    {"code": "XORr", "symbol": '⊕', "arg count": 3, "function": bitwiseXOR, "description": "Bitwise XOR register's contents ([r0] = [r1] ^ [r2])"},
+    {"code": "ANDr", "symbol": '&', "type": "bitwise", "arg count": 3, "function": bitwiseAND, "description": "Bitwise AND register's contents ([r0] = [r1] & [r2])"},
+    {"code": "ORr-", "symbol": '|', "type": "bitwise", "arg count": 3, "function": bitwiseOR,  "description": "Bitwise OR register's contents ([r0] = [r1] | [r2])"},
+    {"code": "XORr", "symbol": '⊕', "type": "bitwise", "arg count": 3, "function": bitwiseXOR, "description": "Bitwise XOR register's contents ([r0] = [r1] ^ [r2])"},
     
-    {"code": "ZERO", "symbol": 'z', "arg count": 1, "function": setToZero, "description": "Set register contents to 0 ([r0] = 0)"},
-    {"code": "UNIT", "symbol": 'u', "arg count": 1, "function": setToOne,  "description": "Set register contents to 1 ([r0] = 1)"},
-    {"code": "RAND", "symbol": 'r', "arg count": 1, "function": setToRand, "description": "Sets [r0] to a random valid address."},
-    {"code": "NULL", "symbol": 'n', "arg count": 1, "function": setToNull, "description": "Sets [r0] to null."},
+    {"code": "ZERO", "symbol": 'z', "type": "set", "arg count": 1, "function": setToZero, "description": "Set register contents to 0 ([r0] = 0)"},
+    {"code": "UNIT", "symbol": 'u', "type": "set", "arg count": 1, "function": setToOne,  "description": "Set register contents to 1 ([r0] = 1)"},
+    {"code": "RAND", "symbol": 'r', "type": "set", "arg count": 1, "function": setToRand, "description": "Sets [r0] to a random valid address."},
+    {"code": "NULL", "symbol": 'n', "type": "set", "arg count": 1, "function": setToNull, "description": "Sets [r0] to null."},
         
-    {"code": "CPYr", "symbol": '"', "arg count": 2, "function": copy, "description": "Copy [r0] into r1"},
-    {"code": "SWPr", "symbol": 'x', "arg count": 2, "function": swap, "description": "Swap [r0] into r1 and [r1] into r0"},
+    {"code": "CPYr", "symbol": '"', "type": "clone/swap", "arg count": 2, "function": copy, "description": "Copy [r0] into r1"},
+    {"code": "SWPr", "symbol": 'x', "type": "clone/swap", "arg count": 2, "function": swap, "description": "Swap [r0] into r1 and [r1] into r0"},
     
-    {"code": "POPr", "symbol": '↑', "arg count": 1, "function": pop,  "description": "Pop into r0 a value from the first stack found immediately after the first matching lock found after this executor"},
-    {"code": "PSHr", "symbol": '↓', "arg count": 1, "function": push, "description": "Push [r0] to the first stack found immediately after the first matching lock found after this executor"},
+    {"code": "POPr", "symbol": '↑', "type": "stack", "arg count": 1, "function": pop,  "description": "Pop into r0 a value from the first stack found immediately after the first matching lock found after this executor"},
+    {"code": "PSHr", "symbol": '↓', "type": "stack", "arg count": 1, "function": push, "description": "Push [r0] to the first stack found immediately after the first matching lock found after this executor"},
     # consider adding a 'stack lock' a special lock like the claim lock and the only valid lock that signifies a stack. symbol 'S'
     
-    {"code": "CLAM", "symbol": 'T', "arg count": 0, "function": noOp,             "description": "A claim marker, used to stake an executor's territory; the boundaries of an organism. Also functions as lock."},
-    {"code": "CLMk", "symbol": 't', "arg count": 0, "function": noOp,             "description": "A claim marker key, matches to a claim marker."},
-    {"code": "MNTR", "symbol": '~', "arg count": 2, "function": monitor,          "description": "Sets [r0] to the address most recently checked within this executor's claim boundaries, and [r1] to the address of the instruction that checked it. Both are set to null if no checks have been recently made."},
+    {"code": "CLAM", "symbol": 'T', "type": "lock", "arg count": 0, "function": noOp,             "description": "A claim marker, used to stake an executor's territory; the boundaries of an organism. Also functions as lock."},
+    {"code": "CLMk", "symbol": 't', "type": "key", "arg count": 0, "function": noOp,             "description": "A claim marker key, matches to a claim marker."},
+    {"code": "MNTR", "symbol": '~', "type": "monitor", "arg count": 2, "function": monitor,          "description": "Sets [r0] to the address most recently checked within this executor's claim boundaries, and [r1] to the address of the instruction that checked it. Both are set to null if no checks have been recently made."},
     
-    {"code": "ADRS", "symbol": '$', "arg count": 2, "function": swapMemoryBlocks, "description": "Swap the memory block at [r0] with the block at [r1]"},
+    {"code": "ADRS", "symbol": '$', "type": "memwrite", "arg count": 2, "function": swapMemoryBlocks, "description": "Swap the memory block at [r0] with the block at [r1]"},
     
-    {"code": "INIT", "symbol": ':', "arg count": 1, "function": initializeExecutor, "description": "Initializes the executor at the address contained in r0. (Sets it to non-dormant and sets its instruction pointer to itself.)"},
-    {"code": "DINT", "symbol": '.', "arg count": 1, "function": denitializeExecutor, "description": "Denitializes the executor at the address contained in r0. (Sets it to dormant.)"},
+    {"code": "INIT", "symbol": ':', "type": "init", "arg count": 1, "function": initializeExecutor, "description": "Initializes the executor at the address contained in r0. (Sets it to non-dormant and sets its instruction pointer to itself.)"},
+    {"code": "DINT", "symbol": '.', "type": "deinit", "arg count": 1, "function": denitializeExecutor, "description": "Denitializes the executor at the address contained in r0. (Sets it to dormant.)"},
     
-    {"code": "KEY_", "symbolrange": "abcdefghijklm", "arg count": 0, "function": noOp, "description": "A key used by some instructions to find a matching upper case lock"},
-    {"code": "LOK_", "symbolrange": "ABCDEFGHIJKLM", "arg count": 0, "function": noOp, "description": "A lock used by some instructions to match to a lower case key"}
+    {"code": "KEY_", "symbolrange": "abcdefghijklm", "type": "key", "arg count": 0, "function": noOp, "description": "A key used by some instructions to find a matching upper case lock"},
+    {"code": "LOK_", "symbolrange": "ABCDEFGHIJKLM", "type": "lock", "arg count": 0, "function": noOp, "description": "A lock used by some instructions to match to a lower case key"}
     
 ]
 
@@ -89,7 +89,8 @@ for i in range(len(INSTRUCTIONS)):
                 "symbol": symbol, 
                 "arg count": instructionEntry["arg count"], 
                 "function": instructionEntry["function"], 
-                "description": instructionEntry["description"]
+                "description": instructionEntry["description"],
+                "type": instructionEntry["type"]
             }
             # INSTRUCTIONS.insert(i, instruction)
             insertList.append([i+len(insertList), instruction])
