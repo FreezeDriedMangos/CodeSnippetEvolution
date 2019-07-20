@@ -73,6 +73,46 @@ def addressOfJumpF(simData, executorAddress, myAddress, arg0):
         return {"fault": True, "executor deinit": executorAddress}
     
     
+def addressOfInstructionB(simData, executorAddress, myAddress, arg0, arg1, arg2): 
+    storeAddress = utils.findRegister(simData, executorAddress, arg2)
+    addressOfSearchTarget = utils.readRegister(simData, executorAddress, arg1)
+    searchTarget = utils.readBlock(simData, addressOfSearchTarget)
+    
+    addr = utils.readRegister(simData, executorAddress, arg0)
+    block = readBlock(simData, addr)
+    
+    while not utils.blocksEquivalent(block, searchTarget):
+        addr -= 1
+        block = readBlock(simData, addr)
+    
+    success = utils.registerWrite(simData, executorAddress, storeAddress, addr)
+    
+    if success:
+        return {}
+    else:
+        return {"fault": True, "executor deinit": executorAddress}
+        
+    
+def addressOfInstructionF(simData, executorAddress, myAddress, arg0, arg1, arg2): 
+    storeAddress = utils.findRegister(simData, executorAddress, arg2)
+    addressOfSearchTarget = utils.readRegister(simData, executorAddress, arg1)
+    searchTarget = utils.readBlock(simData, addressOfSearchTarget)
+    
+    addr = utils.readRegister(simData, executorAddress, arg0)
+    block = readBlock(simData, addr)
+    
+    while not utils.blocksEquivalent(block, searchTarget):
+        addr += 1
+        block = readBlock(simData, addr)
+    
+    success = utils.registerWrite(simData, executorAddress, storeAddress, addr)
+    
+    if success:
+        return {}
+    else:
+        return {"fault": True, "executor deinit": executorAddress}
+        
+    
 def skipIfZero(simData, executorAddress, myAddress, arg0):
     register = utils.readRegister(simData, executorAddress, arg0)
     
@@ -124,12 +164,7 @@ def skipUnlessEquiv(simData, executorAddress, myAddress, arg0, arg1):
     
     #print(ins1["header"]["symbol"], "=?=", ins2["header"]["symbol"])
     
-    if ins1["header"]["type"] == "instruction":
-        if ins1["header"]["symbol"] == ins2["header"]["symbol"]:
-            return {"checked address": [register1["body"], register2["body"]]}
-        return {"skip": 1, "checked address": [register1["body"], register2["body"]]}
-        
-    if ins1["header"]["type"] == ins2["header"]["type"]: # will match (live executor, dormant executor) and (register, register with null) pairs
+    if utils.blocksEquivalent(ins1, ins2):
         return {"checked address": [register1["body"], register2["body"]]}
     return {"skip": 1, "checked address": [register1["body"], register2["body"]]}
    

@@ -5,15 +5,15 @@
 // for each instruction, find a copy in the soup and swap it onto the child, 
 // then advance to the next instruction in this genome
 
-// r1 will walk down the length of this genome
+// r1 will walk down the length of this genome, using it as a template
 // r0 will walk down the length of the child as it's built
 // r2 will store the location of found peices
 
-// r3 will store the address of the end of this genome
+// r3 will store the address of the end of this genome, responsible for triggering the end of the copy loop
 // r4 will store the start address of the child and be responsible for awakening it
 
 T       // begin claim marker, begining of organism
-        // header stuff I suppose
+        // physical non-instruction components
 ◈▯      // live executor and dump register
 #####   // registers, get cleared out when executed
         // a stack would go here like so "A____" if I needed one

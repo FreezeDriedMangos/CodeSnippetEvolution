@@ -315,8 +315,6 @@ def awakenExecutor(simData, executorAddress):
  
 
 def swapMemoryBlocks(simData, addr1, addr2):
-    #FOR SOME REASON, I DON'T THINK THIS WORKS
-    
     if addr1 < 0 or addr1 >= NUM_MEMORY_BLOCKS_IN_SOUP:
         return False
     if addr2 < 0 or addr2 >= NUM_MEMORY_BLOCKS_IN_SOUP:
@@ -338,6 +336,20 @@ def swapMemoryBlocks(simData, addr1, addr2):
 #
 # Other
 #
+
+def blocksEquivalent(block1, block2):
+    if block1 == None and block2 == None:
+        return True
+        
+    if block1["header"]["type"] == "instruction" and block2["header"]["type"] == "instruction":
+        if block1["header"]["symbol"] == block2["header"]["symbol"]:
+            return True
+        return False
+        
+    if block1["header"]["type"] == block2["header"]["type"]: # will match (live executor, dormant executor) and (register, register with null) pairs
+        return True
+    return return False
+   
 
 # returns true if the key really == a key, false otherwise
 def keyCheck(key):

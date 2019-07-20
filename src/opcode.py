@@ -24,9 +24,9 @@ INSTRUCTIONS = [
     {"code": "JMPF", "symbol": ')', "type": "jump", "arg count": 0, "function": jumpF, "description": "Jump forwards to the first lock matching the following key"},
     {"code": "ADRB", "symbol": '[', "type": "lookaround", "arg count": 1, "function": addressOfJumpB, "description": "Look backwards to the first lock matching the following key, store its address in r0"},
     {"code": "ADRF", "symbol": ']', "type": "lookaround", "arg count": 1, "function": addressOfJumpF, "description": "Look forwards to the first lock matching the following key, store its address in r0"},
-    # consider adding '<' and '>' which search after or before matching lock for the instruction in r0, storing the address in r1
-    #{"code": "SERB", "symbol": '<', "type": "lookaround", "arg count": 3, "function": addressOfInstructionB, "description": "Starting from [r0], look backwards for the first instruction matching the instruction at [r1], store its address in r2"},
-    #{"code": "SERF", "symbol": '>', "type": "lookaround", "arg count": 3, "function": addressOfInstructionF, "description": "Starting from [r0], look forwards for the first instruction matching the instruction at [r1], store its address in r2"},
+    # consider removing these two
+    {"code": "SERB", "symbol": '<', "type": "lookaround", "arg count": 3, "function": addressOfInstructionB, "description": "Starting from [r0], look backwards for the first instruction matching the instruction at [r1], store its address in r2"},
+    {"code": "SERF", "symbol": '>', "type": "lookaround", "arg count": 3, "function": addressOfInstructionF, "description": "Starting from [r0], look forwards for the first instruction matching the instruction at [r1], store its address in r2"},
     
     {"code": "IFNZ", "symbol": '?', "type": "if", "arg count": 1, "function": skipIfZero, "description": "if [r0] is not 0, execute the following instruction, otherwise, skip to the next non-argument instruction"},
     {"code": "IFNN", "symbol": '‽', "type": "if", "arg count": 1, "function": skipIfNull, "description": "if [r0] is not null, execute the following instruction, otherwise, skip to the next non-argument instruction"},
