@@ -148,7 +148,7 @@ def readBlock(simData, blockIndex):
     import opcode
     from opcode import FLAG_CODES
     
-    if blockIndex < 0 or blockIndex >= NUM_MEMORY_BLOCKS_IN_SOUP:
+    if blockIndex == None or blockIndex < 0 or blockIndex >= NUM_MEMORY_BLOCKS_IN_SOUP:
         #print("readBlock: index out of bounds ", blockIndex, " max val ", NUM_MEMORY_BLOCKS_IN_SOUP)
         return None
         
@@ -218,6 +218,10 @@ def registerWriteIgnoreDumpMechanics(simData, registerAddress, val, unsigned=Fal
 def registerWrite(simData, executorAddress, registerAddress, val, unsigned=False):
     if val == None:
         val = readBlock(simData, registerAddress)["body"]
+        
+        if val == None:
+            return
+        # if the register wasn't already none
         addToDump(simData, executorAddress, abs(val))
         
         binary = "0b" + '0'*BODY_LEN 
@@ -230,6 +234,9 @@ def registerWrite(simData, executorAddress, registerAddress, val, unsigned=False
         
     # take the neccessary difference from the dump register
     oldVal = readBlock(simData, registerAddress)["body"]
+    if oldVal == None:
+        oldVal = 0
+    
     diff = abs(val) - abs(oldVal)
     success = takeFromDump(simData, executorAddress, diff)
     

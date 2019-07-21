@@ -26,7 +26,8 @@ class Simulation:
     def execute(self, executorAddress):    
         executor = utils.readBlock(self.data, executorAddress)
         if executor["header"]["name"] != "executor":
-            executorAddrList.remove(executorAddress)
+            print("Executor dissappeared at ", executorAddress, " became ", executor)
+            self.data.executorAddrList.remove(executorAddress)
             return
         
         blockAddress = executor["body"]
@@ -43,8 +44,11 @@ class Simulation:
             # handle executor death, rebirth, and moving
             if "executor init" in retval:
                 self.data.executorAddrList.append(retval["executor init"])
+                utils.awakenExecutor(self.data, retval["executor init"])
             if "executor deinit" in retval:
                 self.data.executorAddrList.remove(retval["executor deinit"])
+                utils.killExecutor(self.data, retval["executor deinit"])
+                print("Executor went dormant at address ", retval["executor deinit"], " due to instruction ", block)
             if "active executor move" in retval:
                 for pair in retval["active executor move"]:
                     self.data.executorAddrList.remove(pair[0])
@@ -117,10 +121,11 @@ if __name__ == "__main__":
     ancestor = '''T◈▯#####[t1]t3r"04B>$2=13)d^^1(bD^4:4(tT'''#'''T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=)d^^2"23(bD^4:4(tT'''
     sim = Simulation()
     sim.init(ancestor)       
-    #print(sim.data.soup)
     
     import utils
     exeAddr = sim.data.executorAddrList[0]
+    
+    print(''.join(e["header"]["symbol"] for e in [utils.readBlock(sim.data, i) for i in range(0, 500)]))
     
     
     
@@ -135,7 +140,7 @@ if __name__ == "__main__":
         
         print("Done testing!")
         
-    elif True:
+    elif False:
         print("\n=====ancestor=====")
         pp.pprint(utils.getClaimData(sim.data, exeAddr))
         

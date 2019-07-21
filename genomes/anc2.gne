@@ -1,0 +1,65 @@
+// The second ancestor genome I wrote for this simulation.
+// using the search instructions, I was able to make it significanly smaller
+// and faster.
+// It still uses a crazy number of registers, no stack, and only one executor
+
+
+// regex for linearizing this file: /(\/\/ .*\n)|(\/\/ .*)| |\n/g
+// just delete everything this regex matches
+
+// strategy: assemble the child in order - ie, walk down this genome, 
+// for each instruction, find a copy in the soup and swap it onto the child, 
+// then advance to the next instruction in this genome
+
+// r1 will walk down the length of this genome, using it as a template
+// r0 will walk down the length of the child as it's built
+// r2 will store the location of found peices
+
+// r3 will store the address of the end of this genome, responsible for triggering the end of the copy loop
+// r4 will store the start address of the child and be responsible for awakening it
+
+T       // begin claim marker, begining of organism
+        // physical non-instruction components
+◈▯      // live executor and dump register
+#####   // registers, get cleared out when executed
+        // a stack would go here like so "A____" if I needed one
+        
+        // initialization
+[t1     // find the first claim marker, store address in r1
+]t3     // find the end claim marker, store address in r3
+r       // generate a random address, store it in r0 - this will be the start address of the child
+"04     // now r0 and r4 hold the start address of the new child
+
+B       // lock - marker of the find loop
+>       // starting after [r0], search for instruction at [r1], store its address in r2
+$2      // swap mem[r2] and mem[r0] - adding another block onto the child
+=13     // if [r0] == [r1]   aka if we've just swapped the last piece
+)d      //     awaken the child
+^       // otherwise, increment r0 and r1
+^1      //     which prepares us to find the next block item
+(b      //     and return to the start of the loop
+
+
+A       // endosymbiotic creature working as immune system
+◈▯      // live executor and dump register
+###
+[a1   
+^1      // r1 is now set to point to this organelle's executor
+~20     // the main important thing, [r0] is now set to a target to attack
+<       // r2 is now set to the attacker's executor
+.2      // kill the attacker
+(a      // return to start
+
+
+D       // lock - marker of the awaken child function
+^4      // increment r4 so it now points to the child's executor
+:4      // awaken the child
+(t      // start over and make a new child
+
+T       // end of the genome
+
+// genome laid out linearly, without comments:
+// T◈▯#####[t1]t3r"04B>$2=13)d^^1(bA◈▯###[a1^1~20<.2(aD^4:4(tT
+
+
+
