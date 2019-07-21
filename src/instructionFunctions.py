@@ -75,15 +75,19 @@ def addressOfJumpF(simData, executorAddress, myAddress, arg0):
     
 def addressOfInstructionB(simData, executorAddress, myAddress, arg0, arg1, arg2): 
     storeAddress = utils.findRegister(simData, executorAddress, arg2)
-    addressOfSearchTarget = utils.readRegister(simData, executorAddress, arg1)
+    addressOfSearchTarget = utils.readRegister(simData, executorAddress, arg1)["body"]
     searchTarget = utils.readBlock(simData, addressOfSearchTarget)
     
-    addr = utils.readRegister(simData, executorAddress, arg0)
-    block = readBlock(simData, addr)
+    addr = utils.readRegister(simData, executorAddress, arg0)["body"]
+    block = utils.readBlock(simData, addr)
     
     while not utils.blocksEquivalent(block, searchTarget):
         addr -= 1
-        block = readBlock(simData, addr)
+        block = utils.readBlock(simData, addr)
+        
+        if block is None:
+            success = utils.registerWrite(simData, executorAddress, storeAddress, None)
+            return {}   
     
     success = utils.registerWrite(simData, executorAddress, storeAddress, addr)
     
@@ -95,15 +99,26 @@ def addressOfInstructionB(simData, executorAddress, myAddress, arg0, arg1, arg2)
     
 def addressOfInstructionF(simData, executorAddress, myAddress, arg0, arg1, arg2): 
     storeAddress = utils.findRegister(simData, executorAddress, arg2)
-    addressOfSearchTarget = utils.readRegister(simData, executorAddress, arg1)
+    #print("store address: ", storeAddress, " is register number ", arg2)
+    addressOfSearchTarget = utils.readRegister(simData, executorAddress, arg1)["body"]
     searchTarget = utils.readBlock(simData, addressOfSearchTarget)
+    #print("search target: ", searchTarget["header"]["symbol"], " at address ", addressOfSearchTarget, " from register ", arg1)
     
-    addr = utils.readRegister(simData, executorAddress, arg0)
-    block = readBlock(simData, addr)
+    addr = utils.readRegister(simData, executorAddress, arg0)["body"]
+    block = utils.readBlock(simData, addr)
+    #print("starting search forward from: ", addr, " from register ", arg0)
+    
     
     while not utils.blocksEquivalent(block, searchTarget):
         addr += 1
-        block = readBlock(simData, addr)
+        block = utils.readBlock(simData, addr)
+        
+        if block is None:
+            #print("found nothing, went out of bounds")
+            success = utils.registerWrite(simData, executorAddress, storeAddress, None)
+            return {}
+    
+    #print("found ", block["header"]["symbol"], " at ", addr)
     
     success = utils.registerWrite(simData, executorAddress, storeAddress, addr)
     

@@ -206,3 +206,6 @@ SPAWN_LIST = [
     '111' + '1' * (BODY_LEN)  # a dump register with the maximum value (note: dump registers are unsigned)
 ]
 SPAWN_LIST.extend('001' + intToBinaryUnsigned(i, BODY_LEN) for i in range(len(INSTRUCTIONS))) # all instructions
+
+# TRY TO ADD SPAWN RARITY AS A MECHANIC
+# make args 1-9 increasingly rare to encourage useage of stacks

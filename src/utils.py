@@ -1,6 +1,7 @@
 
 import const
 from const import *
+import random
 
 def binaryToInt(string, unsigned=False):
     signedPlace = len(string)-1
@@ -200,7 +201,7 @@ def decodeArgs(simData, address, count):
                 acceptMemArgs = False
                 arglist.append(queue.pop(0))
         else:
-            arglist.append(queue.pop())
+            arglist.append(queue.pop(0))
             
     return arglist
 
@@ -223,6 +224,9 @@ def registerWrite(simData, executorAddress, registerAddress, val, unsigned=False
         simData.soup.overwrite(binary, MEM_BLOCK_LEN*registerAddress+HEADER_LEN)
         simData.soup.overwrite("0b"+'010', MEM_BLOCK_LEN*registerAddress)
         return
+    
+    if random.random() < REGISTER_WRITE_MUTATION_PROBABILITY:
+        val += random.choice(range(*REGISTER_WRITE_MUTATION_RANGE))
         
     # take the neccessary difference from the dump register
     oldVal = readBlock(simData, registerAddress)["body"]
@@ -348,7 +352,7 @@ def blocksEquivalent(block1, block2):
         
     if block1["header"]["type"] == block2["header"]["type"]: # will match (live executor, dormant executor) and (register, register with null) pairs
         return True
-    return return False
+    return False
    
 
 # returns true if the key really == a key, false otherwise

@@ -1,3 +1,7 @@
+// the very first ancestor genome I wrote for this simulation
+// was written before inclusion of search '<' '>' instructions
+
+
 // regex for linearizing this file: /(\/\/ .*\n)|(\/\/ .*)| |\n/g
 // just delete everything this regex matches
 

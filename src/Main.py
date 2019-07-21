@@ -114,7 +114,7 @@ if __name__ == "__main__":
     import pprint  
     pp = pprint.PrettyPrinter(indent=4)
 
-    ancestor = '''T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=)d^^2"23(bD^4:4(tT'''
+    ancestor = '''T◈▯#####[t1]t3r"04B>$2=13)d^^1(bD^4:4(tT'''#'''T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=)d^^2"23(bD^4:4(tT'''
     sim = Simulation()
     sim.init(ancestor)       
     #print(sim.data.soup)
@@ -135,14 +135,14 @@ if __name__ == "__main__":
         
         print("Done testing!")
         
-    elif False:
+    elif True:
         print("\n=====ancestor=====")
         pp.pprint(utils.getClaimData(sim.data, exeAddr))
         
         for i in range(80):
             sim.cycle()
             claimData = utils.getClaimData(sim.data, exeAddr)
-            print(claimData["symbols"])
+            print(claimData["symbols"], "   ", claimData["register values"])
             print(" " * (claimData["executors"][0]["ip"] - claimData["executors"][0]["address"]), "↑")
         
     else:
@@ -160,12 +160,12 @@ if __name__ == "__main__":
         pp.pprint(claimData)
         
         print("\n-------child---------")
-        childAddress = claimData["register values"][2]
+        childAddress = claimData["register values"][4]
         pp.pprint(utils.getSymbolRange(sim.data, childAddress, childAddress + len(ancestor)))
         
         # now we're actually doing the copying
         for i in range(1, 5000+1):
-            if i % 100 == 0:
+            if i % 20 == 0:
                 print("=====================Begining cycle num ", i, "=========================")
                 print("\n=====ancestor=====")
                 pp.pprint(utils.getClaimData(sim.data, exeAddr))

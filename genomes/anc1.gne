@@ -1,3 +1,9 @@
+// The second ancestor genome I wrote for this simulation.
+// using the search instructions, I was able to make it significanly smaller
+// and faster.
+// It still uses a crazy number of registers, no stack, and only one executor
+
+
 // regex for linearizing this file: /(\/\/ .*\n)|(\/\/ .*)| |\n/g
 // just delete everything this regex matches
 
@@ -22,7 +28,7 @@ T       // begin claim marker, begining of organism
 [t1     // find the first claim marker, store address in r1
 ]t3     // find the end claim marker, store address in r3
 r       // generate a random address, store it in r0 - this will be the start address of the child
-"4      // now r0 and r4 hold the start address of the new child
+"04     // now r0 and r4 hold the start address of the new child
 
 B       // lock - marker of the find loop
 >       // starting after [r0], search for instruction at [r1], store its address in r2
@@ -41,7 +47,7 @@ D       // lock - marker of the awaken child function
 T       // end of the genome
 
 // genome laid out linearly, without comments:
-// T◈▯#####[t1]t3r"4B>$2=13)d^^1(bD^4:4(tT
+// T◈▯#####[t1]t3r"04B>$2=13)d^^1(bD^4:4(tT
 
 
 
