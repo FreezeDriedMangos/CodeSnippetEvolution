@@ -223,8 +223,8 @@ def bitwiseOR(simData, executorAddress, myAddress, arg0, arg1, arg2):
 def bitwiseXOR(simData, executorAddress, myAddress, arg0, arg1, arg2):
     return simpleOp(simData, executorAddress, myAddress, arg0, arg1, arg2, lambda a, b: utils.bitwiseXOR(a, b, BODY_LEN))
 
- 
-def simpleOp(simData, executorAddress, myAddress, arg0, arg1, arg2, operaton):
+
+def simpleOp(simData, executorAddress, myAddress, arg0, arg1, arg2, operation):
     addr = utils.findRegister(simData, executorAddress, arg0)
     reg1 = utils.readBlock(simData, addr)
     reg2 = utils.readRegister(simData, executorAddress, arg1)

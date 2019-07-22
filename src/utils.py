@@ -59,7 +59,7 @@ def bitwiseInverse(intVal, bitLen, unsigned=False):
     binary = intToBinary(intVal, bitLen, unsigned=unsigned)
     binary = ''.join('1' if bit == '0' else '0' for bit in binary)
     
-    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    return binaryToInt(binary, unsigned=unsigned)
     
     
 def bitwiseShiftLeft(intVal, bitLen, unsigned=False):
@@ -67,7 +67,7 @@ def bitwiseShiftLeft(intVal, bitLen, unsigned=False):
     binary = intToBinary(intVal, bitLen, unsigned=unsigned)
     binary = binary[1:] + binary[-1]
     
-    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    return binaryToInt(binary, unsigned=unsigned)
     
     
 def bitwiseShiftRight(intVal, bitLen, unsigned=False):
@@ -75,7 +75,7 @@ def bitwiseShiftRight(intVal, bitLen, unsigned=False):
     binary = intToBinary(intVal, bitLen, unsigned=unsigned)
     binary = binary[0] + binary[0:-1]
     
-    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    return binaryToInt(binary, unsigned=unsigned)
     
   
 def bitwiseAND(intVal1, intVal2, bitLen, unsigned=False):
@@ -87,7 +87,7 @@ def bitwiseAND(intVal1, intVal2, bitLen, unsigned=False):
     
     binary = ''.join('1' if (a and b) else '0' for a, b in zip(binary1, binary2))
     
-    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    return binaryToInt(binary, unsigned=unsigned)
     
    
 def bitwiseOR(intVal1, intVal2, bitLen, unsigned=False):
@@ -99,7 +99,7 @@ def bitwiseOR(intVal1, intVal2, bitLen, unsigned=False):
     
     binary = ''.join('1' if (a or b) else '0' for a, b in zip(binary1, binary2))
     
-    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    return binaryToInt(binary, unsigned=unsigned)
     
      
 def bitwiseXOR(intVal1, intVal2, bitLen, unsigned=False):
@@ -111,7 +111,7 @@ def bitwiseXOR(intVal1, intVal2, bitLen, unsigned=False):
     
     binary = ''.join('1' if (a != b) else '0' for a, b in zip(binary1, binary2))
     
-    return binaryToInt(binary, bitLen, unsigned=unsigned)
+    return binaryToInt(binary, unsigned=unsigned)
     
          
 #
@@ -321,7 +321,8 @@ def killExecutor(simData, executorAddress):
         
 
 def awakenExecutor(simData, executorAddress):
-    binary = "0b" + '101'
+    # overwrite the header information (making this an active executor) and overwrite the body so the ip points to itself
+    binary = "0b" + '101' + intToBinary(executorAddress, BODY_LEN, unsigned=True)
     simData.soup.overwrite(binary, MEM_BLOCK_LEN*executorAddress)
  
 

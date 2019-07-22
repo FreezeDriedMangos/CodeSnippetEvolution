@@ -17,10 +17,18 @@ class SimulationData:
 
 class Simulation:
     data = SimulationData()
+    
+    # route all writes through this class so that updates can be recorded
 
     def cycle(self):
         for exeAddr in self.data.executorAddrList:
             self.execute(exeAddr)
+            
+        for i in range(COSMIC_RAY_MUTATION_ATTEMPT_COUNT):
+            if random.random() < COSMIC_RAY_MUTATION_CHANCE:
+                index = random.randrange(0, TOTAL_MEM_LEN)
+                bit = '0b0' if random.random() < 0.5 else '0b1'
+                self.data.soup.overwrite(bit, index)
 
 
     def execute(self, executorAddress):    
@@ -125,7 +133,7 @@ if __name__ == "__main__":
     import utils
     exeAddr = sim.data.executorAddrList[0]
     
-    print(''.join(e["header"]["symbol"] for e in [utils.readBlock(sim.data, i) for i in range(0, 500)]))
+    #print(''.join(e["header"]["symbol"] for e in [utils.readBlock(sim.data, i) for i in range(0, 500)]))
     
     
     

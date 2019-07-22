@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "src/Main.py", line 181, in <module>
+    sim.cycle()
+  File "src/Main.py", line 23, in cycle
+    self.execute(exeAddr)
+  File "src/Main.py", line 38, in execute
+    retval = block["body"]["function"](self.data, executorAddress, blockAddress, *args)
+  File "/home/clay/Documents/Programming/Python/Virus Evolution/src/instructionFunctions.py", line 270, in bitwiseInverse
+    inverse = utils.bitwiseInverse(reg["body"], BODY_LEN, unsigned=False)
+  File "/home/clay/Documents/Programming/Python/Virus Evolution/src/utils.py", line 62, in bitwiseInverse
+    return binaryToInt(binary, bitLen, unsigned=unsigned)
+TypeError: binaryToInt() got multiple values for argument 'unsigned'
+
