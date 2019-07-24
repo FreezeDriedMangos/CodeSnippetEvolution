@@ -6,21 +6,50 @@ class SimulationData:
     soup = BitArray('0b' + '0'*TOTAL_MEM_LEN)
     executorAddrList = []
     checkedAddresses = [] # list of tuples (checked, checkedBy)
-
+    
+    # recording updates
+    _blockBodyUpdates = []
+    _blockUpdates = []
+    
+    _mutationLocations = []
+    
+    
     def addCheckedAddresses(self, addr):
         for a in addr:
             self.checkedAddresses.insert(a, 0)
             
         while len(self.checkedAddresses) >= CHECKED_ADDRESS_STACK_SIZE:
             self.checkedAddresses.pop(-1)
+      
     
+    def logBlockUpdate(address, wholeBlock=False):
+        if wholeBlock:
+            _blockUpdates.append(address)
+        else:
+            _blockBodyUpdates.append(address)
+    
+    
+    def logMutation(address, soft=True):
+        _mutationLocations.append(address)
+        
+        #if(soft):
+        #    _blockBodyUpdates.append(address)
+        #else:
+        #    _blockUpdates.append(address)
+            
+    
+    def clearLogs():
+        _mutationLocations.clear()
+        _blockBodyUpdates.clear()
+        _blockUpdates.clear()
+        
 
 class Simulation:
     data = SimulationData()
     
-    # route all writes through this class so that updates can be recorded
-
     def cycle(self):
+        self.data.clearLogs()
+        
         for exeAddr in self.data.executorAddrList:
             self.execute(exeAddr)
             
@@ -95,7 +124,7 @@ class Simulation:
         from opcode import SPAWN_LIST
         import compiler
         import utils
-    
+        
         # put a random memory block at each location
         for i in range(0, TOTAL_MEM_LEN, MEM_BLOCK_LEN):
             self.data.soup.overwrite('0b'+random.choice(SPAWN_LIST), i)  
@@ -119,8 +148,7 @@ class Simulation:
             self.data.executorAddrList.append(loc)
             # initialize this executor
             utils.registerWriteIgnoreDumpMechanics(self.data, loc, loc, unsigned=True)
-            
-
+        
 
 if __name__ == "__main__":  
     import pprint  
@@ -136,7 +164,12 @@ if __name__ == "__main__":
     #print(''.join(e["header"]["symbol"] for e in [utils.readBlock(sim.data, i) for i in range(0, 500)]))
     
     
-    
+    #simString = ''.join(e["header"]["symbol"] for e in [utils.readBlock(sim.data, i) for i in range(0, NUM_MEMORY_BLOCKS_IN_SOUP)])
+    #for i in range(CYCLE_COUNT):
+    #    sim.cycle()
+    #    for update in sim.data._blockUpdates:
+    #        simString[update] = utils.readBlock(sim.data, update)["header"]["symbol"]
+            
         
     if False:
         print("\n=====ancestor=====")

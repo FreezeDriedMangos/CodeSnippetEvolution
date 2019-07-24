@@ -1,4 +1,3 @@
-
 import const
 from const import *
 import random
@@ -212,6 +211,8 @@ def decodeArgs(simData, address, count):
 def registerWriteIgnoreDumpMechanics(simData, registerAddress, val, unsigned=False):
     binary = "0b" + intToBinary(val, BODY_LEN, unsigned=unsigned)
     simData.soup.overwrite(binary, MEM_BLOCK_LEN*registerAddress+HEADER_LEN)
+    
+    simData.logBlockUpdate(registerAddress, wholeBlock=False)
     return 
 
 
@@ -227,15 +228,23 @@ def registerWrite(simData, executorAddress, registerAddress, val, unsigned=False
         binary = "0b" + '0'*BODY_LEN 
         simData.soup.overwrite(binary, MEM_BLOCK_LEN*registerAddress+HEADER_LEN)
         simData.soup.overwrite("0b"+'010', MEM_BLOCK_LEN*registerAddress)
+        
+        simData.logBlockUpdate(registerAddress, wholeBlock=True)
         return
+    
     
     if random.random() < REGISTER_WRITE_MUTATION_PROBABILITY:
         val += random.choice(range(*REGISTER_WRITE_MUTATION_RANGE))
+        simData.logMutation(registerAddress, soft=True)
         
     # take the neccessary difference from the dump register
     oldVal = readBlock(simData, registerAddress)["body"]
     if oldVal == None:
         oldVal = 0
+        registerInitialize(simData, registerAddress)
+        simData.logBlockUpdate(registerAddress, wholeBlock=True)
+    
+    simData.logBlockUpdate(registerAddress, wholeBlock=False)
     
     diff = abs(val) - abs(oldVal)
     success = takeFromDump(simData, executorAddress, diff)
@@ -253,6 +262,8 @@ def registerWrite(simData, executorAddress, registerAddress, val, unsigned=False
 
 
 def registerInitialize(simData, registerAddress):
+    simData.logUpdate(registerAddress, wholeBlock=True)
+    
     block = readBlock(simData, registerAddress)
     assert(block["header"]["name"] == "register with a null value")
     
@@ -271,6 +282,8 @@ def takeFromDump(simData, executorAddress, val):
     if val > dump["body"]:
         return False
         
+    simData.logBlockUpdate(dumpAddr, wholeBlock=False)
+    
     binary = "0b" + intToBinary(dump["body"] - val, BODY_LEN, unsigned=True)
     simData.soup.overwrite(binary, MEM_BLOCK_LEN*dumpAddr+HEADER_LEN)
     
@@ -319,12 +332,16 @@ def killExecutor(simData, executorAddress):
     binary = "0b" + '100'
     simData.soup.overwrite(binary, MEM_BLOCK_LEN*executorAddress)
         
+    simData.logBlockUpdate(dumpAddr, wholeBlock=True)
+    
 
 def awakenExecutor(simData, executorAddress):
     # overwrite the header information (making this an active executor) and overwrite the body so the ip points to itself
     binary = "0b" + '101' + intToBinary(executorAddress, BODY_LEN, unsigned=True)
     simData.soup.overwrite(binary, MEM_BLOCK_LEN*executorAddress)
  
+    simData.logBlockUpdate(dumpAddr, wholeBlock=True)
+    
 
 def swapMemoryBlocks(simData, addr1, addr2):
     if addr1 < 0 or addr1 >= NUM_MEMORY_BLOCKS_IN_SOUP:
@@ -342,10 +359,12 @@ def swapMemoryBlocks(simData, addr1, addr2):
     simData.soup.overwrite(block1, MEM_BLOCK_LEN*addr2)
     simData.soup.overwrite(block2, MEM_BLOCK_LEN*addr1)
     
+    simData.logBlockUpdate(dumpAddr, wholeBlock=True)
+    
     return True
     
  
-#
+# 
 # Other
 #
 
