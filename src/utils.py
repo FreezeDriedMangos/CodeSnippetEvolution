@@ -359,7 +359,8 @@ def swapMemoryBlocks(simData, addr1, addr2):
     simData.soup.overwrite(block1, MEM_BLOCK_LEN*addr2)
     simData.soup.overwrite(block2, MEM_BLOCK_LEN*addr1)
     
-    simData.logBlockUpdate(dumpAddr, wholeBlock=True)
+    simData.logBlockUpdate(addr1, wholeBlock=True)
+    simData.logBlockUpdate(addr2, wholeBlock=True)
     
     return True
     

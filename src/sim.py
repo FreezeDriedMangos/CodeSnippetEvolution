@@ -22,15 +22,15 @@ class SimulationData:
             self.checkedAddresses.pop(-1)
       
     
-    def logBlockUpdate(address, wholeBlock=False):
+    def logBlockUpdate(self, address, wholeBlock=False):
         if wholeBlock:
-            _blockUpdates.append(address)
+            self._blockUpdates.append(address)
         else:
-            _blockBodyUpdates.append(address)
+            self._blockBodyUpdates.append(address)
     
     
-    def logMutation(address, soft=True):
-        _mutationLocations.append(address)
+    def logMutation(self, address, soft=True):
+        self._mutationLocations.append(address)
         
         #if(soft):
         #    _blockBodyUpdates.append(address)
@@ -38,16 +38,28 @@ class SimulationData:
         #    _blockUpdates.append(address)
             
     
-    def clearLogs():
-        _mutationLocations.clear()
-        _blockBodyUpdates.clear()
-        _blockUpdates.clear()
+    def clearLogs(self, ):
+        self._mutationLocations.clear()
+        self._blockBodyUpdates.clear()
+        self._blockUpdates.clear()
         
 
 class Simulation:
     data = SimulationData()
     
+    # WARNING: very slow function
+    def symbolString(self):
+        import utils
+        return ''.join(e["header"]["symbol"] for e in [utils.readBlock(self.data, i) for i in range(0, NUM_MEMORY_BLOCKS_IN_SOUP)])
+    
+    
     def cycle(self):
+        from const import COSMIC_RAY_MUTATION_ATTEMPT_COUNT
+        from const import COSMIC_RAY_MUTATION_CHANCE
+        from const import TOTAL_MEM_LEN
+        from const import MEM_BLOCK_LEN
+        import random
+        
         self.data.clearLogs()
         
         for exeAddr in self.data.executorAddrList:
@@ -58,9 +70,14 @@ class Simulation:
                 index = random.randrange(0, TOTAL_MEM_LEN)
                 bit = '0b0' if random.random() < 0.5 else '0b1'
                 self.data.soup.overwrite(bit, index)
+                
+                self.data.logMutation(int(index / MEM_BLOCK_LEN), soft=False)
 
 
-    def execute(self, executorAddress):    
+    def execute(self, executorAddress):   
+        import utils
+        from const import NUM_MEMORY_BLOCKS_IN_SOUP
+        
         executor = utils.readBlock(self.data, executorAddress)
         if executor["header"]["name"] != "executor":
             print("Executor dissappeared at ", executorAddress, " became ", executor)
