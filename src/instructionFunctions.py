@@ -4,6 +4,10 @@ import const
 from const import *
 
 
+def fault(simData, executorAddress, myAddress):
+    return {"fault":True}
+    
+
 def noOp(simData, executorAddress, myAddress):
     return {}
     

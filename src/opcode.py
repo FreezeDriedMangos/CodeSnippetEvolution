@@ -13,6 +13,7 @@ OPCODE_VER = 'v1.0'
 # the unmodified queue is [0,1,2,3,4,5,6,7,8,9]
 # so the instructions +25 would correspond to ([r2] = [r5] + [r0])
 # and                 +00 would correspond to ([r0] = [r0] + [r1])
+FAULT_INSTRUCTION = {"code": "FALT", "symbol": '\0', "type": "noop", "arg count": 0, "function": fault, "description": "Just faults. Used for failed interprets."},
 
 INSTRUCTIONS = [
     {"code": "NOOP", "symbol": ' ', "type": "noop", "arg count": 0, "function": noOp, "description": "No operation"},
@@ -106,6 +107,16 @@ for elem in insertList:
 for elem in removeList:
     INSTRUCTIONS.remove(elem)
 
+
+def decodeFunctionBody(s):
+    try:
+        index = binaryToInt(s, unsigned=True)
+        return INSTRUCTIONS[index]
+    except:
+        print("ERROR: opcode.py:decodeFuctionBody attempted decode of ", s, " as a function block")
+        return FAULT_INSTRUCTION
+        
+
 # the simulation's simulated RAM is segmented into blocks. Each block is made of a header and body
 #
 #   _ _ _ | _ _ _ _ _ _
@@ -195,7 +206,7 @@ FLAG_CODES = {
         "type":           "instruction", 
         "name":           "instruction block", 
         "execute?":       True,  
-        "interpret body": lambda s : INSTRUCTIONS[binaryToInt(s, unsigned=True)],
+        "interpret body": decodeFunctionBody,
         "default body":   None
         },
 }
