@@ -1,17 +1,75 @@
 import const
 from const import *
 from bitstring import BitArray
+from opcode import Opcodes
 
 class SimulationData:
     soup = BitArray('0b' + '0'*TOTAL_MEM_LEN)
+    blocks = []
     executorAddrList = []
     checkedAddresses = [] # list of tuples (checked, checkedBy)
+    
+    opcodes = None
+    
+    _initialized = False;
     
     # recording updates
     _blockBodyUpdates = []
     _blockUpdates = []
     
     _mutationLocations = []
+    
+    
+    def __init__(self):
+        self.opcodes = Opcodes()
+    
+    
+    def initializeBlocks(self):
+        bins = list(self.soup.cut(MEM_BLOCK_LEN))
+        self.blocks = [self.readBlockFromBits(bits) for bits in bins]
+        self._initialized = True
+        
+    
+    def readBlockFromBitsAtAddress(self, addr):
+        if addr < 0 or addr >= NUM_MEMORY_BLOCKS_IN_SOUP:
+            return None
+        
+        cut = list(self.soup.cut(MEM_BLOCK_LEN))
+        return self.readBlockFromBits(cut[addr])
+        
+    
+    def blockify(self, bitArray):
+        cut = list(bitArray.cut(MEM_BLOCK_LEN))
+        return [self.readBlockFromBits(bits) for bits in cut]
+    
+    
+    def readBlockFromBits(self, bits):
+        block = bits
+        block = block.bin
+        header = block[0:HEADER_LEN]
+        body = block[HEADER_LEN:]
+        
+        headerInfo = self.opcodes.FLAG_CODES[header].copy()
+        try:
+            bodyInfo   = headerInfo["interpret body"](self.opcodes, body)
+        except:
+            print("interpreted something wrong: ", headerInfo)
+            print("header was ", header)
+            print("block was ", block)
+            raise
+        
+        if headerInfo["symbol"] == None:
+            try:
+                headerInfo["symbol"] = bodyInfo["symbol"]
+            except Exception as e:
+                print('Error reading header or body:')
+                print(headerInfo)
+                print(bodyInfo)
+                raise e
+            
+            
+        return {"header": headerInfo, "body": bodyInfo}
+
     
     
     def addCheckedAddresses(self, addr):
@@ -22,28 +80,71 @@ class SimulationData:
             self.checkedAddresses.pop(-1)
       
     
-    def logBlockUpdate(self, address, wholeBlock=False):
+    def setBlock(self, binary, address):
+        assert(type(address) == int)
+        assert(type(binary) == str)
+        assert(binary[0:1] != '0b')
+        assert(len(binary) == MEM_BLOCK_LEN)
+        print("setting block ", address, " at index ", MEM_BLOCK_LEN*address)
+        
+        self.soup.overwrite('0b'+binary, MEM_BLOCK_LEN*address)
+        self._logBlockUpdate(address, wholeBlock=True)
+   
+   
+    def setBlockBody(self, binary, address):
+        assert(type(address) == int)
+        assert(type(binary) == str)
+        assert(binary[0:1] != '0b')
+        assert(len(binary) == BODY_LEN)
+        
+        self.soup.overwrite('0b'+binary, MEM_BLOCK_LEN*address+HEADER_LEN)
+        self._logBlockUpdate(address, wholeBlock=False)
+   
+    
+    def setBlockHeader(self, binary, address):
+        assert(type(address) == int)
+        assert(type(binary) == str)
+        assert(binary[0:1] != '0b')
+        assert(len(binary) == HEADER_LEN)
+        
+        self.soup.overwrite('0b'+binary, MEM_BLOCK_LEN*address)
+        self._logBlockUpdate(address, wholeBlock=True)
+   
+    
+    def _logBlockUpdate(self, address, wholeBlock=False):
         if wholeBlock:
             self._blockUpdates.append(address)
         else:
             self._blockBodyUpdates.append(address)
+        
+        if self._initialized:
+            bef = self.blocks[address]["body"]
+            self.blocks[address] = self.readBlockFromBitsAtAddress(address)
+            #print("\tupdated ", address, " from ", bef, " to ", self.blocks[address]["body"])
     
     
     def logMutation(self, address, soft=True):
         self._mutationLocations.append(address)
         
+        if self._initialized:
+            self.blocks[address] = self.readBlockFromBitsAtAddress(address)
         #if(soft):
         #    _blockBodyUpdates.append(address)
         #else:
         #    _blockUpdates.append(address)
             
     
-    def clearLogs(self, ):
+    def clearLogs(self):
         self._mutationLocations.clear()
         self._blockBodyUpdates.clear()
         self._blockUpdates.clear()
         
 
+from const import COSMIC_RAY_MUTATION_ATTEMPT_COUNT
+from const import COSMIC_RAY_MUTATION_CHANCE
+from const import TOTAL_MEM_LEN
+from const import MEM_BLOCK_LEN
+import random
 class Simulation:
     data = SimulationData()
     
@@ -54,12 +155,6 @@ class Simulation:
     
     
     def cycle(self):
-        from const import COSMIC_RAY_MUTATION_ATTEMPT_COUNT
-        from const import COSMIC_RAY_MUTATION_CHANCE
-        from const import TOTAL_MEM_LEN
-        from const import MEM_BLOCK_LEN
-        import random
-        
         self.data.clearLogs()
         
         for exeAddr in self.data.executorAddrList:
@@ -77,6 +172,7 @@ class Simulation:
     def execute(self, executorAddress):   
         import utils
         from const import NUM_MEMORY_BLOCKS_IN_SOUP
+        from const import MEM_BLOCK_LEN
         
         executor = utils.readBlock(self.data, executorAddress)
         if executor["header"]["name"] != "executor":
@@ -85,10 +181,20 @@ class Simulation:
             return
         
         blockAddress = executor["body"]
-        block = utils.readBlock(self.data, blockAddress)
+        try:
+            block = utils.readBlock(self.data, blockAddress)
+        except:
+            cut = [sim.data.soup.cut(MEM_BLOCK_LEN)]
+            print("attempted read at ", blockAddress, " of ", cut[blockAddress])
+            print("surrounding bits:", cut[blockAddress-1:blockAddress+1])
+            raise
         
+        print("running instruction ", block["header"]["symbol"], " @ ", blockAddress)
+        bef = blockAddress
+            
         if block["header"]["execute?"]:
             args = utils.decodeArgs(self.data, blockAddress, block["body"]["arg count"])
+            print("\t", "function: ", block["body"]["function"], " with args ", args)
             retval = block["body"]["function"](self.data, executorAddress, blockAddress, *args)
             
             if "checked address" in retval:
@@ -125,34 +231,37 @@ class Simulation:
                     blockAddress += 1
             else:
                 blockAddress += 1
-                
-            utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress, unsigned=True)
+            
+            #utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress, unsigned=True)
             
         elif block["header"]["type"] == "register":
             utils.registerWrite(self.data, executorAddress, blockAddress, 0)
-            utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress+1)
+            #utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress+1)
+            blockAddress+=1
         else:
-            utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress+1)
-    
+            #utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress+1)
+            blockAddress+=1
+            
+        #print("\tsetting ip from ", bef, " to ", blockAddress)
+        utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress, unsigned=True)
+            
     
     def init(self, ancestorString):
         import random
-        import opcode
-        from opcode import SPAWN_LIST
         import compiler
         import utils
         
         # put a random memory block at each location
         for i in range(0, TOTAL_MEM_LEN, MEM_BLOCK_LEN):
-            self.data.soup.overwrite('0b'+random.choice(SPAWN_LIST), i)  
+            self.data.soup.overwrite('0b'+random.choice(self.data.opcodes.SPAWN_LIST), i)  
         
         # interpret the ancestor string
         ancestor = compiler.compileGenome(ancestorString)
-        ancestorData = SimulationData()
-        ancestorData.soup = BitArray('0b' + ancestor)
+        ancestorData = BitArray('0b' + ancestor)
         
-        ancestorBlocks = [utils.readBlock(ancestorData, i) for i in range(len(ancestorString))]
+        ancestorBlocks = self.data.blockify(ancestorData) #[utils.readBlock(ancestorData, i) for i in range(len(ancestorString))]
         ancestorExecutorLocs = [i for i in range(len(ancestorBlocks)) if ancestorBlocks[i]["header"]["name"] == "executor"]
+        
         
         # seed the soup with one common ancestor
         ancestorLoc = random.randrange(0, NUM_MEMORY_BLOCKS_IN_SOUP-len(ancestor))
@@ -165,6 +274,11 @@ class Simulation:
             self.data.executorAddrList.append(loc)
             # initialize this executor
             utils.registerWriteIgnoreDumpMechanics(self.data, loc, loc, unsigned=True)
+        
+        
+        # initialize the data
+        self.data.initializeBlocks()
+        
         
 
 if __name__ == "__main__":  

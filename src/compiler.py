@@ -4,6 +4,8 @@ import opcode
 from opcode import *
 import utils
 
+assemblyOpcodes = Opcodes()
+
 def compileGenomeFromFile(filepath):
     genomeString = open(genomeString, 'r').read()
     
@@ -19,6 +21,9 @@ def compileGenome(genomeString):
     
             
 def symbolAssembly():
+    FLAG_CODES = assemblyOpcodes.FLAG_CODES
+    INSTRUCTIONS = assemblyOpcodes.INSTRUCTIONS
+    
     instructionCode = [key for key in FLAG_CODES if FLAG_CODES[key]["type"] == "instruction"][0]
     
     specialSymbols = {FLAG_CODES[key]["symbol"]: key + FLAG_CODES[key]["default body"] for key in FLAG_CODES if FLAG_CODES[key]["symbol"] != None}

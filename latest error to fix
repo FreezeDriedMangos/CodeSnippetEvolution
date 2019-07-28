@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "src/frontend.py", line 177, in <module>
+    sim.cycle()
+  File "/home/clay/Documents/Programming/Python/VirusEvolution/src/sim.py", line 73, in cycle
+    self.execute(exeAddr)
+  File "/home/clay/Documents/Programming/Python/VirusEvolution/src/sim.py", line 106, in execute
+    retval = block["body"]["function"](self.data, executorAddress, blockAddress, *args)
+  File "/home/clay/Documents/Programming/Python/VirusEvolution/src/instructionFunctions.py", line 303, in bitwiseShiftLeft
+    success = utils.registerWrite(simData, executorAddress, addr, inverse)
+NameError: name 'inverse' is not defined
+ERROR: opcode.py:decodeFuctionBody attempted decode of  0100000111110  as a function block
+
+ 

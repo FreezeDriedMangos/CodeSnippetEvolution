@@ -115,7 +115,20 @@ def addressOfInstructionF(simData, executorAddress, myAddress, arg0, arg1, arg2)
     
     while not utils.blocksEquivalent(block, searchTarget):
         addr += 1
-        block = utils.readBlock(simData, addr)
+        try:
+            block = utils.readBlock(simData, addr)
+        except:
+            print("attempted read at ", addr)
+            try:
+                cut = list(simData.soup.cut(MEM_BLOCK_LEN)) 
+                print("reading ", cut[addr])
+                print("surrounding bits:", cut[addr-1:addr+1])
+            except:
+                print("addr was out of bounds")
+                print("soup len ", len(simData.soup))
+                print("soup block count ", len(list(simData.soup.cut(MEM_BLOCK_LEN))))
+                print("block len ", MEM_BLOCK_LEN)
+            raise
         
         if block is None:
             #print("found nothing, went out of bounds")
@@ -287,7 +300,7 @@ def bitwiseShiftLeft(simData, executorAddress, myAddress, arg0):
     
     shift = utils.bitwiseShiftLeft(reg["body"], BODY_LEN, unsigned=False)
     
-    success = utils.registerWrite(simData, executorAddress, addr, inverse)
+    success = utils.registerWrite(simData, executorAddress, addr, shift)
     
     if success:
         return {}
@@ -301,7 +314,7 @@ def bitwiseShiftRight(simData, executorAddress, myAddress, arg0):
     
     shift = utils.bitwiseShiftRight(reg["body"], BODY_LEN, unsigned=False)
     
-    success = utils.registerWrite(simData, executorAddress, addr, inverse)
+    success = utils.registerWrite(simData, executorAddress, addr, shift)
     
     if success:
         return {}
@@ -456,9 +469,9 @@ def swapMemoryBlocks(simData, executorAddress, myAddress, arg0, arg1):
     
     executorMoves = []
     if ins1["header"]["name"] == "executor":
-        executorMoves.append(tuple(register1["body"], register2["body"]))
+        executorMoves.append((register1["body"], register2["body"], ))
     if ins2["header"]["name"] == "executor":
-        executorMoves.append(tuple(register2["body"], register1["body"]))
+        executorMoves.append((register2["body"], register1["body"], ))
         
     if len(executorMoves) > 0:
         return {"checked address": [register1["body"], register2["body"]], "active executor move": executorMoves}
