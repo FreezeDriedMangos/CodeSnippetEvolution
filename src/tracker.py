@@ -1,3 +1,0 @@
-
-EXECUTOR_LOCS = []
-
