@@ -2,6 +2,8 @@ from sim import Simulation
 import utils
 import tkinter as tk
 
+from frontend_colors import COLORS
+
 
 BLOCK_BODY_TOOLTIP_LIST = ["executor", "register", "dump register"]
 def getTooltipText(simData, index, text):
@@ -39,6 +41,7 @@ class App(threading.Thread):
     linearGrid = []
     gridWidth = 0
     running = True
+    baseColors = []
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -76,7 +79,7 @@ class App(threading.Thread):
     # ie, it would use the last-set value of l, r, and c
     # now that it's its own function, it works
     def __makeLabel(self, r, c, simString):
-        l = tk.Label(self.gridFrame, text=simString[r][c], font='TkFixedFont', highlightthickness=0, bg="#202020", fg="#aaaaaa")
+        l = tk.Label(self.gridFrame, text=simString[r][c], font='TkFixedFont', highlightthickness=0, bg=COLORS["background"], fg=COLORS["foreground"])
         l.grid(column=c, row=r)
         
         CreateToolTip(l, waittime=0, getText=lambda:getTooltipText(sim.data, r*self.gridWidth + c, l["text"]))
@@ -94,12 +97,15 @@ class App(threading.Thread):
                 
             self.grid.append(row)
         self.gridFrame.pack()
+        self.baseColors = [COLORS["background"]] * len(self.linearGrid)
+    
+    
+    def setBaseBackground(self, index, color):
+        self.linearGrid[index].config(bg=color)
+        self.baseColors[index] = color
     
     
     def setBackground(self, index, color):
-        #row = int(index / self.gridWidth)
-        #column = index % self.gridWidth
-        #self.grid[row][column].config(bg=color)
         self.linearGrid[index].config(bg=color)
     
     
@@ -135,37 +141,26 @@ simString = [c for c in sim.symbolString()]
 
 app.initGrid(unjoinedLineBreak(simString))
 
+
+
 import utils
+import colorsys
+from frontend_colors import colorLerp
+
+updateFade = {}
+def setFadeFrom(index, tocolor, fromcolor):
+    app.baseColors[i] = tocolor
+    updateFade.update({i: (1, fromcolor)})
+    
+
 ancestor = utils.getClaimBoundaries(sim.data, sim.data.executorAddrList[0])
 for i in range(ancestor[0], ancestor[1]+1):
-    app.setBackground(i, "#0d5922")
+    app.setBaseBackground(i, COLORS["life"])
+    
     
 
 app.label.config(text="Running Sim")
 print(sim.data.executorAddrList, " EXECTUTORS ")
-
-
-updateFade = {}
-
-import colorsys
-BLOCK_UPDATE_COLOR = colorsys.rgb_to_hsv(99/255, 105/255, 2/255)
-BLOCK_UPDATE_SATURATION = BLOCK_UPDATE_COLOR[1]
-
-def rgbToHex(r, g, b):
-    r = int(r * 255)
-    g = int(g * 255)
-    b = int(b * 255)
-    
-    r = hex(r)[2:]
-    r = r if len(r) > 1 else "0"+r
-    
-    g = hex(g)[2:]
-    g = g if len(g) > 1 else "0"+g
-    
-    b = hex(b)[2:]
-    b = b if len(b) > 1 else "0"+b
-    
-    return "#"+r+g+b
 
 
 # run the simulation
@@ -174,30 +169,49 @@ while app.running:
     i += 1
     app.cycleLabel.config(text="Cycle Num " + str(i))
     
-    # update
+    # logic update
     sim.cycle()
     
     # record blocks that have been updated
     for update in sim.data._blockUpdates:
         simString[update] = utils.readBlock(sim.data, update)["header"]["symbol"]
         app.setGridText(update, simString[update])
-        updateFade.update({update: BLOCK_UPDATE_SATURATION})
+        updateFade.update({update: (1, COLORS["block update"])})
     
+    # update any executor awakenings or hibernations
+    for hibernation in sim.data._hibernationLocations:
+        claim = utils.getClaimData(sim.data, hibernation)
+        exe = [e for e in claim["executors"] if e["active"]]
+        
+        if len(exe) == 0:
+            for i in range(*claim["range bounds"]):
+                #app.baseColors[i] = COLORS["background"]
+                #updateFade.update({i: (1, COLORS["life"])})
+                setFadeFrom(i, COLORS["background"], app.baseColors[i])
+    
+    for awakening in sim.data._awakeningLocations:
+        claim = utils.getClaimData(sim.data, awakening)
+        for i in range(*claim["range bounds"]):
+            #app.baseColors[i] = COLORS["life"]
+            #updateFade.update({i: (1, COLORS["background"])})
+            setFadeFrom(i, COLORS["life"], app.baseColors[i])
+    
+    
+    # update color fading
     removeKeys = []
-    # update colors
-    for key in updateFade:
-        saturation = updateFade[key]
+    for index in updateFade:
+        baseColor = app.baseColors[index]
+        decay, updateColor = updateFade[index]
         
-        color = colorsys.hsv_to_rgb(BLOCK_UPDATE_COLOR[0], saturation, BLOCK_UPDATE_COLOR[2])
+        if decay <= 0:
+            app.setBackground(index, baseColor)
+            removeKeys.append(index)
+            continue
         
-        app.setBackground(update, rgbToHex(*color))
-        updateFade[key] -= 0.01
+        color = colorLerp(baseColor, updateColor, decay)
+        app.setBackground(index, color)
+        updateFade[index] = (decay-0.01, updateColor, )
         
-        if updateFade[key] <= 0:
-            #updateFade.pop(key)
-            app.setBackground(update, rgbToHex(0,0,0))
-            removeKeys.append(key)
-    
     for key in removeKeys:
         updateFade.pop(key)
     
