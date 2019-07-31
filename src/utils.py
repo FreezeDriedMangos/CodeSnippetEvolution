@@ -144,6 +144,8 @@ def findRegister(simData, executorAddress, regNum):
 
 
 def readBlock(simData, blockIndex):
+    if type(blockIndex) != int:
+        return None
     if blockIndex < 0 or blockIndex >= NUM_MEMORY_BLOCKS_IN_SOUP:
         return None
     return simData.blocks[blockIndex]
@@ -469,7 +471,8 @@ def getSymbolRange(simData, start, stop):
     executors = [{
                 "address": i+start, 
                 "ip": blocks[i]["body"], 
-                "next instruction": None
+                "next instruction": None, 
+                "active": blocks[i]["header"]["name"] == "executor"
                 } for i in range(len(blocks)) if blocks[i]["header"]["type"] == "executor"]
     
     for i in range(len(executors)):
@@ -483,6 +486,7 @@ def getSymbolRange(simData, start, stop):
     
     
     return {
+        "range bounds": (boundaries[0], boundaries[1]+1, ),
         "boundaries": boundaries,
         "symbols": symbolString,
         "register values": registerValues,

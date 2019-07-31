@@ -219,7 +219,7 @@ class Opcodes:
     # also upsidedown ? 0000001010100
     def decodeFunctionBody(self, s):
         try:
-            index = binaryToInt(s, unsigned=True)
+            index = binaryToInt(s, unsigned=True) % len(self.INSTRUCTIONS)
             return self.INSTRUCTIONS[index]
         except:
             print("ERROR: opcode.py:decodeFuctionBody attempted decode of ", s, " as a function block")

@@ -19,6 +19,9 @@ class SimulationData:
     
     _mutationLocations = []
     
+    _awakeningLocations = []   # executors activating and deactivating
+    _hibernationLocations = []
+    
     
     def __init__(self):
         self.opcodes = Opcodes()
@@ -87,6 +90,10 @@ class SimulationData:
         assert(len(binary) == MEM_BLOCK_LEN)
         print("setting block ", address, " at index ", MEM_BLOCK_LEN*address)
         
+        if random.random() < RANDOMIZE_BLOCK_ON_WRITE_CHANCE:
+            binary = ''.join('1' if random.random() < 0.5 else '0' for i in range(MEM_BLOCK_LEN))
+            self.logMutation(address, soft=False)
+        
         self.soup.overwrite('0b'+binary, MEM_BLOCK_LEN*address)
         self._logBlockUpdate(address, wholeBlock=True)
    
@@ -118,26 +125,43 @@ class SimulationData:
             self._blockBodyUpdates.append(address)
         
         if self._initialized:
-            bef = self.blocks[address]["body"]
             self.blocks[address] = self.readBlockFromBitsAtAddress(address)
-            #print("\tupdated ", address, " from ", bef, " to ", self.blocks[address]["body"])
-    
+            
+            if self.blocks[address]["header"]["name"] == "executor":
+                self._logExecutorAwakening(address)
+            elif self.blocks[address]["header"]["name"] == "dormant executor":
+                self._logExecutorHibernation(address)
+            
     
     def logMutation(self, address, soft=True):
         self._mutationLocations.append(address)
         
         if self._initialized:
             self.blocks[address] = self.readBlockFromBitsAtAddress(address)
-        #if(soft):
-        #    _blockBodyUpdates.append(address)
-        #else:
-        #    _blockUpdates.append(address)
+        
+            if self.blocks[address]["header"]["name"] == "executor":
+                self._logExecutorAwakening(address)
+            # we don't want to log a brand new dormant executor as if it were
+            # a previously active executor that suddenly
+            # went into hibernation
+            #elif self.blocks[address]["header"]["name"] == "dormant executor":
+                #self._logExecutorHibernation(address)
             
+        
+    def _logExecutorAwakening(self, addr):
+        self._awakeningLocations.append(addr)   # executors activating and deactivating
+        
+    
+    def _logExecutorHibernation(self, addr):
+        self._hibernationLocations.append(addr)
+        
     
     def clearLogs(self):
         self._mutationLocations.clear()
         self._blockBodyUpdates.clear()
         self._blockUpdates.clear()
+        self._awakeningLocations.clear()
+        self._hibernationLocations.clear()
         
 
 from const import COSMIC_RAY_MUTATION_ATTEMPT_COUNT
