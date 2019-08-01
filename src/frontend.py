@@ -50,7 +50,7 @@ class App(threading.Thread):
 
     def callback(self):
         self.running = False
-        self.root.quit()
+        sim.forceQuit()
 
 
     def run(self):
@@ -65,7 +65,7 @@ class App(threading.Thread):
         self.label = tk.Label(self.root, text="Loading, Step 1...")
         self.label.pack()
 
-        self.gridFrame = tk.Frame(self.root, bg="#202020")
+        self.gridFrame = tk.Frame(self.root, bg="#202020", highlightthickness=10)
 
         #button = tk.Button(self.root, text='-')
         
@@ -187,7 +187,10 @@ while app.running:
             for i in range(*claim["range bounds"]):
                 #app.baseColors[i] = COLORS["background"]
                 #updateFade.update({i: (1, COLORS["life"])})
-                setFadeFrom(i, COLORS["background"], app.baseColors[i])
+                try:
+                    setFadeFrom(i, COLORS["background"], app.baseColors[i])
+                except:
+                    print("Encountered error setting fade for index ", i)
     
     for awakening in sim.data._awakeningLocations:
         claim = utils.getClaimData(sim.data, awakening)
@@ -216,7 +219,9 @@ while app.running:
         updateFade.pop(key)
     
 
-        
+ 
+app.root.quit()
+print("Application has quit!")       
         
         
         

@@ -1,0 +1,1044 @@
+
+	
+cycle 1
+36	▯`8190`	BODY
+35	◈`36`	BODY
+
+	
+cycle 2
+36	▯`8189`	BODY
+35	◈`37`	BODY
+
+	
+cycle 3
+36	▯`8188`	BODY
+37	#`0`	BODY
+36	▯`8188`	BODY
+35	◈`38`	BODY
+
+	
+cycle 4
+36	▯`8187`	BODY
+38	#`0`	BODY
+36	▯`8187`	BODY
+35	◈`39`	BODY
+
+	
+cycle 5
+36	▯`8186`	BODY
+39	#`0`	BODY
+36	▯`8186`	BODY
+35	◈`40`	BODY
+
+	
+cycle 6
+36	▯`8185`	BODY
+40	#`0`	BODY
+36	▯`8185`	BODY
+35	◈`41`	BODY
+
+	
+cycle 7
+36	▯`8184`	BODY
+41	#`0`	BODY
+36	▯`8184`	BODY
+35	◈`42`	BODY
+
+	
+cycle 8
+36	▯`8149`	BODY
+38	#`34`	BODY
+36	▯`8149`	BODY
+35	◈`43`	BODY
+
+	
+cycle 9
+36	▯`8148`	BODY
+35	◈`44`	BODY
+
+	
+cycle 10
+36	▯`8147`	BODY
+35	◈`45`	BODY
+
+	
+cycle 11
+36	▯`8073`	BODY
+40	#`73`	BODY
+36	▯`8073`	BODY
+35	◈`46`	BODY
+
+	
+cycle 12
+36	▯`8072`	BODY
+35	◈`47`	BODY
+
+	
+cycle 13
+36	▯`8071`	BODY
+35	◈`48`	BODY
+
+	
+cycle 14
+36	▯`7601`	BODY
+37	#`469`	BODY
+36	▯`7601`	BODY
+35	◈`49`	BODY
+
+	
+cycle 15
+36	▯`7131`	BODY
+41	#`469`	BODY
+36	▯`7131`	BODY
+35	◈`50`	BODY
+
+	
+cycle 16
+36	▯`7130`	BODY
+35	◈`51`	BODY
+
+	
+cycle 17
+36	▯`7129`	BODY
+35	◈`52`	BODY
+
+	
+cycle 18
+36	▯`7128`	BODY
+35	◈`53`	BODY
+
+	
+cycle 19
+36	▯`6596`	BODY
+39	#`531`	BODY
+36	▯`6596`	BODY
+35	◈`54`	BODY
+
+	
+cycle 20
+36	▯`6595`	BODY
+35	◈`55`	BODY
+469	T	BLOCK
+531	5	BLOCK
+
+	
+cycle 21
+36	▯`6594`	BODY
+35	◈`56`	BODY
+
+	
+cycle 22
+36	▯`6590`	BODY
+35	◈`60`	BODY
+
+	
+cycle 23
+36	▯`6589`	BODY
+35	◈`61`	BODY
+
+	
+cycle 24
+36	▯`6587`	BODY
+37	#`470`	BODY
+36	▯`6587`	BODY
+35	◈`62`	BODY
+
+	
+cycle 25
+36	▯`6585`	BODY
+38	#`35`	BODY
+36	▯`6585`	BODY
+35	◈`63`	BODY
+
+	
+cycle 26
+36	▯`6584`	BODY
+35	◈`64`	BODY
+
+	
+cycle 27
+36	▯`6596`	BODY
+35	◈`52`	BODY
+
+	
+cycle 28
+36	▯`6595`	BODY
+35	◈`53`	BODY
+
+	
+cycle 29
+36	▯`6550`	BODY
+39	#`575`	BODY
+36	▯`6550`	BODY
+35	◈`54`	BODY
+
+	
+cycle 30
+36	▯`6549`	BODY
+35	◈`55`	BODY
+470	◇`None`	BLOCK
+575	=	BLOCK
+
+	
+cycle 31
+36	▯`6548`	BODY
+35	◈`56`	BODY
+
+	
+cycle 32
+36	▯`6544`	BODY
+35	◈`60`	BODY
+
+	
+cycle 33
+36	▯`6543`	BODY
+35	◈`61`	BODY
+
+	
+cycle 34
+36	▯`6541`	BODY
+37	#`471`	BODY
+36	▯`6541`	BODY
+35	◈`62`	BODY
+
+	
+cycle 35
+36	▯`6539`	BODY
+38	#`36`	BODY
+36	▯`6539`	BODY
+35	◈`63`	BODY
+
+	
+cycle 36
+36	▯`6538`	BODY
+35	◈`64`	BODY
+
+	
+cycle 37
+36	▯`6550`	BODY
+35	◈`52`	BODY
+
+	
+cycle 38
+36	▯`6549`	BODY
+35	◈`53`	BODY
+
+	
+cycle 39
+36	▯`6587`	BODY
+39	#`536`	BODY
+36	▯`6587`	BODY
+35	◈`54`	BODY
+
+	
+cycle 40
+36	▯`6586`	BODY
+35	◈`55`	BODY
+471	▯`8191`	BLOCK
+536	j	BLOCK
+
+	
+cycle 41
+36	▯`6585`	BODY
+35	◈`56`	BODY
+
+	
+cycle 42
+36	▯`6581`	BODY
+35	◈`60`	BODY
+
+	
+cycle 43
+36	▯`6580`	BODY
+35	◈`61`	BODY
+
+	
+cycle 44
+36	▯`6578`	BODY
+37	#`472`	BODY
+36	▯`6578`	BODY
+35	◈`62`	BODY
+
+	
+cycle 45
+36	▯`6576`	BODY
+38	#`37`	BODY
+36	▯`6576`	BODY
+35	◈`63`	BODY
+
+	
+cycle 46
+36	▯`6575`	BODY
+35	◈`64`	BODY
+
+	
+cycle 47
+36	▯`6587`	BODY
+35	◈`52`	BODY
+
+	
+cycle 48
+36	▯`6586`	BODY
+35	◈`53`	BODY
+
+	
+cycle 49
+36	▯`6605`	BODY
+39	#`516`	BODY
+36	▯`6605`	BODY
+35	◈`54`	BODY
+
+	
+cycle 50
+36	▯`6604`	BODY
+35	◈`55`	BODY
+472	#`0`	BLOCK
+516	~	BLOCK
+
+	
+cycle 51
+36	▯`6603`	BODY
+35	◈`56`	BODY
+
+	
+cycle 52
+36	▯`6599`	BODY
+35	◈`60`	BODY
+
+	
+cycle 53
+36	▯`6598`	BODY
+35	◈`61`	BODY
+
+	
+cycle 54
+36	▯`6596`	BODY
+37	#`473`	BODY
+36	▯`6596`	BODY
+35	◈`62`	BODY
+
+	
+cycle 55
+36	▯`6594`	BODY
+38	#`38`	BODY
+36	▯`6594`	BODY
+35	◈`63`	BODY
+
+	
+cycle 56
+36	▯`6593`	BODY
+35	◈`64`	BODY
+
+	
+cycle 57
+36	▯`6605`	BODY
+35	◈`52`	BODY
+
+	
+cycle 58
+36	▯`6604`	BODY
+35	◈`53`	BODY
+
+	
+cycle 59
+36	▯`6601`	BODY
+39	#`518`	BODY
+36	▯`6601`	BODY
+35	◈`54`	BODY
+
+	
+cycle 60
+36	▯`6600`	BODY
+35	◈`55`	BODY
+473	#`0`	BLOCK
+518	3	BLOCK
+
+	
+cycle 61
+36	▯`6599`	BODY
+35	◈`56`	BODY
+
+	
+cycle 62
+36	▯`6595`	BODY
+35	◈`60`	BODY
+
+	
+cycle 63
+36	▯`6594`	BODY
+35	◈`61`	BODY
+
+	
+cycle 64
+36	▯`6592`	BODY
+37	#`474`	BODY
+36	▯`6592`	BODY
+35	◈`62`	BODY
+
+	
+cycle 65
+36	▯`6590`	BODY
+38	#`39`	BODY
+36	▯`6590`	BODY
+35	◈`63`	BODY
+
+	
+cycle 66
+36	▯`6589`	BODY
+35	◈`64`	BODY
+
+	
+cycle 67
+36	▯`6601`	BODY
+35	◈`52`	BODY
+
+	
+cycle 68
+36	▯`6600`	BODY
+35	◈`53`	BODY
+
+	
+cycle 69
+36	▯`6501`	BODY
+39	#`616`	BODY
+36	▯`6501`	BODY
+35	◈`54`	BODY
+
+	
+cycle 70
+36	▯`6500`	BODY
+35	◈`55`	BODY
+474	#`0`	BLOCK
+616	h	BLOCK
+
+	
+cycle 1
+68	▯`8190`	BODY
+67	◈`68`	BODY
+
+	
+cycle 2
+68	▯`8189`	BODY
+67	◈`69`	BODY
+
+	
+cycle 3
+68	▯`8188`	BODY
+69	#`0`	BODY
+68	▯`8188`	BODY
+67	◈`70`	BODY
+
+	
+cycle 4
+68	▯`8187`	BODY
+70	#`0`	BODY
+68	▯`8187`	BODY
+67	◈`71`	BODY
+
+	
+cycle 5
+68	▯`8186`	BODY
+71	#`0`	BODY
+68	▯`8186`	BODY
+67	◈`72`	BODY
+
+	
+cycle 6
+68	▯`8185`	BODY
+72	#`0`	BODY
+68	▯`8185`	BODY
+67	◈`73`	BODY
+
+	
+cycle 7
+68	▯`8184`	BODY
+73	#`0`	BODY
+68	▯`8184`	BODY
+67	◈`74`	BODY
+
+	
+cycle 8
+68	▯`8117`	BODY
+70	#`66`	BODY
+68	▯`8117`	BODY
+67	◈`75`	BODY
+
+	
+cycle 9
+68	▯`8116`	BODY
+67	◈`76`	BODY
+
+	
+cycle 10
+68	▯`8115`	BODY
+67	◈`77`	BODY
+
+	
+cycle 11
+68	▯`8009`	BODY
+72	#`105`	BODY
+68	▯`8009`	BODY
+67	◈`78`	BODY
+
+	
+cycle 12
+68	▯`8008`	BODY
+67	◈`79`	BODY
+
+	
+cycle 13
+68	▯`8007`	BODY
+67	◈`80`	BODY
+
+	
+cycle 14
+68	▯`7685`	BODY
+69	#`321`	BODY
+68	▯`7685`	BODY
+67	◈`81`	BODY
+
+	
+cycle 15
+68	▯`7363`	BODY
+73	#`321`	BODY
+68	▯`7363`	BODY
+67	◈`82`	BODY
+
+	
+cycle 16
+68	▯`7362`	BODY
+67	◈`83`	BODY
+
+	
+cycle 17
+68	▯`7361`	BODY
+67	◈`84`	BODY
+
+	
+cycle 18
+68	▯`7360`	BODY
+67	◈`85`	BODY
+
+	
+cycle 19
+68	▯`7030`	BODY
+71	#`329`	BODY
+68	▯`7030`	BODY
+67	◈`86`	BODY
+
+	
+cycle 20
+68	▯`7029`	BODY
+67	◈`87`	BODY
+321	T	BLOCK
+329	?	BLOCK
+
+	
+cycle 21
+68	▯`7028`	BODY
+67	◈`88`	BODY
+
+	
+cycle 22
+68	▯`7024`	BODY
+67	◈`92`	BODY
+
+	
+cycle 23
+68	▯`7023`	BODY
+67	◈`93`	BODY
+
+	
+cycle 24
+68	▯`7021`	BODY
+69	#`322`	BODY
+68	▯`7021`	BODY
+67	◈`94`	BODY
+
+	
+cycle 25
+68	▯`7019`	BODY
+70	#`67`	BODY
+68	▯`7019`	BODY
+67	◈`95`	BODY
+
+	
+cycle 26
+68	▯`7018`	BODY
+67	◈`96`	BODY
+
+	
+cycle 27
+68	▯`7030`	BODY
+67	◈`84`	BODY
+
+	
+cycle 28
+68	▯`7029`	BODY
+67	◈`85`	BODY
+
+	
+cycle 29
+68	▯`6934`	BODY
+71	#`423`	BODY
+68	▯`6934`	BODY
+67	◈`86`	BODY
+
+	
+cycle 30
+68	▯`6933`	BODY
+67	◈`87`	BODY
+322	◇`None`	BLOCK
+423	6	BLOCK
+
+	
+cycle 31
+68	▯`6932`	BODY
+67	◈`88`	BODY
+
+	
+cycle 32
+68	▯`6928`	BODY
+67	◈`92`	BODY
+
+	
+cycle 33
+68	▯`6927`	BODY
+67	◈`93`	BODY
+
+	
+cycle 34
+68	▯`6925`	BODY
+69	#`323`	BODY
+68	▯`6925`	BODY
+67	◈`94`	BODY
+
+	
+cycle 35
+68	▯`6923`	BODY
+70	#`68`	BODY
+68	▯`6923`	BODY
+67	◈`95`	BODY
+
+	
+cycle 36
+68	▯`6922`	BODY
+67	◈`96`	BODY
+
+	
+cycle 37
+68	▯`6934`	BODY
+67	◈`84`	BODY
+
+	
+cycle 38
+68	▯`6933`	BODY
+67	◈`85`	BODY
+
+	
+cycle 39
+68	▯`7028`	BODY
+71	#`327`	BODY
+68	▯`7028`	BODY
+67	◈`86`	BODY
+
+	
+cycle 40
+68	▯`7027`	BODY
+67	◈`87`	BODY
+323	▯`8191`	BLOCK
+327	!	BLOCK
+
+	
+cycle 41
+68	▯`7026`	BODY
+67	◈`88`	BODY
+
+	
+cycle 42
+68	▯`7022`	BODY
+67	◈`92`	BODY
+
+	
+cycle 43
+68	▯`7021`	BODY
+67	◈`93`	BODY
+
+	
+cycle 44
+68	▯`7019`	BODY
+69	#`324`	BODY
+68	▯`7019`	BODY
+67	◈`94`	BODY
+
+	
+cycle 45
+68	▯`7017`	BODY
+70	#`69`	BODY
+68	▯`7017`	BODY
+67	◈`95`	BODY
+
+	
+cycle 46
+68	▯`7016`	BODY
+67	◈`96`	BODY
+
+	
+cycle 47
+68	▯`7028`	BODY
+67	◈`84`	BODY
+
+	
+cycle 48
+68	▯`7027`	BODY
+67	◈`85`	BODY
+
+	
+cycle 49
+68	▯`7011`	BODY
+71	#`342`	BODY
+68	▯`7011`	BODY
+67	◈`86`	BODY
+
+	
+cycle 50
+68	▯`7010`	BODY
+67	◈`87`	BODY
+324	#`0`	BLOCK
+342	>	BLOCK
+
+	
+cycle 51
+68	▯`7009`	BODY
+67	◈`88`	BODY
+
+	
+cycle 52
+68	▯`7005`	BODY
+67	◈`92`	BODY
+
+	
+cycle 53
+68	▯`7004`	BODY
+67	◈`93`	BODY
+
+	
+cycle 54
+68	▯`7002`	BODY
+69	#`325`	BODY
+68	▯`7002`	BODY
+67	◈`94`	BODY
+
+	
+cycle 55
+68	▯`7000`	BODY
+70	#`70`	BODY
+68	▯`7000`	BODY
+67	◈`95`	BODY
+
+	
+cycle 56
+68	▯`6999`	BODY
+67	◈`96`	BODY
+
+	
+cycle 57
+68	▯`7011`	BODY
+67	◈`84`	BODY
+
+	
+cycle 58
+68	▯`7010`	BODY
+67	◈`85`	BODY
+
+	
+cycle 59
+68	▯`6921`	BODY
+71	#`430`	BODY
+68	▯`6921`	BODY
+67	◈`86`	BODY
+
+	
+cycle 60
+68	▯`6920`	BODY
+67	◈`87`	BODY
+325	#`0`	BLOCK
+430	=	BLOCK
+
+	
+cycle 61
+68	▯`6919`	BODY
+67	◈`88`	BODY
+
+	
+cycle 1
+325	▯`8190`	BODY
+324	◈`325`	BODY
+
+	
+cycle 2
+325	▯`8189`	BODY
+324	◈`326`	BODY
+
+	
+cycle 3
+325	▯`8188`	BODY
+326	#`0`	BODY
+325	▯`8188`	BODY
+324	◈`327`	BODY
+
+	
+cycle 4
+325	▯`8187`	BODY
+327	#`0`	BODY
+325	▯`8187`	BODY
+324	◈`328`	BODY
+
+	
+cycle 5
+325	▯`8186`	BODY
+328	#`0`	BODY
+325	▯`8186`	BODY
+324	◈`329`	BODY
+
+	
+cycle 6
+325	▯`8185`	BODY
+329	#`0`	BODY
+325	▯`8185`	BODY
+324	◈`330`	BODY
+
+	
+cycle 7
+325	▯`8184`	BODY
+330	#`0`	BODY
+325	▯`8184`	BODY
+324	◈`331`	BODY
+
+	
+cycle 8
+325	▯`7860`	BODY
+327	#`323`	BODY
+325	▯`7860`	BODY
+324	◈`332`	BODY
+
+	
+cycle 9
+325	▯`7859`	BODY
+324	◈`333`	BODY
+
+	
+cycle 10
+325	▯`7858`	BODY
+324	◈`334`	BODY
+
+	
+cycle 11
+325	▯`7495`	BODY
+329	#`362`	BODY
+325	▯`7495`	BODY
+324	◈`335`	BODY
+
+	
+cycle 12
+325	▯`7494`	BODY
+324	◈`336`	BODY
+
+	
+cycle 13
+325	▯`7493`	BODY
+324	◈`337`	BODY
+
+	
+cycle 14
+325	▯`6508`	BODY
+326	#`984`	BODY
+325	▯`6508`	BODY
+324	◈`338`	BODY
+
+	
+cycle 15
+325	▯`5523`	BODY
+330	#`984`	BODY
+325	▯`5523`	BODY
+324	◈`339`	BODY
+
+	
+cycle 16
+325	▯`5522`	BODY
+324	◈`340`	BODY
+
+	
+cycle 17
+325	▯`5521`	BODY
+324	◈`341`	BODY
+
+	
+cycle 18
+325	▯`5520`	BODY
+324	◈`342`	BODY
+
+	
+cycle 19
+325	▯`5519`	BODY
+325	▯`5519`	BODY
+324	◈`343`	BODY
+328	_`None`	BLOCK
+
+	
+cycle 20
+325	▯`5518`	BODY
+324	◈`344`	BODY
+
+	
+cycle 21
+325	▯`5517`	BODY
+324	◈`345`	BODY
+
+	
+cycle 22
+325	▯`5513`	BODY
+324	◈`349`	BODY
+
+	
+cycle 23
+325	▯`5512`	BODY
+324	◈`350`	BODY
+
+	
+cycle 24
+325	▯`5510`	BODY
+326	#`985`	BODY
+325	▯`5510`	BODY
+324	◈`351`	BODY
+
+	
+cycle 25
+325	▯`5508`	BODY
+327	#`324`	BODY
+325	▯`5508`	BODY
+324	◈`352`	BODY
+
+	
+cycle 26
+325	▯`5507`	BODY
+324	◈`353`	BODY
+
+	
+cycle 27
+325	▯`5519`	BODY
+324	◈`341`	BODY
+
+	
+cycle 28
+325	▯`5518`	BODY
+324	◈`342`	BODY
+
+	
+cycle 29
+325	▯`4527`	BODY
+325	▯`4527`	BODY
+324	◈`343`	BODY
+328	#`990`	BLOCK
+
+	
+cycle 30
+325	▯`4526`	BODY
+324	◈`344`	BODY
+985	◇`None`	BLOCK
+990	3	BLOCK
+
+	
+cycle 31
+325	▯`4525`	BODY
+324	◈`345`	BODY
+
+	
+cycle 32
+325	▯`4521`	BODY
+324	◈`349`	BODY
+
+	
+cycle 33
+325	▯`4520`	BODY
+324	◈`350`	BODY
+
+	
+cycle 34
+325	▯`4518`	BODY
+326	#`986`	BODY
+325	▯`4518`	BODY
+324	◈`351`	BODY
+
+	
+cycle 35
+325	▯`4516`	BODY
+327	#`325`	BODY
+325	▯`4516`	BODY
+324	◈`352`	BODY
+
+	
+cycle 36
+325	▯`4515`	BODY
+324	◈`353`	BODY
+
+	
+cycle 37
+325	▯`4527`	BODY
+324	◈`341`	BODY
+
+	
+cycle 38
+325	▯`4526`	BODY
+324	◈`342`	BODY
+
+	
+cycle 39
+325	▯`5515`	BODY
+325	▯`5515`	BODY
+324	◈`343`	BODY
+328	_`None`	BLOCK
+
+	
+cycle 40
+325	▯`5514`	BODY
+324	◈`344`	BODY
+
+	
+cycle 41
+325	▯`5513`	BODY
+324	◈`345`	BODY
+
+	
+cycle 42
+325	▯`5509`	BODY
+324	◈`349`	BODY
+
+	
+cycle 43
+325	▯`5508`	BODY
+324	◈`350`	BODY
+
+	
+cycle 44
+325	▯`5506`	BODY
+326	#`987`	BODY
+325	▯`5506`	BODY
+324	◈`351`	BODY
+
+	
+cycle 45
+325	▯`5504`	BODY
+327	#`326`	BODY
+325	▯`5504`	BODY
+324	◈`352`	BODY
+
+	
+cycle 46
+325	▯`5503`	BODY
+324	◈`353`	BODY
+
+	
+cycle 47
+325	▯`5515`	BODY
+324	◈`341`	BODY

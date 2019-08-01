@@ -5,6 +5,7 @@ from opcode import Opcodes
 
 class SimulationData:
     soup = BitArray('0b' + '0'*TOTAL_MEM_LEN)
+    cycle = 0
     blocks = []
     executorAddrList = []
     checkedAddresses = [] # list of tuples (checked, checkedBy)
@@ -162,6 +163,7 @@ class SimulationData:
         self._blockUpdates.clear()
         self._awakeningLocations.clear()
         self._hibernationLocations.clear()
+        self.cycle += 1
         
 
 from const import COSMIC_RAY_MUTATION_ATTEMPT_COUNT
@@ -169,8 +171,10 @@ from const import COSMIC_RAY_MUTATION_CHANCE
 from const import TOTAL_MEM_LEN
 from const import MEM_BLOCK_LEN
 import random
+from tracker import Tracker
 class Simulation:
     data = SimulationData()
+    tracker = None
     
     # WARNING: very slow function
     def symbolString(self):
@@ -191,7 +195,9 @@ class Simulation:
                 self.data.soup.overwrite(bit, index)
                 
                 self.data.logMutation(int(index / MEM_BLOCK_LEN), soft=False)
-
+        
+        self.tracker.log(self.data)
+        
 
     def execute(self, executorAddress):   
         import utils
@@ -213,12 +219,12 @@ class Simulation:
             print("surrounding bits:", cut[blockAddress-1:blockAddress+1])
             raise
         
-        print("running instruction ", block["header"]["symbol"], " @ ", blockAddress)
+        printArgs = ["running instruction ", block["header"]["symbol"], " @ ", blockAddress]
         bef = blockAddress
             
         if block["header"]["execute?"]:
             args = utils.decodeArgs(self.data, blockAddress, block["body"]["arg count"])
-            print("\t", "function: ", block["body"]["function"], " with args ", args)
+            printArgs.extend(["function: ", block["body"]["function"], " with args ", args])
             retval = block["body"]["function"](self.data, executorAddress, blockAddress, *args)
             
             if "checked address" in retval:
@@ -268,7 +274,8 @@ class Simulation:
             
         #print("\tsetting ip from ", bef, " to ", blockAddress)
         utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress, unsigned=True)
-            
+        print(*printArgs)
+        
     
     def init(self, ancestorString):
         import random
@@ -303,6 +310,14 @@ class Simulation:
         # initialize the data
         self.data.initializeBlocks()
         
+        # initialize the tracker
+        self.tracker = Tracker(self.data)
+     
+     
+    def forceQuit(self):
+        print("Saving...")
+        self.tracker._writeLogs()
+        print("\tDone!")
         
 
 if __name__ == "__main__":  

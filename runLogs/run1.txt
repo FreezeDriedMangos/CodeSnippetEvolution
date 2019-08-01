@@ -1,0 +1,524 @@
+body len = 13
+header len = 3
+body opener = "`"
+body closer = "`"
+
+initial soup:
+m::^÷g#C«&eMAL◇E~I]9cC⊕33(4#<|9emu*h%^ce‽^jl%v~K^Ifai*lz&B"T~h7h]=vL▯-.‽m5K2T◈▯#
+####[t1]t3r"04B>$2=13)d^^1(bD^4:4(tT?+9⊕L-=|>hJA4A▯f‽‽6‽i!&"÷|Dx⸘A÷<tee%EzM2M]2C
+2hh¿h~3*?l(L⊕t◇A◇>C⸘gFm«(◇uG▯2M)~5(1÷a»k)zhtE↓&<%⊕j:rnCtJ[FIh#v»-5.z$5JG52cLxjm▯
+7‽)h5&hK<#e1l↓!TgBcL.«="nL=+r+])¿b83iv79*Bmuc↑$+9"23»F$k"▯▯ Kc⊕F#▯|»»I÷)G0$¿%].#
+K 3B¿÷↓G3]CK÷3:~HJC^16KA÷T÷[5◇↑.AJ»^xk~6x⸘5i%g◇÷:A)j9!LLBm5>kL1TA4Tv7!x]T=«K<d|▯
+eI!=."+!«!i1K=+k¿K◇9m6⊕iI▯&h|r?+4j÷tMuEurC÷eEgc↑f¿.cD&=iA«*uAa|«:8»7)h1÷Kz26rE↓▯
+]L◇bx¿E*?.⊕▯|*)Fg1:&b6▯8I»K÷.↓«||]4⸘3A÷a.[F.ivbI+B6«1C6j4.vd>$.C%Eav*B|3¿d[[x7Hf
+5kc(¿jC↓ 30J*~uI↓↓j358v»⸘h!B?6Ha↑60 a7t7-.r(÷aB?f+a¿32A(g?I~4.h1!j|l(?~^k‽+DD8%:
+↑J2◇ LArl]xdD%7 ◇=zd⸘D1Hv]Gi8~CkvKc»¿⸘gr>>0¿▯KJ8»⸘◇mt⊕%-cc5uBDxce‽Fl↑fbtEe⸘H4c0e
+((|⸘.d8<[9⸘26«ubA▯$vu)▯i2n«HG?GK"F‽n|mrK55!k2(3*j677)Dn◇vKL+at*I‽2-Azex[CuK52 ¿▯
+↑L↓J5vviHvD="⸘⸘÷H[:gTH91dd|↑h>~dr⸘f"=k⸘|4Bnjtm FkL40¿ukfA)B2^:|z7Ei%0I0tb&!|7A»j
+z7aetMF^]-«&3B8-!7G3CF3=G3L!a?n‽[h *~⸘?Jm##8 AcGM*÷)»?d▯r#A6AEv⊕K42h▯1M↑«gt>[!K%
+÷g»i=◇C^a¿cI↓FudL>÷k1Kg>&k1«d|‽r>1tb!h⸘K
+
+BODIES:
+6	#`0`
+14	◇`None`
+27	#`0`
+68	▯`8191`
+77	◈`77`
+78	▯`8191`
+79	#`0`
+80	#`0`
+81	#`0`
+82	#`0`
+83	#`0`
+130	▯`8191`
+174	◇`None`
+176	◇`None`
+185	◇`None`
+188	▯`8191`
+221	#`0`
+239	▯`8191`
+249	#`0`
+297	▯`8191`
+298	▯`8191`
+304	#`0`
+305	▯`8191`
+319	#`0`
+349	◇`None`
+366	◇`None`
+399	▯`8191`
+418	◇`None`
+425	▯`8191`
+479	▯`8191`
+482	◇`None`
+491	▯`8191`
+502	▯`8191`
+643	◇`None`
+656	◇`None`
+684	▯`8191`
+690	◇`None`
+737	▯`8191`
+742	▯`8191`
+775	◇`None`
+799	▯`8191`
+921	#`0`
+922	#`0`
+935	▯`8191`
+937	#`0`
+948	▯`8191`
+965	◇`None`
+
+	
+cycle 1
+78	▯`8190`	BODY
+77	◈`78`	BODY
+
+	
+cycle 2
+78	▯`8189`	BODY
+77	◈`79`	BODY
+
+	
+cycle 3
+78	▯`8188`	BODY
+79	#`0`	BODY
+78	▯`8188`	BODY
+77	◈`80`	BODY
+
+	
+cycle 4
+78	▯`8187`	BODY
+80	#`0`	BODY
+78	▯`8187`	BODY
+77	◈`81`	BODY
+
+	
+cycle 5
+78	▯`8186`	BODY
+81	#`0`	BODY
+78	▯`8186`	BODY
+77	◈`82`	BODY
+
+	
+cycle 6
+78	▯`8185`	BODY
+82	#`0`	BODY
+78	▯`8185`	BODY
+77	◈`83`	BODY
+
+	
+cycle 7
+78	▯`8184`	BODY
+83	#`0`	BODY
+78	▯`8184`	BODY
+77	◈`84`	BODY
+
+	
+cycle 8
+78	▯`8107`	BODY
+80	#`76`	BODY
+78	▯`8107`	BODY
+77	◈`85`	BODY
+
+	
+cycle 9
+78	▯`8106`	BODY
+77	◈`86`	BODY
+
+	
+cycle 10
+78	▯`8105`	BODY
+77	◈`87`	BODY
+
+	
+cycle 11
+78	▯`7989`	BODY
+82	#`115`	BODY
+78	▯`7989`	BODY
+77	◈`88`	BODY
+
+	
+cycle 12
+78	▯`7988`	BODY
+77	◈`89`	BODY
+
+	
+cycle 13
+78	▯`7987`	BODY
+77	◈`90`	BODY
+
+	
+cycle 14
+78	▯`7352`	BODY
+79	#`634`	BODY
+78	▯`7352`	BODY
+77	◈`91`	BODY
+
+	
+cycle 15
+78	▯`6717`	BODY
+83	#`634`	BODY
+78	▯`6717`	BODY
+77	◈`92`	BODY
+
+	
+cycle 16
+78	▯`6716`	BODY
+77	◈`93`	BODY
+
+	
+cycle 17
+78	▯`6715`	BODY
+77	◈`94`	BODY
+
+	
+cycle 18
+78	▯`6714`	BODY
+77	◈`95`	BODY
+
+	
+cycle 19
+78	▯`5893`	BODY
+81	#`820`	BODY
+78	▯`5893`	BODY
+77	◈`96`	BODY
+
+	
+cycle 20
+78	▯`5892`	BODY
+77	◈`97`	BODY
+634	T	BLOCK
+820	+	BLOCK
+
+	
+cycle 21
+78	▯`5891`	BODY
+77	◈`98`	BODY
+
+	
+cycle 22
+78	▯`5887`	BODY
+77	◈`102`	BODY
+
+	
+cycle 23
+78	▯`5886`	BODY
+77	◈`103`	BODY
+
+	
+cycle 24
+78	▯`5884`	BODY
+79	#`635`	BODY
+78	▯`5884`	BODY
+77	◈`104`	BODY
+
+	
+cycle 25
+78	▯`5882`	BODY
+80	#`77`	BODY
+78	▯`5882`	BODY
+77	◈`105`	BODY
+
+	
+cycle 26
+78	▯`5881`	BODY
+77	◈`106`	BODY
+
+	
+cycle 27
+78	▯`5893`	BODY
+77	◈`94`	BODY
+
+	
+cycle 28
+78	▯`5892`	BODY
+77	◈`95`	BODY
+
+	
+cycle 29
+78	▯`6068`	BODY
+81	#`643`	BODY
+78	▯`6068`	BODY
+77	◈`96`	BODY
+
+	
+cycle 30
+78	▯`6067`	BODY
+77	◈`97`	BODY
+635	◇`None`	BLOCK
+643	D	BLOCK
+
+	
+cycle 31
+78	▯`6066`	BODY
+77	◈`98`	BODY
+
+	
+cycle 32
+78	▯`6062`	BODY
+77	◈`102`	BODY
+
+	
+cycle 33
+78	▯`6061`	BODY
+77	◈`103`	BODY
+
+	
+cycle 34
+78	▯`6059`	BODY
+79	#`636`	BODY
+78	▯`6059`	BODY
+77	◈`104`	BODY
+
+	
+cycle 35
+78	▯`6057`	BODY
+80	#`78`	BODY
+78	▯`6057`	BODY
+77	◈`105`	BODY
+
+	
+cycle 36
+78	▯`6056`	BODY
+77	◈`106`	BODY
+
+	
+cycle 37
+78	▯`6068`	BODY
+77	◈`94`	BODY
+
+	
+cycle 38
+78	▯`6067`	BODY
+77	◈`95`	BODY
+
+	
+cycle 39
+78	▯`6025`	BODY
+81	#`684`	BODY
+78	▯`6025`	BODY
+77	◈`96`	BODY
+
+	
+cycle 40
+78	▯`6024`	BODY
+77	◈`97`	BODY
+636	▯`8191`	BLOCK
+684	D	BLOCK
+
+	
+cycle 41
+78	▯`6023`	BODY
+77	◈`98`	BODY
+
+	
+cycle 42
+78	▯`6019`	BODY
+77	◈`102`	BODY
+
+	
+cycle 43
+78	▯`6018`	BODY
+77	◈`103`	BODY
+
+	
+cycle 44
+78	▯`6016`	BODY
+79	#`637`	BODY
+78	▯`6016`	BODY
+77	◈`104`	BODY
+
+	
+cycle 45
+78	▯`6014`	BODY
+80	#`79`	BODY
+78	▯`6014`	BODY
+77	◈`105`	BODY
+
+	
+cycle 46
+78	▯`6013`	BODY
+77	◈`106`	BODY
+
+	
+cycle 47
+78	▯`6025`	BODY
+77	◈`94`	BODY
+
+	
+cycle 48
+78	▯`6024`	BODY
+77	◈`95`	BODY
+
+	
+cycle 49
+78	▯`5786`	BODY
+81	#`921`	BODY
+78	▯`5786`	BODY
+77	◈`96`	BODY
+
+	
+cycle 50
+78	▯`5785`	BODY
+77	◈`97`	BODY
+637	#`0`	BLOCK
+921	8	BLOCK
+
+	
+cycle 51
+78	▯`5784`	BODY
+77	◈`98`	BODY
+
+	
+cycle 52
+78	▯`5780`	BODY
+77	◈`102`	BODY
+
+	
+cycle 53
+78	▯`5779`	BODY
+77	◈`103`	BODY
+
+	
+cycle 54
+78	▯`5777`	BODY
+79	#`638`	BODY
+78	▯`5777`	BODY
+77	◈`104`	BODY
+
+	
+cycle 55
+78	▯`5775`	BODY
+80	#`80`	BODY
+78	▯`5775`	BODY
+77	◈`105`	BODY
+
+	
+cycle 56
+78	▯`5774`	BODY
+77	◈`106`	BODY
+
+	
+cycle 57
+78	▯`5786`	BODY
+77	◈`94`	BODY
+
+	
+cycle 58
+78	▯`5785`	BODY
+77	◈`95`	BODY
+
+	
+cycle 59
+78	▯`5783`	BODY
+81	#`922`	BODY
+78	▯`5783`	BODY
+77	◈`96`	BODY
+
+	
+cycle 60
+78	▯`5782`	BODY
+77	◈`97`	BODY
+638	#`0`	BLOCK
+922	%	BLOCK
+
+	
+cycle 61
+78	▯`5781`	BODY
+77	◈`98`	BODY
+
+	
+cycle 62
+78	▯`5777`	BODY
+77	◈`102`	BODY
+
+	
+cycle 63
+78	▯`5776`	BODY
+77	◈`103`	BODY
+
+	
+cycle 64
+78	▯`5774`	BODY
+79	#`639`	BODY
+78	▯`5774`	BODY
+77	◈`104`	BODY
+
+	
+cycle 65
+78	▯`5772`	BODY
+80	#`81`	BODY
+78	▯`5772`	BODY
+77	◈`105`	BODY
+
+	
+cycle 66
+78	▯`5771`	BODY
+77	◈`106`	BODY
+
+	
+cycle 67
+78	▯`5783`	BODY
+77	◈`94`	BODY
+
+	
+cycle 68
+78	▯`5782`	BODY
+77	◈`95`	BODY
+
+	
+cycle 69
+78	▯`5766`	BODY
+81	#`937`	BODY
+78	▯`5766`	BODY
+77	◈`96`	BODY
+
+	
+cycle 70
+78	▯`5765`	BODY
+77	◈`97`	BODY
+639	#`0`	BLOCK
+937	:	BLOCK
+
+	
+cycle 71
+78	▯`5764`	BODY
+77	◈`98`	BODY
+
+	
+cycle 72
+78	▯`5760`	BODY
+77	◈`102`	BODY
+
+	
+cycle 73
+78	▯`5759`	BODY
+77	◈`103`	BODY
+
+	
+cycle 74
+78	▯`5757`	BODY
+79	#`640`	BODY
+78	▯`5757`	BODY
+77	◈`104`	BODY
+
+	
+cycle 75
+78	▯`5755`	BODY
+80	#`82`	BODY
+78	▯`5755`	BODY
+77	◈`105`	BODY
+
+	
+cycle 76
+78	▯`5754`	BODY
+77	◈`106`	BODY
+
+	
+cycle 77
+78	▯`5766`	BODY
+77	◈`94`	BODY
+
+	
+cycle 78
+78	▯`5765`	BODY
+77	◈`95`	BODY
