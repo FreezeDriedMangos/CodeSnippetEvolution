@@ -7,10 +7,7 @@ import utils
 assemblyOpcodes = Opcodes()
 
 def compileGenomeFromFile(filepath):
-    genomeString = open(genomeString, 'r').read()
-    
-    genomeString = re.sub(r"(\/\/ .*\n)|(\/\/ .*)| |\n", "", genomeString)
-    
+    genomeString = genomeSymbolsFromFile(filepath)
     return (compileGenome(genomeString), genomeString)
 
 
@@ -19,6 +16,12 @@ def compileGenome(genomeString):
     assembledGenome = "".join(assemb[symbol] for symbol in genomeString)
     return assembledGenome
     
+
+def genomeSymbolsFromFile(filepath):
+    genomeString = open(genomeString, 'r').read()
+    genomeString = re.sub(r"(\/\/ .*\n)|(\/\/ .*)| |\n", "", genomeString)
+    return genomeString
+
             
 def symbolAssembly():
     FLAG_CODES = assemblyOpcodes.FLAG_CODES
