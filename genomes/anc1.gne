@@ -32,6 +32,11 @@ r       // generate a random address, store it in r0 - this will be the start ad
 
 B       // lock - marker of the find loop
 >       // starting after [r0], search for instruction at [r1], store its address in r2
+‽2      // if [r2] is not null, 
+)c          // jump to the swap function
+(t          // else, start over
+
+C       // SWAP FUNCTION
 $2      // swap mem[r2] and mem[r0] - adding another block onto the child
 =13     // if [r0] == [r1]   aka if we've just swapped the last piece
 )d      //     awaken the child
@@ -45,9 +50,9 @@ D       // lock - marker of the awaken child function
 (t      // start over and make a new child
 
 T       // end of the genome
-
+ 
 // genome laid out linearly, without comments:
-// T◈▯#####[t1]t3r"04B>$2=13)d^^1(bD^4:4(tT
+// T◈▯#####[t1]t3r"04B>‽2)c(tC$2=13)d^^1(bD^4:4(tT
 
 
 
