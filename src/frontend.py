@@ -21,7 +21,7 @@ def getTooltipText(simData, index, text):
 
 
 chunkSize = 50
-ancestor = '''T◈▯#####[t1]t3r"04B>$2=13)d^^1(bD^4:4(tT''' #'''T◈▯###''' '''##[t]t1r2"23"24B⸘03)c^3(bC$32=)d^^2"23(bD^4:4(tT'''
+ancestor = '''T◈▯#####[t1]t3r"04B>‽2)c(tC$2=13)d^^1(bD^4:4(tT''' #'''T◈▯###''' '''##[t]t1r2"23"24B⸘03)c^3(bC$32=)d^^2"23(bD^4:4(tT'''
 
 sim = Simulation()
       
@@ -149,6 +149,8 @@ from frontend_colors import colorLerp
 
 updateFade = {}
 def setFadeFrom(index, tocolor, fromcolor):
+    if i < 0 or i >= len(app.baseColors):
+        return
     app.baseColors[i] = tocolor
     updateFade.update({i: (1, fromcolor)})
     

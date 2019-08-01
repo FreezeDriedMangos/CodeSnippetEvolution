@@ -172,21 +172,29 @@ from const import TOTAL_MEM_LEN
 from const import MEM_BLOCK_LEN
 import random
 from tracker import Tracker
+import utils
 class Simulation:
     data = SimulationData()
     tracker = None
     
-    # WARNING: very slow function
     def symbolString(self):
-        import utils
         return ''.join(e["header"]["symbol"] for e in [utils.readBlock(self.data, i) for i in range(0, NUM_MEMORY_BLOCKS_IN_SOUP)])
     
     
     def cycle(self):
         self.data.clearLogs()
         
+        removeList = []
         for exeAddr in self.data.executorAddrList:
-            self.execute(exeAddr)
+            try:
+                self.execute(exeAddr)
+            except Exception as e:
+                print("Executor at ", exeAddr, " had a serious error, resulting in it going into dormancy:")
+                print(e)
+                utils.killExecutor(self.data, exeAddr)
+                removeList.append(exeAddr)
+        for e in removeList:
+            self.data.executorAddrList.remove(e)
             
         for i in range(COSMIC_RAY_MUTATION_ATTEMPT_COUNT):
             if random.random() < COSMIC_RAY_MUTATION_CHANCE:

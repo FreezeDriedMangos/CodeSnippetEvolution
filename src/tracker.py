@@ -13,7 +13,7 @@ class Tracker:
     
     def __init__(self, data):
         # below line modified from https://stackoverflow.com/a/2632251
-        self.filenum = len([name for name in os.listdir(self.FOLDER_PATH) if os.path.isfile(name)])+1
+        self.filenum = len([name for name in os.listdir(self.FOLDER_PATH)])
         self.filename = self.FOLDER_PATH + "run" + str(self.filenum) + ".txt"
 
         f = open(self.filename, "w+")
@@ -22,7 +22,27 @@ class Tracker:
         f.write("body opener = \"" + self.BODY_OPENER + "\"" + "\n")
         f.write("body closer = \"" + self.BODY_CLOSER + "\"" + "\n")
         
-        f.write("\n")
+        # RECORD OPCODES IN ORDER, LISTING THEIR NUMERICAL CONVERSIONS
+        # RECORD ALL CONSTANTS
+        
+        f.write("OPCODE DATA\n\n")
+        from opcode import Opcodes
+        import pprint
+        op = Opcodes()
+        printer = pprint.PrettyPrinter(indent=4, stream=f)
+        
+        f.write("Flag Names: " + str(op.FLAG_NAMES))
+        f.write("\n\n")
+        
+        f.write("Flag Codes:\n")
+        printer.pprint(op.FLAG_CODES)
+        f.write("\n\n")
+        
+        f.write("Instruction Codes:\n")
+        printer.pprint(op.INSTRUCTIONS)
+        f.write("\n\n")
+        
+        f.write("INITIAL SOUP\n")
         f.write(self.encode(data) + "\n")
         f.close()
         
@@ -32,7 +52,7 @@ class Tracker:
     
     
     def encode(self, data):
-        retval = "initial soup:\n"
+        retval = ""
         retval += self.lineBreak([block["header"]["symbol"] for block in data.blocks])
         retval += "\n\nBODIES:"
         

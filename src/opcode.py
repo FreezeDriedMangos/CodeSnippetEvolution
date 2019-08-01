@@ -164,6 +164,10 @@ class Opcodes:
         {"code": "MNTR", "symbol": '~', "type": "monitor", "arg count": 2, "function": monitor, "description": "Sets [r0] to the address most recently checked within this executor's claim boundaries, and [r1] to the address of the instruction that checked it. Both are set to null if no checks have been recently made."},
         
         {"code": "ADRS", "symbol": '$', "type": "memwrite", "arg count": 2, "function": swapMemoryBlocks, "description": "Swap the memory block at [r0] with the block at [r1]"},
+        # consider adding an "instruction to number" instruction that looks at an instruction at address [r0] and puts its numerical value in r1
+        # also an instruction that adds the value of instruction at [r1] to the one at [r0], turning [r1] into a noop
+        # also an instruction that takes half the value of @[r1] and adds it to @[r0]
+        # this will allow creatures to have better tools for manipulating their environment
         
         {"code": "INIT", "symbol": ':', "type": "init", "arg count": 1, "function": initializeExecutor, "description": "Initializes the executor at the address contained in r0. (Sets it to non-dormant and sets its instruction pointer to itself.)"},
         {"code": "DINT", "symbol": '.', "type": "deinit", "arg count": 1, "function": denitializeExecutor, "description": "Denitializes the executor at the address contained in r0. (Sets it to dormant.)"},
