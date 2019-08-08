@@ -18,7 +18,7 @@ def compileGenome(genomeString):
     
 
 def genomeSymbolsFromFile(filepath):
-    genomeString = open(genomeString, 'r').read()
+    genomeString = open(filepath, 'r').read()
     genomeString = re.sub(r"(\/\/ .*\n)|(\/\/ .*)| |\n", "", genomeString)
     return genomeString
 

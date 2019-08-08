@@ -89,7 +89,7 @@ class SimulationData:
         assert(type(binary) == str)
         assert(binary[0:1] != '0b')
         assert(len(binary) == MEM_BLOCK_LEN)
-        print("setting block ", address, " at index ", MEM_BLOCK_LEN*address)
+        #print("setting block ", address, " at index ", MEM_BLOCK_LEN*address)
         
         if random.random() < RANDOMIZE_BLOCK_ON_WRITE_CHANCE:
             binary = ''.join('1' if random.random() < 0.5 else '0' for i in range(MEM_BLOCK_LEN))
@@ -194,7 +194,8 @@ class Simulation:
                 utils.killExecutor(self.data, exeAddr)
                 removeList.append(exeAddr)
         for e in removeList:
-            self.data.executorAddrList.remove(e)
+            if e in self.data.executorAddrList:
+                self.data.executorAddrList.remove(e)
             
         for i in range(COSMIC_RAY_MUTATION_ATTEMPT_COUNT):
             if random.random() < COSMIC_RAY_MUTATION_CHANCE:
@@ -282,7 +283,7 @@ class Simulation:
             
         #print("\tsetting ip from ", bef, " to ", blockAddress)
         utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress, unsigned=True)
-        print(*printArgs)
+        #print(*printArgs)
         
     
     def init(self, ancestorString):

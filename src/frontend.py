@@ -1,9 +1,11 @@
 from sim import Simulation
 import utils
 import tkinter as tk
-
+from compiler import genomeSymbolsFromFile
 from frontend_colors import COLORS
 
+
+MAX_INSTRUCTION_LIST_SIZE = 10
 
 BLOCK_BODY_TOOLTIP_LIST = ["executor", "register", "dump register"]
 def getTooltipText(simData, index, text):
@@ -21,12 +23,9 @@ def getTooltipText(simData, index, text):
 
 
 chunkSize = 50
-ancestor = '''T◈▯#####[t1]t3r"04B>‽2)c(tC$2=13)d^^1(bD^4:4(tT''' #'''T◈▯###''' '''##[t]t1r2"23"24B⸘03)c^3(bC$32=)d^^2"23(bD^4:4(tT'''
+ancestor = genomeSymbolsFromFile("genomes/anc1_1.gne")
 
 sim = Simulation()
-      
- 
-
  
 
 #
@@ -36,12 +35,12 @@ import threading
 from tkTooltip import CreateToolTip
 
 class App(threading.Thread):
-
     grid = []
     linearGrid = []
     gridWidth = 0
     running = True
     baseColors = []
+    executorPanels = {}
 
     def __init__(self):
         threading.Thread.__init__(self)
@@ -55,20 +54,25 @@ class App(threading.Thread):
 
     def run(self):
         self.root = tk.Tk()
+        self.root.title("Virus Evolution Proof of Concept")
         self.root.protocol("WM_DELETE_WINDOW", self.callback)
         
+        # main window
         self.cycleLabel = tk.Label(self.root, text="Cycle Num -1")
         self.cycleLabel.pack()
-        CreateToolTip(self.cycleLabel, waittime=0, getText=lambda:"test")
-                
         
         self.label = tk.Label(self.root, text="Loading, Step 1...")
         self.label.pack()
-
-        self.gridFrame = tk.Frame(self.root, bg="#202020", highlightthickness=10)
-
-        #button = tk.Button(self.root, text='-')
         
+        self.soupView = tk.Frame(self.root, bg="#202020", highlightthickness=10)
+        
+        # second window
+        self.executorWindow = tk.Toplevel(self.root)
+        self.executorView = tk.Frame(self.executorWindow, bg="green")
+        self.executorView.pack(fill=tk.X)
+        tk.Label(self.executorView, text="EXECUTORS").pack()
+        
+        # finalize
         self.initialized = True
         self.root.mainloop()
     
@@ -79,7 +83,7 @@ class App(threading.Thread):
     # ie, it would use the last-set value of l, r, and c
     # now that it's its own function, it works
     def __makeLabel(self, r, c, simString):
-        l = tk.Label(self.gridFrame, text=simString[r][c], font='TkFixedFont', highlightthickness=0, bg=COLORS["background"], fg=COLORS["foreground"])
+        l = tk.Label(self.soupView, text=simString[r][c], font='TkFixedFont', highlightthickness=0, bg=COLORS["background"], fg=COLORS["foreground"])
         l.grid(column=c, row=r)
         
         CreateToolTip(l, waittime=0, getText=lambda:getTooltipText(sim.data, r*self.gridWidth + c, l["text"]))
@@ -96,9 +100,42 @@ class App(threading.Thread):
                 self.linearGrid.append(l)
                 
             self.grid.append(row)
-        self.gridFrame.pack()
+        self.soupView.pack()
         self.baseColors = [COLORS["background"]] * len(self.linearGrid)
     
+    
+    def makeExecutorPanel(self, sim, executorLoc):
+        executor = utils.readBlock(sim.data, executorLoc)
+        
+        panel = tk.Frame(self.executorView, borderwidth=1)
+        title = tk.Label(panel, text="Executor @"+str(executorLoc))
+        ip = tk.Label(panel, text="->"+str(executor["body"])+"<-")
+        instructionList = tk.Label(panel, text=" ")
+        
+        title.pack()
+        ip.pack()
+        instructionList.pack()
+        panel.pack(side=tk.LEFT)
+        
+        self.executorPanels.update({executorLoc: [panel, title, ip, [], instructionList]})
+    
+    
+    def updateExecutorPanel(self, sim, executorLoc):
+        if executorLoc not in self.executorPanels:
+            self.makeExecutorPanel(sim, executorLoc)
+        
+        executor = utils.readBlock(sim.data, executorLoc)
+        display = self.executorPanels[executorLoc]
+        display[2].config(text="->"+str(executor["body"])+"<-")
+        
+        nextInst = utils.readBlock(sim.data, executor["body"])
+        display[3].insert(0, nextInst["header"]["symbol"])
+        
+        while len(display[3]) > MAX_INSTRUCTION_LIST_SIZE:
+            display[3].pop()
+        
+        display[4].config(text="\n".join(display[3]))
+        
     
     def setBaseBackground(self, index, color):
         self.linearGrid[index].config(bg=color)
@@ -141,7 +178,9 @@ simString = [c for c in sim.symbolString()]
 
 app.initGrid(unjoinedLineBreak(simString))
 
-
+for loc in sim.data.executorAddrList:
+    app.makeExecutorPanel(sim, loc)
+print(app.executorPanels)
 
 import utils
 import colorsys
@@ -170,6 +209,10 @@ i = 0
 while app.running:
     i += 1
     app.cycleLabel.config(text="Cycle Num " + str(i))
+    
+    # update executor panels
+    for loc in sim.data.executorAddrList:
+        app.updateExecutorPanel(sim, loc)
     
     # logic update
     sim.cycle()

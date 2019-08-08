@@ -355,7 +355,7 @@ def swapMemoryBlocks(simData, addr1, addr2):
     block1 = cut[addr1]
     block2 = cut[addr2]
     
-    print("swapping ", addr1, addr2, " | ", block1, "<->", block2)
+    #print("swapping ", addr1, addr2, " | ", block1, "<->", block2)
     
     #simData.soup.overwrite(block1, MEM_BLOCK_LEN*addr2)
     #simData.soup.overwrite(block2, MEM_BLOCK_LEN*addr1)
