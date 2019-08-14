@@ -197,16 +197,6 @@ class Simulation:
             if e in self.data.executorAddrList:
                 self.data.executorAddrList.remove(e)
         
-        if COSMIC_RAY_MUTATION_ATTEMPT_COUNT > 0 and COSMIC_RAY_MUTATION_CHANCE > 0:
-            for i in range(COSMIC_RAY_MUTATION_ATTEMPT_COUNT):
-                if random.random() < COSMIC_RAY_MUTATION_CHANCE:
-                    index = random.randrange(0, TOTAL_MEM_LEN)
-                    bit = '0b0' if random.random() < 0.5 else '0b1'
-                    self.data.soup.overwrite(bit, index)
-                    print("COSMIC RAY MUTATION")
-                
-                self.data.logMutation(int(index / MEM_BLOCK_LEN), soft=False)
-        
         self.tracker.log(self.data)
         
 
