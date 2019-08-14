@@ -24,8 +24,8 @@ class Opcodes:
 
     FLAG_NAMES = ["special", "isRegister", "isNonNull"]
         
-    FLAG_CODES = {
-        '000': {
+    BLOCK_TYPES = [
+        {
             "symbol":         '░', 
             "code":           "0000",
             "type":           "uninitialized", 
@@ -33,9 +33,9 @@ class Opcodes:
             "execute?":       False, 
             "interpret body": lambda self, s : None, 
             "default body":   '0'*BODY_LEN
-            },
-        
-        '011': {
+        },
+    
+        {
             "symbol":         '#', 
             "code":           "REG#",
             "type":           "register", 
@@ -43,8 +43,8 @@ class Opcodes:
             "execute?":       False, 
             "interpret body": lambda self, s : binaryToInt(s), 
             "default body":   '0'*BODY_LEN
-            },
-        '010': {
+        },
+        {
             "symbol":         '_', 
             "code":           "REGn",
             "type":           "register", 
@@ -52,9 +52,9 @@ class Opcodes:
             "execute?":       False, 
             "interpret body": lambda self, s : None, 
             "default body":   '0'*BODY_LEN
-            },
-        
-        '111': {
+        },
+    
+        {
             "symbol":         '▯', 
             "code":           "DUMP",
             "type":           "dump register", 
@@ -62,8 +62,8 @@ class Opcodes:
             "execute?":       False, 
             "interpret body": lambda self, s : binaryToInt(s, unsigned=True), 
             "default body":   '1'*BODY_LEN
-            },
-        '110': { # these should never exist in an actual simulation
+        },
+        { # these should never exist in an actual simulation
             "symbol":         '█', 
             "code":           "DMPn",
             "type":           "dump register", 
@@ -71,9 +71,9 @@ class Opcodes:
             "execute?":       False, 
             "interpret body": lambda self, s : None, 
             "default body":   '0'*BODY_LEN
-            }, 
-        
-        '101': {
+        }, 
+    
+        {
             "symbol":         '◈', 
             "code":           "EXEC",
             "type":           "executor", 
@@ -81,8 +81,8 @@ class Opcodes:
             "execute?":       False, 
             "interpret body": lambda self, s : binaryToInt(s, unsigned=True), 
             "default body":   '0'*BODY_LEN
-            }, # the core, driving life force of an organism. This is what makes the organism alive (it reads and executes instructions, basically)
-        '100': {
+        }, # the core, driving life force of an organism. This is what makes the organism alive (it reads and executes instructions, basically)
+        {
             "symbol":         '◇', 
             "code":           "EXEn",
             "type":           "executor", 
@@ -90,9 +90,9 @@ class Opcodes:
             "execute?":       False, 
             "interpret body": lambda self, s : None, 
             "default body":   '0'*BODY_LEN
-            }, # a dormant executor. May be part of a dead organism. Can be reawakened if moved or otherwise interacted with
-        
-        '001': {
+        }, # a dormant executor. May be part of a dead organism. Can be reawakened if moved or otherwise interacted with
+    
+        {
             "symbol":         None, 
             "code":           None,
             "type":           "instruction", 
@@ -100,8 +100,8 @@ class Opcodes:
             "execute?":       True,  
             "interpret body": lambda self, s: self.decodeFunctionBody(s),
             "default body":   None
-            },
-    }
+        }
+    ]
     
     # when instructions are given arguments, they remove those arguments from a queue and pop from the queue to fill the remaining arguments
     # the unmodified queue is [0,1,2,3,4,5,6,7,8,9]
@@ -173,11 +173,10 @@ class Opcodes:
         {"code": "DINT", "symbol": '.', "type": "deinit", "arg count": 1, "function": denitializeExecutor, "description": "Denitializes the executor at the address contained in r0. (Sets it to dormant.)"},
         
         {"code": "KEY_", "symbolrange": "abcdefghijklm", "type": "key", "arg count": 0, "function": noOp, "description": "A key used by some instructions to find a matching upper case lock"},
-        {"code": "LOK_", "symbolrange": "ABCDEFGHIJKLM", "type": "lock", "arg count": 0, "function": noOp, "description": "A lock used by some instructions to match to a lower case key"}
-        
+        {"code": "LOK_", "symbolrange": "ABCDEFGHIJKLM", "type": "lock", "arg count": 0, "function": noOp, "description": "A lock used by some instructions to match to a lower case key"} 
     ]
 
-    SPAWN_LIST = []
+    _SYMBOL_DICTIONARY = {}
 
     def __init__(self):
         # unpack compressed instruction lists
@@ -208,15 +207,24 @@ class Opcodes:
         for elem in removeList:
             self.INSTRUCTIONS.remove(elem)
             
-        self.SPAWN_LIST = [
-            '011' + '0' * BODY_LEN, # an empty register - may be initialized with a random value later
-            '100' + '0' * BODY_LEN, # a dormant executor 
-            '111' + '1' * (BODY_LEN)  # a dump register with the maximum value (note: dump registers are unsigned)
-        ]
-        self.SPAWN_LIST.extend('001' + intToBinaryUnsigned(i, BODY_LEN) for i in range(len(self.INSTRUCTIONS))) # all instructions
+        instructionHeader = BLOCK_TYPES[-1]
+        _SYMBOL_DICTIONARY.update({BLOCK_TYPES[e]["symbol"]: _buildBlock(BLOCK_TYPES[e], None) for e in BLOCK_TYPES if BLOCK_TYPES[e]["symbol"] is not None})
+        _SYMBOL_DICTIONARY.update({e["symbol"]: _buildBlock(instructionHeader, e) for e in INSTRUCTIONS})
+        
 
-    # TRY TO ADD SPAWN RARITY AS A MECHANIC
-    # make args 1-9 increasingly rare to encourage useage of stacks
+
+    def _buildBlock(header, body):
+        return {"header":header, "body":body}
+
+
+    def fetchBlock(symbol):
+        proto = _SYMBOL_DICTIONARY[symbol]
+        
+        body = proto["body"]
+        if body == None:
+            body = proto["header"]["default body"]
+        
+        retval = {"header": proto["header"].copy(), "body": body}
 
 
     #TODO: THIS FUNCTION FAILS ON DECODING PUSH: 1000000101010

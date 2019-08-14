@@ -4,7 +4,6 @@ from bitstring import BitArray
 from opcode import Opcodes
 
 class SimulationData:
-    soup = BitArray('0b' + '0'*TOTAL_MEM_LEN)
     cycle = 0
     blocks = []
     executorAddrList = []
@@ -289,27 +288,34 @@ class Simulation:
         #print(*printArgs)
         
     
-    def init(self, ancestorString):
+    def init(self, ancestorString, spawnTable=None):
         import random
         import compiler
         import utils
         
+        if spawnTable == None:
+            spawnTable = [(1, symbol) for symbol in self.data.opcodes._SYMBOL_DICTIONARY]
+        maxRandVal = sum(e[0] for e in spawnTable)
+        
         # put a random memory block at each location
-        for i in range(0, TOTAL_MEM_LEN, MEM_BLOCK_LEN):
-            self.data.soup.overwrite('0b'+random.choice(self.data.opcodes.SPAWN_LIST), i)  
+        for i in range(0, NUM_MEMORY_BLOCKS_IN_SOUP):
+            randval = random.randint(maxRandVal)
+            j = 0
+            while randval > 0:
+                randval -= spawnTable[j][0]
+                j++
+                
+            symbol = spawnTable[j][1]
+            self.data.blocks.append(self.data.opcodes.fetchBlock(symbol))
         
         # interpret the ancestor string
-        ancestor = compiler.compileGenome(ancestorString)
-        ancestorData = BitArray('0b' + ancestor)
-        
-        ancestorBlocks = self.data.blockify(ancestorData) #[utils.readBlock(ancestorData, i) for i in range(len(ancestorString))]
+        ancestorBlocks = [self.data.fetchBlock(s) for s in ancestorString]
         ancestorExecutorLocs = [i for i in range(len(ancestorBlocks)) if ancestorBlocks[i]["header"]["name"] == "executor"]
         
         
         # seed the soup with one common ancestor
         ancestorLoc = random.randrange(0, NUM_MEMORY_BLOCKS_IN_SOUP-len(ancestor))
-        self.data.soup.overwrite('0b'+ancestor, MEM_BLOCK_LEN*ancestorLoc)
-        
+        self.data.blocks[ancestorLoc:len(ancestorString)] = ancestorBlocks
         
         # find ancestor's executor
         for loc in ancestorExecutorLocs:
