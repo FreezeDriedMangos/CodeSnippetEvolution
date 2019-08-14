@@ -1,0 +1,1298 @@
+body len = 13
+header len = 3
+body opener = "`"
+body closer = "`"
+OPCODE DATA
+
+Flag Names: ['special', 'isRegister', 'isNonNull']
+
+Flag Codes:
+{   '000': {   'code': '0000',
+               'default body': '0000000000000',
+               'execute?': False,
+               'interpret body': <function Opcodes.<lambda> at 0x7efc0adac840>,
+               'name': 'uninitialized block',
+               'symbol': '░',
+               'type': 'uninitialized'},
+    '001': {   'code': None,
+               'default body': None,
+               'execute?': True,
+               'interpret body': <function Opcodes.<lambda> at 0x7efc0adacbf8>,
+               'name': 'instruction block',
+               'symbol': None,
+               'type': 'instruction'},
+    '010': {   'code': 'REGn',
+               'default body': '0000000000000',
+               'execute?': False,
+               'interpret body': <function Opcodes.<lambda> at 0x7efc0adac950>,
+               'name': 'register with a null value',
+               'symbol': '_',
+               'type': 'register'},
+    '011': {   'code': 'REG#',
+               'default body': '0000000000000',
+               'execute?': False,
+               'interpret body': <function Opcodes.<lambda> at 0x7efc0adac8c8>,
+               'name': 'register',
+               'symbol': '#',
+               'type': 'register'},
+    '100': {   'code': 'EXEn',
+               'default body': '0000000000000',
+               'execute?': False,
+               'interpret body': <function Opcodes.<lambda> at 0x7efc0adacb70>,
+               'name': 'dormant executor',
+               'symbol': '◇',
+               'type': 'executor'},
+    '101': {   'code': 'EXEC',
+               'default body': '0000000000000',
+               'execute?': False,
+               'interpret body': <function Opcodes.<lambda> at 0x7efc0adacae8>,
+               'name': 'executor',
+               'symbol': '◈',
+               'type': 'executor'},
+    '110': {   'code': 'DMPn',
+               'default body': '0000000000000',
+               'execute?': False,
+               'interpret body': <function Opcodes.<lambda> at 0x7efc0adaca60>,
+               'name': 'dump register with a null value',
+               'symbol': '█',
+               'type': 'dump register'},
+    '111': {   'code': 'DUMP',
+               'default body': '1111111111111',
+               'execute?': False,
+               'interpret body': <function Opcodes.<lambda> at 0x7efc0adac9d8>,
+               'name': 'dump register',
+               'symbol': '▯',
+               'type': 'dump register'}}
+
+
+Instruction Codes:
+[   {   'arg count': 0,
+        'code': 'NOOP',
+        'description': 'No operation',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': ' ',
+        'type': 'noop'},
+    {   'arg count': 0,
+        'code': 'ARG0',
+        'description': 'No operation. Modifies registers to be used by '
+                       'previous instruction',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': '0',
+        'type': 'arg'},
+    {   'arg count': 0,
+        'code': 'ARG1',
+        'description': 'No operation. Modifies registers to be used by '
+                       'previous instruction',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': '1',
+        'type': 'arg'},
+    {   'arg count': 0,
+        'code': 'ARG2',
+        'description': 'No operation. Modifies registers to be used by '
+                       'previous instruction',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': '2',
+        'type': 'arg'},
+    {   'arg count': 0,
+        'code': 'ARG3',
+        'description': 'No operation. Modifies registers to be used by '
+                       'previous instruction',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': '3',
+        'type': 'arg'},
+    {   'arg count': 0,
+        'code': 'ARG4',
+        'description': 'No operation. Modifies registers to be used by '
+                       'previous instruction',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': '4',
+        'type': 'arg'},
+    {   'arg count': 0,
+        'code': 'ARG5',
+        'description': 'No operation. Modifies registers to be used by '
+                       'previous instruction',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': '5',
+        'type': 'arg'},
+    {   'arg count': 0,
+        'code': 'ARG6',
+        'description': 'No operation. Modifies registers to be used by '
+                       'previous instruction',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': '6',
+        'type': 'arg'},
+    {   'arg count': 0,
+        'code': 'ARG7',
+        'description': 'No operation. Modifies registers to be used by '
+                       'previous instruction',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': '7',
+        'type': 'arg'},
+    {   'arg count': 0,
+        'code': 'ARG8',
+        'description': 'No operation. Modifies registers to be used by '
+                       'previous instruction',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': '8',
+        'type': 'arg'},
+    {   'arg count': 0,
+        'code': 'ARG9',
+        'description': 'No operation. Modifies registers to be used by '
+                       'previous instruction',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': '9',
+        'type': 'arg'},
+    {   'arg count': 1,
+        'code': 'JMPR',
+        'description': 'Jump to the address in r0.',
+        'function': <function jumpR at 0x7efc0adab378>,
+        'symbol': '%',
+        'type': 'jump'},
+    {   'arg count': 0,
+        'code': 'JMPB',
+        'description': 'Jump backwards to the first lock matching the '
+                       'following key',
+        'function': <function jumpB at 0x7efc0adab400>,
+        'symbol': '(',
+        'type': 'jump'},
+    {   'arg count': 0,
+        'code': 'JMPF',
+        'description': 'Jump forwards to the first lock matching the following '
+                       'key',
+        'function': <function jumpF at 0x7efc0adab488>,
+        'symbol': ')',
+        'type': 'jump'},
+    {   'arg count': 1,
+        'code': 'ADRB',
+        'description': 'Look backwards to the first lock matching the '
+                       'following key, store its address in r0',
+        'function': <function addressOfJumpB at 0x7efc0adab510>,
+        'symbol': '[',
+        'type': 'lookaround'},
+    {   'arg count': 1,
+        'code': 'ADRF',
+        'description': 'Look forwards to the first lock matching the following '
+                       'key, store its address in r0',
+        'function': <function addressOfJumpF at 0x7efc0adab598>,
+        'symbol': ']',
+        'type': 'lookaround'},
+    {   'arg count': 3,
+        'code': 'SERB',
+        'description': 'Starting from [r0], look backwards for the first '
+                       'instruction matching the instruction at [r1], store '
+                       'its address in r2',
+        'function': <function addressOfInstructionB at 0x7efc0adab620>,
+        'symbol': '<',
+        'type': 'lookaround'},
+    {   'arg count': 3,
+        'code': 'SERF',
+        'description': 'Starting from [r0], look forwards for the first '
+                       'instruction matching the instruction at [r1], store '
+                       'its address in r2',
+        'function': <function addressOfInstructionF at 0x7efc0adab6a8>,
+        'symbol': '>',
+        'type': 'lookaround'},
+    {   'arg count': 1,
+        'code': 'IFNZ',
+        'description': 'if [r0] is not 0, execute the following instruction, '
+                       'otherwise, skip to the next non-argument instruction',
+        'function': <function skipIfZero at 0x7efc0adab730>,
+        'symbol': '?',
+        'type': 'if'},
+    {   'arg count': 1,
+        'code': 'IFNN',
+        'description': 'if [r0] is not null, execute the following '
+                       'instruction, otherwise, skip to the next non-argument '
+                       'instruction',
+        'function': <function skipIfNull at 0x7efc0adab7b8>,
+        'symbol': '‽',
+        'type': 'if'},
+    {   'arg count': 0,
+        'code': 'IFDZ',
+        'description': 'if the instruction at the address in r0 is the same as '
+                       "the instruction at the address in r1 (or if they're "
+                       'both registers, dump registers, or executors), execute '
+                       'the next instruction, otherwise, skip to the next '
+                       'non-argument instruction',
+        'function': <function skipIfDumpIsZero at 0x7efc0adab840>,
+        'symbol': '¿',
+        'type': 'if'},
+    {   'arg count': 2,
+        'code': 'IFBE',
+        'description': 'if the instruction at the address in r0 is the same as '
+                       "the instruction at the address in r1 (or if they're "
+                       'both registers, dump registers, or executors), execute '
+                       'the next instruction, otherwise, skip to the next '
+                       'non-argument instruction',
+        'function': <function skipUnlessEquiv at 0x7efc0adab8c8>,
+        'symbol': '⸘',
+        'type': 'if'},
+    {   'arg count': 2,
+        'code': 'IFEQ',
+        'description': 'if [r0] == [r1], execute the next instruction, '
+                       'otherwise, skip to the next non-argument instruction',
+        'function': <function skipUnlessEqual at 0x7efc0adab950>,
+        'symbol': '=',
+        'type': 'if'},
+    {   'arg count': 3,
+        'code': 'ADDr',
+        'description': "Add registers' contents ([r0] = [r1] + [r2])",
+        'function': <function add at 0x7efc0adab9d8>,
+        'symbol': '+',
+        'type': 'arithmetic'},
+    {   'arg count': 3,
+        'code': 'SUBr',
+        'description': "Subtract registers' contents ([r0] = [r1] - [r2])",
+        'function': <function subtract at 0x7efc0adaba60>,
+        'symbol': '-',
+        'type': 'arithmetic'},
+    {   'arg count': 3,
+        'code': 'MULr',
+        'description': "Multiply registers' contents ([r0] = [r1] * [r2])",
+        'function': <function multiply at 0x7efc0adabae8>,
+        'symbol': '*',
+        'type': 'arithmetic'},
+    {   'arg count': 3,
+        'code': 'DIVr',
+        'description': "Divide registers' contents ([r0] = [r1] ÷ [r2])",
+        'function': <function divide at 0x7efc0adabb70>,
+        'symbol': '÷',
+        'type': 'arithmetic'},
+    {   'arg count': 1,
+        'code': 'INCr',
+        'description': "Increment register's contents ([r0]++)",
+        'function': <function increment at 0x7efc0adabe18>,
+        'symbol': '^',
+        'type': 'arithmetic'},
+    {   'arg count': 1,
+        'code': 'DECr',
+        'description': "Decrement register's contents ([r0]--)",
+        'function': <function decrement at 0x7efc0adabea0>,
+        'symbol': 'v',
+        'type': 'arithmetic'},
+    {   'arg count': 1,
+        'code': 'NOTr',
+        'description': "Bitwise NOT register's contents ([r0] = ![r0])",
+        'function': <function bitwiseInverse at 0x7efc0adabf28>,
+        'symbol': '!',
+        'type': 'bitwise'},
+    {   'arg count': 1,
+        'code': 'SHFL',
+        'description': "Bitwise left shift register's contents ([r0] = [r0] << "
+                       '1)',
+        'function': <function bitwiseShiftLeft at 0x7efc0adac048>,
+        'symbol': '«',
+        'type': 'bitwise'},
+    {   'arg count': 1,
+        'code': 'SHFR',
+        'description': "Bitwise right shift register's contents ([r0] = [r0] "
+                       '>> 1)',
+        'function': <function bitwiseShiftRight at 0x7efc0adac0d0>,
+        'symbol': '»',
+        'type': 'bitwise'},
+    {   'arg count': 3,
+        'code': 'ANDr',
+        'description': "Bitwise AND register's contents ([r0] = [r1] & [r2])",
+        'function': <function bitwiseAND at 0x7efc0adabbf8>,
+        'symbol': '&',
+        'type': 'bitwise'},
+    {   'arg count': 3,
+        'code': 'ORr-',
+        'description': "Bitwise OR register's contents ([r0] = [r1] | [r2])",
+        'function': <function bitwiseOR at 0x7efc0adabc80>,
+        'symbol': '|',
+        'type': 'bitwise'},
+    {   'arg count': 3,
+        'code': 'XORr',
+        'description': "Bitwise XOR register's contents ([r0] = [r1] ^ [r2])",
+        'function': <function bitwiseXOR at 0x7efc0adabd08>,
+        'symbol': '⊕',
+        'type': 'bitwise'},
+    {   'arg count': 1,
+        'code': 'ZERO',
+        'description': 'Set register contents to 0 ([r0] = 0)',
+        'function': <function setToZero at 0x7efc0adac158>,
+        'symbol': 'z',
+        'type': 'set'},
+    {   'arg count': 1,
+        'code': 'UNIT',
+        'description': 'Set register contents to 1 ([r0] = 1)',
+        'function': <function setToOne at 0x7efc0adac1e0>,
+        'symbol': 'u',
+        'type': 'set'},
+    {   'arg count': 1,
+        'code': 'RAND',
+        'description': 'Sets [r0] to a random valid address.',
+        'function': <function setToRand at 0x7efc0adac2f0>,
+        'symbol': 'r',
+        'type': 'set'},
+    {   'arg count': 1,
+        'code': 'NULL',
+        'description': 'Sets [r0] to null.',
+        'function': <function setToNull at 0x7efc0adac268>,
+        'symbol': 'n',
+        'type': 'set'},
+    {   'arg count': 2,
+        'code': 'CPYr',
+        'description': 'Copy [r0] into r1',
+        'function': <function copy at 0x7efc0adac400>,
+        'symbol': '"',
+        'type': 'clone/swap'},
+    {   'arg count': 2,
+        'code': 'SWPr',
+        'description': 'Swap [r0] into r1 and [r1] into r0',
+        'function': <function swap at 0x7efc0adac488>,
+        'symbol': 'x',
+        'type': 'clone/swap'},
+    {   'arg count': 1,
+        'code': 'POPr',
+        'description': 'Pop into r0 a value from the first stack found '
+                       'immediately after the first matching lock found after '
+                       'this executor',
+        'function': <function pop at 0x7efc0adac598>,
+        'symbol': '↑',
+        'type': 'stack'},
+    {   'arg count': 1,
+        'code': 'PSHr',
+        'description': 'Push [r0] to the first stack found immediately after '
+                       'the first matching lock found after this executor',
+        'function': <function push at 0x7efc0adac510>,
+        'symbol': '↓',
+        'type': 'stack'},
+    {   'arg count': 0,
+        'code': 'CLAM',
+        'description': "A claim marker, used to stake an executor's territory; "
+                       'the boundaries of an organism. Also functions as lock.',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'T',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'CLMk',
+        'description': 'A claim marker key, matches to a claim marker.',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 't',
+        'type': 'key'},
+    {   'arg count': 2,
+        'code': 'MNTR',
+        'description': 'Sets [r0] to the address most recently checked within '
+                       "this executor's claim boundaries, and [r1] to the "
+                       'address of the instruction that checked it. Both are '
+                       'set to null if no checks have been recently made.',
+        'function': <function monitor at 0x7efc0adac6a8>,
+        'symbol': '~',
+        'type': 'monitor'},
+    {   'arg count': 2,
+        'code': 'ADRS',
+        'description': 'Swap the memory block at [r0] with the block at [r1]',
+        'function': <function swapMemoryBlocks at 0x7efc0adac620>,
+        'symbol': '$',
+        'type': 'memwrite'},
+    {   'arg count': 1,
+        'code': 'INIT',
+        'description': 'Initializes the executor at the address contained in '
+                       'r0. (Sets it to non-dormant and sets its instruction '
+                       'pointer to itself.)',
+        'function': <function initializeExecutor at 0x7efc0adac730>,
+        'symbol': ':',
+        'type': 'init'},
+    {   'arg count': 1,
+        'code': 'DINT',
+        'description': 'Denitializes the executor at the address contained in '
+                       'r0. (Sets it to dormant.)',
+        'function': <function denitializeExecutor at 0x7efc0adac7b8>,
+        'symbol': '.',
+        'type': 'deinit'},
+    {   'arg count': 0,
+        'code': 'KEYA',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'a',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYB',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'b',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYC',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'c',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYD',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'd',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYE',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'e',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYF',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'f',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYG',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'g',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYH',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'h',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYI',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'i',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYJ',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'j',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYK',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'k',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYL',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'l',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'KEYM',
+        'description': 'A key used by some instructions to find a matching '
+                       'upper case lock',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'm',
+        'type': 'key'},
+    {   'arg count': 0,
+        'code': 'LOKA',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'A',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKB',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'B',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKC',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'C',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKD',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'D',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKE',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'E',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKF',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'F',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKG',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'G',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKH',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'H',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKI',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'I',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKJ',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'J',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKK',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'K',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKL',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'L',
+        'type': 'lock'},
+    {   'arg count': 0,
+        'code': 'LOKM',
+        'description': 'A lock used by some instructions to match to a lower '
+                       'case key',
+        'function': <function noOp at 0x7efc0adab2f0>,
+        'symbol': 'M',
+        'type': 'lock'}]
+
+
+INITIAL SOUP
+xrguJgHDx)↑vM<2«.»E3)?"$¿MC1«vt>1▯Jechi?h^<]6t| 9~T)$[8g[.+Ak2D-l»L4~)⊕fM¿xu%3=z
+Ciu-1ltiFT↑cx=)2tJ[d%63>~3J[5&eT◈▯#####[t1]t3r"04B>‽2)c(tC$2=13)d^^1(bD^4:4(tT↓l
+m‽↑m⊕.x¿-▯m[v"3cE$%rIc[aiKC<«15h04eh#hL↑»2(74EJ⊕K4gd:ch0+»|i»*f37ht$~E÷»?[«]‽JKz
+b$Tr?+[uBhCDhau[8(|÷$JJ-▯aH~$÷«D1(J↑F1«EizbAe%d^]2Hlt25m6T)‽a$I◇9$)0 tgm9!»%vbh.
+K)Fe(C»dLg↓?~*6«9g3nd‽Tu4L eu?bDn»!IaE⊕◇2zrc▯⊕khjv9↑! 9f◇(K(K⸘⸘D»b87!»1eg4↓3:Gk?
+?tJI*"0Tb09a++a:Mg»:e$C3|0^G1+÷nG⸘5|Iv]>?g7a÷fcC|8>07Gr[|¿"-uM$(jm4K1◇L=¿&~T1◇JC
+A A6?AlMC▯&h‽* 0mkG|↑▯1kBm«8uF▯2e5ej~Tl#.h5<]!i>=⸘2<J>⸘+5!IkHj↓n*>jmz^:.▯d=»Et]%
+")u5ljr»<KrT&($]FBx◇+⸘+Tr↓K[n%J⸘7Iv6"e[A1~>)t~▯(?]A5~))J>%T]↓k-6t?▯dBn%F*C»ET÷L*
+↓÷C|hF:71?:2~fve÷%H~CuG%.AaG!▯‽zD2k7jKILk»÷i2g4.5xF&~CLJr÷If6‽▯÷*II^|4ddrB*↑)M)M
+gb#K5!a]x[+^|T«⸘M⸘"]|)5.I2▯a:(0f?Fk>e~#Bh◇^l^e«cI5$&]7‽"◇↑33. Hmlcc|"-n~n-I4◇↑tn
+ ⊕6↑<d↑&|B5t+ju↑->4L*).7[»G(*"Hzma¿1h.:⸘Mtx~~↑ :zt]9v8-uKtGhI!i%j2T↓?#m÷jMmAk.‽G
+C6m7◇AfC«!6#%E¿$ rM]=62aH‽02vB"?HLuh1%$K=4t^▯<Ductg^DkC4K=1jv-%g<>l)t«^⊕4>3-e»ac
+K~$nzDM)5▯▯◇⸘8D↑[$&&hci^5il3»t3vE-Ju&KHH
+
+BODIES:
+33	▯`8191`
+112	◈`112`
+113	▯`8191`
+114	#`0`
+115	#`0`
+116	#`0`
+117	#`0`
+118	#`0`
+169	▯`8191`
+196	#`0`
+264	▯`8191`
+303	◇`None`
+359	◇`None`
+364	▯`8191`
+376	◇`None`
+469	◇`None`
+477	◇`None`
+489	▯`8191`
+501	▯`8191`
+510	▯`8191`
+519	#`0`
+552	▯`8191`
+579	◇`None`
+606	▯`8191`
+626	▯`8191`
+669	▯`8191`
+702	▯`8191`
+722	#`0`
+746	▯`8191`
+758	#`0`
+761	◇`None`
+776	◇`None`
+796	◇`None`
+869	#`0`
+884	◇`None`
+891	#`0`
+924	▯`8191`
+969	▯`8191`
+970	▯`8191`
+971	◇`None`
+
+	
+cycle 1
+113	▯`8190`	BODY
+112	◈`113`	BODY
+
+	
+cycle 2
+113	▯`8189`	BODY
+112	◈`114`	BODY
+
+	
+cycle 3
+113	▯`8188`	BODY
+114	#`0`	BODY
+113	▯`8188`	BODY
+112	◈`115`	BODY
+
+	
+cycle 4
+113	▯`8187`	BODY
+115	#`0`	BODY
+113	▯`8187`	BODY
+112	◈`116`	BODY
+
+	
+cycle 5
+113	▯`8186`	BODY
+116	#`0`	BODY
+113	▯`8186`	BODY
+112	◈`117`	BODY
+
+	
+cycle 6
+113	▯`8185`	BODY
+117	#`0`	BODY
+113	▯`8185`	BODY
+112	◈`118`	BODY
+
+	
+cycle 7
+113	▯`8184`	BODY
+118	#`0`	BODY
+113	▯`8184`	BODY
+112	◈`119`	BODY
+
+	
+cycle 8
+113	▯`8072`	BODY
+115	#`111`	BODY
+113	▯`8072`	BODY
+112	◈`120`	BODY
+
+	
+cycle 9
+113	▯`8071`	BODY
+112	◈`121`	BODY
+
+	
+cycle 10
+113	▯`8070`	BODY
+112	◈`122`	BODY
+
+	
+cycle 11
+113	▯`7912`	BODY
+117	#`157`	BODY
+113	▯`7912`	BODY
+112	◈`123`	BODY
+
+	
+cycle 12
+113	▯`7911`	BODY
+112	◈`124`	BODY
+
+	
+cycle 13
+113	▯`7910`	BODY
+112	◈`125`	BODY
+
+	
+cycle 14
+113	▯`7383`	BODY
+114	#`526`	BODY
+113	▯`7383`	BODY
+112	◈`126`	BODY
+
+	
+cycle 15
+113	▯`6856`	BODY
+118	#`526`	BODY
+113	▯`6856`	BODY
+112	◈`127`	BODY
+
+	
+cycle 16
+113	▯`6855`	BODY
+112	◈`128`	BODY
+
+	
+cycle 17
+113	▯`6854`	BODY
+112	◈`129`	BODY
+
+	
+cycle 18
+113	▯`6853`	BODY
+112	◈`130`	BODY
+
+	
+cycle 19
+113	▯`6281`	BODY
+116	#`571`	BODY
+113	▯`6281`	BODY
+112	◈`131`	BODY
+
+	
+cycle 20
+113	▯`6280`	BODY
+112	◈`132`	BODY
+
+	
+cycle 21
+113	▯`6279`	BODY
+112	◈`133`	BODY
+
+	
+cycle 22
+113	▯`6275`	BODY
+112	◈`137`	BODY
+
+	
+cycle 23
+113	▯`6274`	BODY
+112	◈`138`	BODY
+
+	
+cycle 24
+113	▯`6273`	BODY
+112	◈`139`	BODY
+526	T	BLOCK
+571	i	BLOCK
+
+	
+cycle 25
+113	▯`6272`	BODY
+112	◈`140`	BODY
+
+	
+cycle 26
+113	▯`6268`	BODY
+112	◈`144`	BODY
+
+	
+cycle 27
+113	▯`6267`	BODY
+112	◈`145`	BODY
+
+	
+cycle 28
+113	▯`6265`	BODY
+114	#`527`	BODY
+113	▯`6265`	BODY
+112	◈`146`	BODY
+
+	
+cycle 29
+113	▯`6263`	BODY
+115	#`112`	BODY
+113	▯`6263`	BODY
+112	◈`147`	BODY
+
+	
+cycle 30
+113	▯`6262`	BODY
+112	◈`148`	BODY
+
+	
+cycle 31
+113	▯`6281`	BODY
+112	◈`129`	BODY
+
+	
+cycle 32
+113	▯`6280`	BODY
+112	◈`130`	BODY
+
+	
+cycle 33
+113	▯`6271`	BODY
+116	#`579`	BODY
+113	▯`6271`	BODY
+112	◈`131`	BODY
+
+	
+cycle 34
+113	▯`6270`	BODY
+112	◈`132`	BODY
+
+	
+cycle 35
+113	▯`6269`	BODY
+112	◈`133`	BODY
+
+	
+cycle 36
+113	▯`6265`	BODY
+112	◈`137`	BODY
+
+	
+cycle 37
+113	▯`6264`	BODY
+112	◈`138`	BODY
+
+	
+cycle 38
+113	▯`6263`	BODY
+112	◈`139`	BODY
+527	◇`None`	BLOCK
+579	>	BLOCK
+
+	
+cycle 39
+113	▯`6262`	BODY
+112	◈`140`	BODY
+
+	
+cycle 40
+113	▯`6258`	BODY
+112	◈`144`	BODY
+
+	
+cycle 41
+113	▯`6257`	BODY
+112	◈`145`	BODY
+
+	
+cycle 42
+113	▯`6255`	BODY
+114	#`528`	BODY
+113	▯`6255`	BODY
+112	◈`146`	BODY
+
+	
+cycle 43
+113	▯`6253`	BODY
+115	#`113`	BODY
+113	▯`6253`	BODY
+112	◈`147`	BODY
+
+	
+cycle 44
+113	▯`6252`	BODY
+112	◈`148`	BODY
+
+	
+cycle 45
+113	▯`6271`	BODY
+112	◈`129`	BODY
+
+	
+cycle 46
+113	▯`6270`	BODY
+112	◈`130`	BODY
+
+	
+cycle 47
+113	▯`6296`	BODY
+116	#`552`	BODY
+113	▯`6296`	BODY
+112	◈`131`	BODY
+
+	
+cycle 48
+113	▯`6295`	BODY
+112	◈`132`	BODY
+
+	
+cycle 49
+113	▯`6294`	BODY
+112	◈`133`	BODY
+
+	
+cycle 50
+113	▯`6290`	BODY
+112	◈`137`	BODY
+
+	
+cycle 51
+113	▯`6289`	BODY
+112	◈`138`	BODY
+
+	
+cycle 52
+113	▯`6288`	BODY
+112	◈`139`	BODY
+528	▯`8191`	BLOCK
+552	=	BLOCK
+
+	
+cycle 53
+113	▯`6287`	BODY
+112	◈`140`	BODY
+
+	
+cycle 54
+113	▯`6283`	BODY
+112	◈`144`	BODY
+
+	
+cycle 55
+113	▯`6282`	BODY
+112	◈`145`	BODY
+
+	
+cycle 56
+113	▯`6280`	BODY
+114	#`529`	BODY
+113	▯`6280`	BODY
+112	◈`146`	BODY
+
+	
+cycle 57
+113	▯`6278`	BODY
+115	#`114`	BODY
+113	▯`6278`	BODY
+112	◈`147`	BODY
+
+	
+cycle 58
+113	▯`6277`	BODY
+112	◈`148`	BODY
+
+	
+cycle 59
+113	▯`6296`	BODY
+112	◈`129`	BODY
+
+	
+cycle 60
+113	▯`6295`	BODY
+112	◈`130`	BODY
+
+	
+cycle 61
+113	▯`6124`	BODY
+116	#`722`	BODY
+113	▯`6124`	BODY
+112	◈`131`	BODY
+
+	
+cycle 62
+113	▯`6123`	BODY
+112	◈`132`	BODY
+
+	
+cycle 63
+113	▯`6122`	BODY
+112	◈`133`	BODY
+
+	
+cycle 64
+113	▯`6118`	BODY
+112	◈`137`	BODY
+
+	
+cycle 65
+113	▯`6117`	BODY
+112	◈`138`	BODY
+
+	
+cycle 66
+113	▯`6116`	BODY
+112	◈`139`	BODY
+529	#`0`	BLOCK
+722	⸘	BLOCK
+
+	
+cycle 67
+113	▯`6115`	BODY
+112	◈`140`	BODY
+
+	
+cycle 68
+113	▯`6111`	BODY
+112	◈`144`	BODY
+
+	
+cycle 69
+113	▯`6110`	BODY
+112	◈`145`	BODY
+
+	
+cycle 70
+113	▯`6108`	BODY
+114	#`530`	BODY
+113	▯`6108`	BODY
+112	◈`146`	BODY
+
+	
+cycle 71
+113	▯`6106`	BODY
+115	#`115`	BODY
+113	▯`6106`	BODY
+112	◈`147`	BODY
+
+	
+cycle 72
+113	▯`6105`	BODY
+112	◈`148`	BODY
+
+	
+cycle 73
+113	▯`6124`	BODY
+112	◈`129`	BODY
+
+	
+cycle 74
+113	▯`6123`	BODY
+112	◈`130`	BODY
+
+	
+cycle 75
+113	▯`6086`	BODY
+116	#`758`	BODY
+113	▯`6086`	BODY
+112	◈`131`	BODY
+
+	
+cycle 76
+113	▯`6085`	BODY
+112	◈`132`	BODY
+
+	
+cycle 77
+113	▯`6084`	BODY
+112	◈`133`	BODY
+
+	
+cycle 78
+113	▯`6080`	BODY
+112	◈`137`	BODY
+
+	
+cycle 79
+113	▯`6079`	BODY
+112	◈`138`	BODY
+
+	
+cycle 80
+113	▯`6078`	BODY
+112	◈`139`	BODY
+530	#`0`	BLOCK
+758	2	BLOCK
+
+	
+cycle 81
+113	▯`6077`	BODY
+112	◈`140`	BODY
+
+	
+cycle 82
+113	▯`6073`	BODY
+112	◈`144`	BODY
+
+	
+cycle 83
+113	▯`6072`	BODY
+112	◈`145`	BODY
+
+	
+cycle 84
+113	▯`6070`	BODY
+114	#`531`	BODY
+113	▯`6070`	BODY
+112	◈`146`	BODY
+
+	
+cycle 85
+113	▯`6068`	BODY
+115	#`116`	BODY
+113	▯`6068`	BODY
+112	◈`147`	BODY
+
+	
+cycle 86
+113	▯`6067`	BODY
+112	◈`148`	BODY
+
+	
+cycle 87
+113	▯`6086`	BODY
+112	◈`129`	BODY
+
+	
+cycle 88
+113	▯`6085`	BODY
+112	◈`130`	BODY
+
+	
+cycle 89
+113	▯`5973`	BODY
+116	#`869`	BODY
+113	▯`5973`	BODY
+112	◈`131`	BODY
+
+	
+cycle 90
+113	▯`5972`	BODY
+112	◈`132`	BODY
+
+	
+cycle 91
+113	▯`5971`	BODY
+112	◈`133`	BODY
+
+	
+cycle 92
+113	▯`5967`	BODY
+112	◈`137`	BODY
+
+	
+cycle 93
+113	▯`5966`	BODY
+112	◈`138`	BODY
+
+	
+cycle 94
+113	▯`5965`	BODY
+112	◈`139`	BODY
+531	#`0`	BLOCK
+869	<	BLOCK
+
+	
+cycle 95
+113	▯`5964`	BODY
+112	◈`140`	BODY
+
+	
+cycle 96
+113	▯`5960`	BODY
+112	◈`144`	BODY
+
+	
+cycle 97
+113	▯`5959`	BODY
+112	◈`145`	BODY
+
+	
+cycle 98
+113	▯`5957`	BODY
+114	#`532`	BODY
+113	▯`5957`	BODY
+112	◈`146`	BODY
+
+	
+cycle 99
+113	▯`5955`	BODY
+115	#`117`	BODY
+113	▯`5955`	BODY
+112	◈`147`	BODY
+
+	
+cycle 100
+113	▯`5954`	BODY
+112	◈`148`	BODY
+
+	
+cycle 101
+113	▯`5973`	BODY
+112	◈`129`	BODY
+
+	
+cycle 102
+113	▯`5972`	BODY
+112	◈`130`	BODY
+
+	
+cycle 103
+113	▯`5949`	BODY
+116	#`891`	BODY
+113	▯`5949`	BODY
+112	◈`131`	BODY
+
+	
+cycle 104
+113	▯`5948`	BODY
+112	◈`132`	BODY
+
+	
+cycle 105
+113	▯`5947`	BODY
+112	◈`133`	BODY
+
+	
+cycle 106
+113	▯`5943`	BODY
+112	◈`137`	BODY
+
+	
+cycle 107
+113	▯`5942`	BODY
+112	◈`138`	BODY
+
+	
+cycle 108
+113	▯`5941`	BODY
+112	◈`139`	BODY
+532	#`0`	BLOCK
+891	J	BLOCK
+
+	
+cycle 109
+113	▯`5940`	BODY
+112	◈`140`	BODY
+
+	
+cycle 110
+113	▯`5936`	BODY
+112	◈`144`	BODY
+
+	
+cycle 111
+113	▯`5935`	BODY
+112	◈`145`	BODY
+
+	
+cycle 112
+113	▯`5933`	BODY
+114	#`533`	BODY
+113	▯`5933`	BODY
+112	◈`146`	BODY
+
+	
+cycle 113
+113	▯`5931`	BODY
+115	#`118`	BODY
+113	▯`5931`	BODY
+112	◈`147`	BODY
+
+	
+cycle 114
+113	▯`5930`	BODY
+112	◈`148`	BODY
+
+	
+cycle 115
+113	▯`5949`	BODY
+112	◈`129`	BODY
+
+	
+cycle 116
+113	▯`5948`	BODY
+112	◈`130`	BODY

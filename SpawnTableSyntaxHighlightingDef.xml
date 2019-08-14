@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language name="Symbolic Evolution Spawn Table" version="1" kateversion="5.0" section="Sources" extensions="*.spt">
+  <highlighting>
+        <list name="uninitialized">
+      <item>░</item>
+    </list>
+    <list name="register">
+      <item>#</item>
+      <item>_</item>
+    </list>
+    <list name="dumpregister">
+      <item>▯</item>
+      <item>█</item>
+    </list>
+    <list name="executor">
+      <item>◈</item>
+      <item>◇</item>
+    </list>
+    <list name="arg">
+      <item>0</item>
+      <item>1</item>
+      <item>2</item>
+      <item>3</item>
+      <item>4</item>
+      <item>5</item>
+      <item>6</item>
+      <item>7</item>
+      <item>8</item>
+      <item>9</item>
+    </list>
+    <list name="jump">
+      <item>%</item>
+      <item>(</item>
+      <item>)</item>
+    </list>
+    <list name="lookaround">
+      <item>[</item>
+      <item>]</item>
+      <item>&lt;</item>
+      <item>&gt;</item>
+    </list>
+    <list name="conditional">
+      <item>?</item>
+      <item>‽</item>
+      <item>¿</item>
+      <item>⸘</item>
+      <item>=</item>
+    </list>
+    <list name="arithmetic">
+      <item>+</item>
+      <item>-</item>
+      <item>*</item>
+      <item>÷</item>
+      <item>^</item>
+      <item>v</item>
+    </list>
+    <list name="bitwise">
+      <item>!</item>
+      <item>«</item>
+      <item>»</item>
+      <item>&amp;</item>
+      <item>|</item>
+      <item>⊕</item>
+    </list>
+    <list name="setregister">
+      <item>z</item>
+      <item>u</item>
+      <item>r</item>
+      <item>n</item>
+    </list>
+    <list name="miscregister">
+      <item>&quot;</item>
+      <item>x</item>
+    </list>
+    <list name="stack">
+      <item>↑</item>
+      <item>↓</item>
+    </list>
+    <list name="lock">
+      <item>T</item>
+      <item>A</item>
+      <item>B</item>
+      <item>C</item>
+      <item>D</item>
+      <item>E</item>
+      <item>F</item>
+      <item>G</item>
+      <item>H</item>
+      <item>I</item>
+      <item>J</item>
+      <item>K</item>
+      <item>L</item>
+      <item>M</item>
+    </list>
+    <list name="key">
+      <item>t</item>
+      <item>a</item>
+      <item>b</item>
+      <item>c</item>
+      <item>d</item>
+      <item>e</item>
+      <item>f</item>
+      <item>g</item>
+      <item>h</item>
+      <item>i</item>
+      <item>j</item>
+      <item>k</item>
+      <item>l</item>
+      <item>m</item>
+    </list>
+    <list name="monitor">
+      <item>~</item>
+    </list>
+    <list name="memwrite">
+      <item>$</item>
+    </list>
+    <list name="init">
+      <item>:</item>
+    </list>
+    <list name="deinit">
+      <item>.</item>
+    </list>
+    <contexts>
+      <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text" >
+        <keyword attribute="Argument" context="#stay" String="arg" />
+		<keyword attribute="Key" context="#stay" String="key" />
+		<keyword attribute="Lock" context="#stay" String="lock" />
+        
+		<keyword attribute="Special" context="#stay" String="executor" />
+		<keyword attribute="Special" context="#stay" String="dumpregister" />
+		<keyword attribute="Register" context="#stay" String="register" />
+		
+        <keyword attribute="JumpAround" context="#stay" String="jump" />
+		<keyword attribute="JumpAround" context="#stay" String="lookaround" />
+		
+        <keyword attribute="Conditional" context="#stay" String="conditional" />
+		
+        <keyword attribute="Operation" context="#stay" String="arithmetic" />
+		<keyword attribute="Operation" context="#stay" String="bitwise" />
+		<keyword attribute="Operation" context="#stay" String="setregister" />
+		
+        <keyword attribute="Stack Operation" context="#stay" String="stack" />
+		
+        <keyword attribute="Meta" context="#stay" String="monitor" />
+        
+		<keyword attribute="Modification" context="#stay" String="memwrite" />
+		<keyword attribute="Modification" context="#stay" String="init" />
+		<keyword attribute="Modification" context="#stay" String="deinit" />
+		
+        <DetectChar attribute="Weight" context="weight" char="\t" />
+      </context>
+      <context attribute="Weight" lineEndContext="#pop" name="weight" >
+      </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Normal Text" defStyleNum="dsError" />
+      
+      <itemData name="Argument"    defStyleNum="dsDecVal" />
+      <itemData name="Key"         defStyleNum="dsSpecialChar" />
+      <itemData name="Lock"        defStyleNum="dsConstant" />
+      <itemData name="Special"     defStyleNum="dsKeyword" />
+      <itemData name="Register"    defStyleNum="dsKeyword" />
+      <itemData name="JumpAround"  defStyleNum="dsNormal" />
+      <itemData name="Conditional" defStyleNum="dsControlFlow" />
+      <itemData name="Operation"   defStyleNum="dsOperator" />
+      <itemData name="Meta"        defStyleNum="dsBuiltIn" />
+      <itemData name="Modification" defStyleNum="dsBuiltIn" />
+      
+      <itemData name="Weight" defStyleNum="dsString" />
+    </itemDatas>
+  </highlighting>
+  <general>
+    <comments>
+      <comment name="singleLine" start="//"/>
+    </comments>
+    <keywords casesensitive="1"/>
+  </general>
+</language>

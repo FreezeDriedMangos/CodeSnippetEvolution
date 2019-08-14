@@ -220,10 +220,10 @@ def registerWrite(simData, executorAddress, registerAddress, val, unsigned=False
         simData.setBlock('010'+'0'*BODY_LEN, registerAddress)
         return
     
-    
-    if random.random() < REGISTER_WRITE_MUTATION_PROBABILITY:
-        val += random.choice(range(*REGISTER_WRITE_MUTATION_RANGE))
-        simData.logMutation(registerAddress, soft=True)
+    if REGISTER_WRITE_MUTATION_PROBABILITY > 0:
+        if random.random() < REGISTER_WRITE_MUTATION_PROBABILITY:
+            val += random.choice(range(*REGISTER_WRITE_MUTATION_RANGE))
+            simData.logMutation(registerAddress, soft=True)
         
     # take the neccessary difference from the dump register
     initialize = False
