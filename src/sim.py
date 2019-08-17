@@ -2,12 +2,15 @@ import const
 from const import *
 from bitstring import BitArray
 from opcode import Opcodes
+import random
 
 class SimulationData:
     cycle = 0
     blocks = []
     executorAddrList = []
     checkedAddresses = [] # list of tuples (checked, checkedBy)
+    spawnTable = []
+    _maxRandVal = 0
     
     opcodes = None
     
@@ -23,57 +26,30 @@ class SimulationData:
     _hibernationLocations = []
     
     
-    def __init__(self):
+    def __init__(self, spawnTable):
         self.opcodes = Opcodes()
-    
-    
-    def initializeBlocks(self):
-        bins = list(self.soup.cut(MEM_BLOCK_LEN))
-        self.blocks = [self.readBlockFromBits(bits) for bits in bins]
-        self._initialized = True
+        self.spawnTable = spawnTable
+        _maxRandVal = (e[0] for e in spawnTable)
+        
+        # put a random memory block at each location
+        for i in range(0, NUM_MEMORY_BLOCKS_IN_SOUP):
+            self.data.blocks.append(self.data.spawnRandomBlock)
         
     
-    def readBlockFromBitsAtAddress(self, addr):
-        if addr < 0 or addr >= NUM_MEMORY_BLOCKS_IN_SOUP:
-            return None
-        
-        cut = list(self.soup.cut(MEM_BLOCK_LEN))
-        return self.readBlockFromBits(cut[addr])
-        
-    
-    def blockify(self, bitArray):
-        cut = list(bitArray.cut(MEM_BLOCK_LEN))
-        return [self.readBlockFromBits(bits) for bits in cut]
-    
-    
-    def readBlockFromBits(self, bits):
-        block = bits
-        block = block.bin
-        header = block[0:HEADER_LEN]
-        body = block[HEADER_LEN:]
-        
-        headerInfo = self.opcodes.FLAG_CODES[header].copy()
-        try:
-            bodyInfo   = headerInfo["interpret body"](self.opcodes, body)
-        except:
-            print("interpreted something wrong: ", headerInfo)
-            print("header was ", header)
-            print("block was ", block)
-            raise
-        
-        if headerInfo["symbol"] == None:
-            try:
-                headerInfo["symbol"] = bodyInfo["symbol"]
-            except Exception as e:
-                print('Error reading header or body:')
-                print(headerInfo)
-                print(bodyInfo)
-                raise e
+    def getRandomSymbol(self):
+        randval = random.randint(maxRandVal)
+        j = 0
+        while randval > 0:
+            randval -= self.spawnTable[j][0]
+            j++
             
-            
-        return {"header": headerInfo, "body": bodyInfo}
-
-    
+        return self.spawnTable[j][1]
+   
+   
+   def spawnRandomBlock(self):
+       symbol = self.getRandomSymbol()
+       return self.opcodes.fetchBlock(symbol)
+   
     
     def addCheckedAddresses(self, addr):
         for a in addr:
@@ -83,39 +59,29 @@ class SimulationData:
             self.checkedAddresses.pop(-1)
       
     
-    def setBlock(self, binary, address):
+    def setBlock(self, newBlock, address):
         assert(type(address) == int)
-        assert(type(binary) == str)
-        assert(binary[0:1] != '0b')
-        assert(len(binary) == MEM_BLOCK_LEN)
+        assert(type(newBlock) == dict)
+        assert("body" in newBlock)
+        assert("header" in newBlock)
+        
         #print("setting block ", address, " at index ", MEM_BLOCK_LEN*address)
         
         if random.random() < RANDOMIZE_BLOCK_ON_WRITE_CHANCE:
-            binary = ''.join('1' if random.random() < 0.5 else '0' for i in range(MEM_BLOCK_LEN))
+            newBlock = self.spawnRandomBlock()
             self.logMutation(address, soft=False)
         
-        self.soup.overwrite('0b'+binary, MEM_BLOCK_LEN*address)
+        self.blocks[address] = newBlock
         self._logBlockUpdate(address, wholeBlock=True)
    
    
-    def setBlockBody(self, binary, address):
+    def setBlockBody(self, content, address):
         assert(type(address) == int)
-        assert(type(binary) == str)
-        assert(binary[0:1] != '0b')
-        assert(len(binary) == BODY_LEN)
+        assert(type(content) == int)
+        assert(type(self.blocks[address]["body"]) == int)
         
-        self.soup.overwrite('0b'+binary, MEM_BLOCK_LEN*address+HEADER_LEN)
+        self.blocks[address]["body"] = content
         self._logBlockUpdate(address, wholeBlock=False)
-   
-    
-    def setBlockHeader(self, binary, address):
-        assert(type(address) == int)
-        assert(type(binary) == str)
-        assert(binary[0:1] != '0b')
-        assert(len(binary) == HEADER_LEN)
-        
-        self.soup.overwrite('0b'+binary, MEM_BLOCK_LEN*address)
-        self._logBlockUpdate(address, wholeBlock=True)
    
     
     def _logBlockUpdate(self, address, wholeBlock=False):
@@ -173,7 +139,7 @@ import random
 from tracker import Tracker
 import utils
 class Simulation:
-    data = SimulationData()
+    data = None
     tracker = None
     
     def symbolString(self):
@@ -205,7 +171,7 @@ class Simulation:
         from const import NUM_MEMORY_BLOCKS_IN_SOUP
         from const import MEM_BLOCK_LEN
         
-        executor = utils.readBlock(self.data, executorAddress)
+        executor = self.data.blocks[executorAddress]
         if executor["header"]["name"] != "executor":
             print("Executor dissappeared at ", executorAddress, " became ", executor)
             self.data.executorAddrList.remove(executorAddress)
@@ -213,11 +179,9 @@ class Simulation:
         
         blockAddress = executor["body"]
         try:
-            block = utils.readBlock(self.data, blockAddress)
+            block = self.data.blocks[blockAddress]
         except:
-            cut = [sim.data.soup.cut(MEM_BLOCK_LEN)]
-            print("attempted read at ", blockAddress, " of ", cut[blockAddress])
-            print("surrounding bits:", cut[blockAddress-1:blockAddress+1])
+            print("failed attempted read at ", blockAddress, " of ", self.data.blocks)
             raise
         
         printArgs = ["running instruction ", block["header"]["symbol"], " @ ", blockAddress]
@@ -279,24 +243,12 @@ class Simulation:
         
     
     def init(self, ancestorString, spawnTable=None):
-        import random
-        import compiler
         import utils
         
         if spawnTable == None:
             spawnTable = [(1, symbol) for symbol in self.data.opcodes._SYMBOL_DICTIONARY]
-        maxRandVal = sum(e[0] for e in spawnTable)
         
-        # put a random memory block at each location
-        for i in range(0, NUM_MEMORY_BLOCKS_IN_SOUP):
-            randval = random.randint(maxRandVal)
-            j = 0
-            while randval > 0:
-                randval -= spawnTable[j][0]
-                j++
-                
-            symbol = spawnTable[j][1]
-            self.data.blocks.append(self.data.opcodes.fetchBlock(symbol))
+        data = SimulationData(spawnTable)
         
         # interpret the ancestor string
         ancestorBlocks = [self.data.fetchBlock(s) for s in ancestorString]
