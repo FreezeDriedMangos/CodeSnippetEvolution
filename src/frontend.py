@@ -2,11 +2,9 @@ from sim import Simulation
 import utils
 import tkinter as tk
 from compiler import genomeSymbolsFromFile
+from compiler import readSpawnTableFromFile
 from frontend_colors import COLORS
 
-
-MAX_INSTRUCTION_LIST_SIZE = 10
-UPDATE_COLOR_DECAY_SPEED = 0.0015
 
 BLOCK_BODY_TOOLTIP_LIST = ["executor", "register", "dump register"]
 def getTooltipText(simData, index, text):
@@ -23,8 +21,13 @@ def getTooltipText(simData, index, text):
     return retval + str(block["body"])
 
 
+MAX_INSTRUCTION_LIST_SIZE = 10
+UPDATE_COLOR_DECAY_SPEED = 0.0015
+
+
 chunkSize = 50
 ancestor = genomeSymbolsFromFile("genomes/anc1_1.gne")
+spawnTable = readSpawnTableFromFile("spawnTables/spawnTable1.spt")
 
 sim = Simulation()
  

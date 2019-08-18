@@ -4,53 +4,22 @@ import opcode
 from opcode import *
 import utils
 
-assemblyOpcodes = Opcodes()
-
-def compileGenomeFromFile(filepath):
-    genomeString = genomeSymbolsFromFile(filepath)
-    return (compileGenome(genomeString), genomeString)
-
-
-def compileGenome(genomeString):
-    assemb = symbolAssembly()
-    assembledGenome = "".join(assemb[symbol] for symbol in genomeString)
-    return assembledGenome
-    
-
 def genomeSymbolsFromFile(filepath):
     genomeString = open(filepath, 'r').read()
-    genomeString = re.sub(r"(\/\/ .*\n)|(\/\/ .*)| |\n", "", genomeString)
+    genomeString = re.sub(r"(\/\/.*\n)|(\/\/.*)| |\n", "", genomeString)
     return genomeString
 
-            
-def symbolAssembly():
-    FLAG_CODES = assemblyOpcodes.FLAG_CODES
-    INSTRUCTIONS = assemblyOpcodes.INSTRUCTIONS
-    
-    instructionCode = [key for key in FLAG_CODES if FLAG_CODES[key]["type"] == "instruction"][0]
-    
-    specialSymbols = {FLAG_CODES[key]["symbol"]: key + FLAG_CODES[key]["default body"] for key in FLAG_CODES if FLAG_CODES[key]["symbol"] != None}
-    instructionSymbols = {INSTRUCTIONS[i]["symbol"]: instructionCode + utils.intToBinary(i, BODY_LEN, unsigned=True) for i in range(len(INSTRUCTIONS))}
-    
-    symbols = specialSymbols
-    symbols.update(instructionSymbols)
-    return symbols
-    
 
-if __name__ == "__main__":    
-    import pprint  
-    pp = pprint.PrettyPrinter(indent=4)
-    #pp.pprint(symbolAssembly())
-    #pp.pprint(INSTRUCTIONS)
-
-    from bitstring import BitArray
-    comp, genome = compileGenomeFromFile("genome.anc")
-    comp = BitArray("0b"+comp)
-    print(comp.bin)
-    print(genome)
-    genomeBlocks = [utils.readBlock(comp, i) for i in range(len(genome))]
-    print(''.join(e["header"]["symbol"] for e in genomeBlocks))
-    #pp.pprint(genomeBlocks)
+def readSpawnTableFromFile(filepath):
+    if filepath is None or filepath == "":
+        return None
+    
+    spawnTableString = open(filepath, 'r').read()
+    spawnTableString = re.sub(r"(\/\/.*\n)|(\/\/.*)", "", spawnTableString)
+    
+    spawnTable = [e.split('\t') for e in spawnTableString.split('\n')]
+    spawnTable = [(int(e[1]), e[0],) for e in spawnTable]
+    return spawnTable
 
 
 
