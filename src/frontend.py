@@ -6,6 +6,7 @@ from frontend_colors import COLORS
 
 
 MAX_INSTRUCTION_LIST_SIZE = 10
+UPDATE_COLOR_DECAY_SPEED = 0.0015
 
 BLOCK_BODY_TOOLTIP_LIST = ["executor", "register", "dump register"]
 def getTooltipText(simData, index, text):
@@ -258,7 +259,7 @@ while app.running:
         
         color = colorLerp(baseColor, updateColor, decay)
         app.setBackground(index, color)
-        updateFade[index] = (decay-0.01, updateColor, )
+        updateFade[index] = (decay-UPDATE_COLOR_DECAY_SPEED, updateColor, )
         
     for key in removeKeys:
         updateFade.pop(key)
