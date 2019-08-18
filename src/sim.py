@@ -29,26 +29,40 @@ class SimulationData:
     def __init__(self, spawnTable):
         self.opcodes = Opcodes()
         self.spawnTable = spawnTable
-        _maxRandVal = (e[0] for e in spawnTable)
+        
+        if self.spawnTable == None:
+            self.spawnTable = [(1, symbol) for symbol in self.opcodes._SYMBOL_DICTIONARY if self.opcodes._SYMBOL_DICTIONARY[symbol]["header"]["spawnable?"]]
+        
+        self._maxRandVal = sum(e[0] for e in self.spawnTable)-1
         
         # put a random memory block at each location
         for i in range(0, NUM_MEMORY_BLOCKS_IN_SOUP):
-            self.data.blocks.append(self.data.spawnRandomBlock)
+            self.blocks.append(self.spawnRandomBlock())
         
     
     def getRandomSymbol(self):
-        randval = random.randint(maxRandVal)
+        initVal = randval = random.randint(0, self._maxRandVal)
         j = 0
-        while randval > 0:
+        while randval > 0 and j < len(self.spawnTable):
             randval -= self.spawnTable[j][0]
-            j++
+            j += 1
+            
+        if randval > 0 or j >= len(self.spawnTable):
+            print("FAILURE in SimulationData.getRandomSymbol()")
+            import pprint
+            p = pprint.PrettyPrinter(indent=4)
+            p.pprint(self.spawnTable)
+            print("weights sum = ", sum(e[0] for e in self.spawnTable))
+            print("rand value = ", initVal)
+            print("after processing = ", randval)
+            raise
             
         return self.spawnTable[j][1]
    
    
-   def spawnRandomBlock(self):
-       symbol = self.getRandomSymbol()
-       return self.opcodes.fetchBlock(symbol)
+    def spawnRandomBlock(self):
+        symbol = self.getRandomSymbol()
+        return self.opcodes.fetchBlock(symbol)
    
     
     def addCheckedAddresses(self, addr):
@@ -77,8 +91,9 @@ class SimulationData:
    
     def setBlockBody(self, content, address):
         assert(type(address) == int)
+        bodyType = type(self.blocks[address]["body"])
         assert(type(content) == int)
-        assert(type(self.blocks[address]["body"]) == int)
+        assert(bodyType == int or bodyType == type(None))
         
         self.blocks[address]["body"] = content
         self._logBlockUpdate(address, wholeBlock=False)
@@ -131,13 +146,11 @@ class SimulationData:
         self.cycle += 1
         
 
-from const import COSMIC_RAY_MUTATION_ATTEMPT_COUNT
-from const import COSMIC_RAY_MUTATION_CHANCE
-from const import TOTAL_MEM_LEN
-from const import MEM_BLOCK_LEN
 import random
 from tracker import Tracker
 import utils
+from const import NUM_MEMORY_BLOCKS_IN_SOUP
+    
 class Simulation:
     data = None
     tracker = None
@@ -167,10 +180,6 @@ class Simulation:
         
 
     def execute(self, executorAddress):   
-        import utils
-        from const import NUM_MEMORY_BLOCKS_IN_SOUP
-        from const import MEM_BLOCK_LEN
-        
         executor = self.data.blocks[executorAddress]
         if executor["header"]["name"] != "executor":
             print("Executor dissappeared at ", executorAddress, " became ", executor)
@@ -227,48 +236,42 @@ class Simulation:
             else:
                 blockAddress += 1
             
-            #utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress, unsigned=True)
             
         elif block["header"]["type"] == "register":
             utils.registerWrite(self.data, executorAddress, blockAddress, 0)
-            #utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress+1)
             blockAddress+=1
         else:
-            #utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress+1)
             blockAddress+=1
             
         #print("\tsetting ip from ", bef, " to ", blockAddress)
-        utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress, unsigned=True)
+        utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress)
         #print(*printArgs)
-        
-    
-    def init(self, ancestorString, spawnTable=None):
-        import utils
-        
-        if spawnTable == None:
-            spawnTable = [(1, symbol) for symbol in self.data.opcodes._SYMBOL_DICTIONARY]
-        
-        data = SimulationData(spawnTable)
-        
+   
+   
+    def spawnCreature(self, creatureString):
         # interpret the ancestor string
-        ancestorBlocks = [self.data.fetchBlock(s) for s in ancestorString]
-        ancestorExecutorLocs = [i for i in range(len(ancestorBlocks)) if ancestorBlocks[i]["header"]["name"] == "executor"]
-        
+        creatureBlocks = [self.data.opcodes.fetchBlock(s) for s in creatureString]
+        creatureExecutorLocs = [i for i in range(len(creatureBlocks)) if creatureBlocks[i]["header"]["name"] == "executor"]
         
         # seed the soup with one common ancestor
-        ancestorLoc = random.randrange(0, NUM_MEMORY_BLOCKS_IN_SOUP-len(ancestor))
-        self.data.blocks[ancestorLoc:len(ancestorString)] = ancestorBlocks
+        creatureLoc = random.randrange(0, NUM_MEMORY_BLOCKS_IN_SOUP-len(creatureString))
+        self.data.blocks[creatureLoc:len(creatureString)] = creatureBlocks
         
         # find ancestor's executor
-        for loc in ancestorExecutorLocs:
-            loc = loc + ancestorLoc
+        for loc in creatureExecutorLocs:
+            loc = loc + creatureLoc
             self.data.executorAddrList.append(loc)
+            
             # initialize this executor
-            utils.registerWriteIgnoreDumpMechanics(self.data, loc, loc, unsigned=True)
+            utils.registerWriteIgnoreDumpMechanics(self.data, loc, loc)
         
+   
+    
+    def init(self, ancestorString, spawnTable=None):
+        self.data = SimulationData(spawnTable)
         
-        # initialize the data
-        self.data.initializeBlocks()
+        # seed the soup with life
+        self.spawnCreature(ancestorString)
         
         # initialize the tracker
         self.tracker = Tracker(self.data)

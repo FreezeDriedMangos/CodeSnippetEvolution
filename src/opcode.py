@@ -1,12 +1,6 @@
 from instructionFunctions import *
-from utils import binaryToInt
-from utils import intToBinaryUnsigned
 import const
 from const import *
-
-# this is important because once a genome is assembled, it can only be interpreted or dissasembled
-# using the exact version it was assembled with
-OPCODE_VER = 'v1.0'
 
 class Opcodes:
     BLOCK_TYPES = [
@@ -16,8 +10,9 @@ class Opcodes:
             "type":           "uninitialized", 
             "name":           "uninitialized block", 
             "execute?":       False, 
+            "spawnable?":     False,
             "interpret body": lambda self, s : None, 
-            "default body":   None
+            "default body":   None,
         },
     
         {
@@ -25,8 +20,9 @@ class Opcodes:
             "code":           "REG#",
             "type":           "register", 
             "name":           "register", 
-            "execute?":       False, 
-            "interpret body": lambda self, s : binaryToInt(s), 
+            "execute?":       False,
+            "spawnable?":     True, 
+            "interpret body": lambda self, s : s, 
             "default body":   0
         },
         {
@@ -35,6 +31,7 @@ class Opcodes:
             "type":           "register", 
             "name":           "register with a null value", 
             "execute?":       False, 
+            "spawnable?":     True, 
             "interpret body": lambda self, s : None, 
             "default body":   None
         },
@@ -44,8 +41,9 @@ class Opcodes:
             "code":           "DUMP",
             "type":           "dump register", 
             "name":           "dump register", 
-            "execute?":       False, 
-            "interpret body": lambda self, s : binaryToInt(s, unsigned=True), 
+            "execute?":       False,
+            "spawnable?":     True,  
+            "interpret body": lambda self, s : abs(s), 
             "default body":   99999
         },
         { # these should never exist in an actual simulation
@@ -54,6 +52,7 @@ class Opcodes:
             "type":           "dump register", 
             "name":           "dump register with a null value", 
             "execute?":       False, 
+            "spawnable?":     False, 
             "interpret body": lambda self, s : None, 
             "default body":   None
         }, 
@@ -64,7 +63,8 @@ class Opcodes:
             "type":           "executor", 
             "name":           "executor", 
             "execute?":       False, 
-            "interpret body": lambda self, s : binaryToInt(s, unsigned=True), 
+            "spawnable?":     False, 
+            "interpret body": lambda self, s : abs(s), 
             "default body":   None
         }, # the core, driving life force of an organism. This is what makes the organism alive (it reads and executes instructions, basically)
         {
@@ -73,6 +73,7 @@ class Opcodes:
             "type":           "executor", 
             "name":           "dormant executor", 
             "execute?":       False, 
+            "spawnable?":     True, 
             "interpret body": lambda self, s : None, 
             "default body":   None
         }, # a dormant executor. May be part of a dead organism. Can be reawakened if moved or otherwise interacted with
@@ -82,8 +83,9 @@ class Opcodes:
             "code":           None,
             "type":           "instruction", 
             "name":           "instruction block", 
-            "execute?":       True,  
-            "interpret body": lambda self, s: self.decodeFunctionBody(s),
+            "execute?":       True, 
+            "spawnable?":     True,  
+            "interpret body": lambda self, s: s,
             "default body":   None
         }
     ]
@@ -130,10 +132,10 @@ class Opcodes:
         {"code": "ORr-", "symbol": '|', "type": "bitwise", "arg count": 3, "function": bitwiseOR,  "description": "Bitwise OR register's contents ([r0] = [r1] | [r2])"},
         {"code": "XORr", "symbol": '⊕', "type": "bitwise", "arg count": 3, "function": bitwiseXOR, "description": "Bitwise XOR register's contents ([r0] = [r1] ^ [r2])"},
         
-        {"code": "ZERO", "symbol": 'z', "type": "set register", "arg count": 1, "function": set registerToZero, "description": "Set register contents to 0 ([r0] = 0)"},
-        {"code": "UNIT", "symbol": 'u', "type": "set register", "arg count": 1, "function": set registerToOne,  "description": "Set register contents to 1 ([r0] = 1)"},
-        {"code": "RAND", "symbol": 'r', "type": "set register", "arg count": 1, "function": set registerToRand, "description": "Sets [r0] to a random valid address."},
-        {"code": "NULL", "symbol": 'n', "type": "set register", "arg count": 1, "function": set registerToNull, "description": "Sets [r0] to null."},
+        {"code": "ZERO", "symbol": 'z', "type": "set register", "arg count": 1, "function": setToZero, "description": "Set register contents to 0 ([r0] = 0)"},
+        {"code": "UNIT", "symbol": 'u', "type": "set register", "arg count": 1, "function": setToOne,  "description": "Set register contents to 1 ([r0] = 1)"},
+        {"code": "RAND", "symbol": 'r', "type": "set register", "arg count": 1, "function": setToRand, "description": "Sets [r0] to a random valid address."},
+        {"code": "NULL", "symbol": 'n', "type": "set register", "arg count": 1, "function": setToNull, "description": "Sets [r0] to null."},
             
         {"code": "CPYr", "symbol": '"', "type": "misc register", "arg count": 2, "function": copy, "description": "Copy [r0] into r1"},
         {"code": "SWPr", "symbol": 'x', "type": "misc register", "arg count": 2, "function": swap, "description": "Swap [r0] into r1 and [r1] into r0"},
@@ -192,39 +194,46 @@ class Opcodes:
         for elem in removeList:
             self.INSTRUCTIONS.remove(elem)
             
-        instructionHeader = BLOCK_TYPES[-1]
-        _SYMBOL_DICTIONARY.update({BLOCK_TYPES[e]["symbol"]: _buildBlock(BLOCK_TYPES[e], None) for e in BLOCK_TYPES if BLOCK_TYPES[e]["symbol"] is not None})
-        _SYMBOL_DICTIONARY.update({e["symbol"]: _buildBlock(instructionHeader, e) for e in INSTRUCTIONS})
+        instructionHeader = self.BLOCK_TYPES[-1]
+        self._SYMBOL_DICTIONARY.update({e["symbol"]: self._buildBlock(e, None) for e in self.BLOCK_TYPES if e["symbol"] is not None})
+        self._SYMBOL_DICTIONARY.update({e["symbol"]: self._buildBlock(instructionHeader, e) for e in self.INSTRUCTIONS})
         
 
 
-    def _buildBlock(header, body):
+    def _buildBlock(self, header, body):
         return {"header":header, "body":body}
 
 
-    def fetchBlock(symbol):
-        proto = _SYMBOL_DICTIONARY[symbol]
+    def fetchBlock(self, symbol):
+        proto = self._SYMBOL_DICTIONARY[symbol]
         
+        header = proto["header"].copy()
         body = proto["body"]
+        
         if body == None:
             body = proto["header"]["default body"]
+        else:
+            body = body.copy()
         
-        retval = {"header": proto["header"].copy(), "body": body}
+        if header["symbol"] == None:
+           header["symbol"] = body["symbol"] 
+        
+        return {"header": header, "body": body}
 
 
     def spawnNullRegister(self):
-        return fetchBlock("_")
+        return self.fetchBlock("_")
     
     
     def spawnRegister(self):
-        return fetchBlock("#")
+        return self.fetchBlock("#")
     
     
     def spawnDormantExecutor(self):
-        return fetchBlock("◇")
+        return self.fetchBlock("◇")
     
     
     def spawnAwakeExecutor(self):
-        return fetchBlock("◈")
+        return self.fetchBlock("◈")
     
     

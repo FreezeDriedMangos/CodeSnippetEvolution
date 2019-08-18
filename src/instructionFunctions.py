@@ -118,16 +118,7 @@ def addressOfInstructionF(simData, executorAddress, myAddress, arg0, arg1, arg2)
         try:
             block = utils.readBlock(simData, addr)
         except:
-            print("attempted read at ", addr)
-            try:
-                cut = list(simData.soup.cut(MEM_BLOCK_LEN)) 
-                print("reading ", cut[addr])
-                print("surrounding bits:", cut[addr-1:addr+1])
-            except:
-                print("addr was out of bounds")
-                print("soup len ", len(simData.soup))
-                print("soup block count ", len(list(simData.soup.cut(MEM_BLOCK_LEN))))
-                print("block len ", MEM_BLOCK_LEN)
+            print("failed attempted read at ", addr)
             raise
         
         if block is None:

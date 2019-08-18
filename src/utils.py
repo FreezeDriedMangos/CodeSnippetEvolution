@@ -189,7 +189,7 @@ def killExecutor(simData, executorAddress):
     
 
 def awakenExecutor(simData, executorAddress):
-    simData.setBlock(executorAddress, simData.opcodes.spawnAwakeExecutor())
+    simData.setBlock(simData.opcodes.spawnAwakeExecutor(), executorAddress)
     simData.setBlockBody(executorAddress, executorAddress)
     
 
@@ -231,7 +231,7 @@ def keyCheck(key):
     if not key["header"]["type"] == "instruction":
         return False
         
-    return lock["body"]["type"] == "key"
+    return key["body"]["type"] == "key"
    
 
 # returns true if the lock really == a lock, false otherwise

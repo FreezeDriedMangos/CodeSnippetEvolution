@@ -17,29 +17,24 @@ class Tracker:
         self.filename = self.FOLDER_PATH + "run" + str(self.filenum) + ".txt"
 
         f = open(self.filename, "w+")
-        f.write("body len = " + str(BODY_LEN) + "\n")
-        f.write("header len = " + str(HEADER_LEN) + "\n")
+        f.write("log of run number " + str(self.filenum) + "\n")
+        f.write('filename "' + str(self.filename) + '"\n')
         f.write("body opener = \"" + self.BODY_OPENER + "\"" + "\n")
         f.write("body closer = \"" + self.BODY_CLOSER + "\"" + "\n")
         
         # RECORD OPCODES IN ORDER, LISTING THEIR NUMERICAL CONVERSIONS
         # RECORD ALL CONSTANTS
         
-        f.write("OPCODE DATA\n\n")
-        from opcode import Opcodes
+        f.write("SYMBOL META DATA\n\n")
         import pprint
-        op = Opcodes()
         printer = pprint.PrettyPrinter(indent=4, stream=f)
         
-        f.write("Flag Names: " + str(op.FLAG_NAMES))
+        f.write("Spawn Table:\n")
+        printer.pprint(data.spawnTable)
         f.write("\n\n")
         
-        f.write("Flag Codes:\n")
-        printer.pprint(op.FLAG_CODES)
-        f.write("\n\n")
-        
-        f.write("Instruction Codes:\n")
-        printer.pprint(op.INSTRUCTIONS)
+        f.write("Symbol Dictionary:\n")
+        printer.pprint(data.opcodes._SYMBOL_DICTIONARY)
         f.write("\n\n")
         
         f.write("INITIAL SOUP\n")
