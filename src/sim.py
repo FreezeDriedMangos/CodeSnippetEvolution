@@ -42,11 +42,11 @@ class SimulationData:
     
     def getRandomSymbol(self):
         initVal = randval = random.randint(0, self._maxRandVal)
-        j = 0
-        while randval > 0 and j < len(self.spawnTable):
-            randval -= self.spawnTable[j][0]
+        j = -1
+        while randval >= 0 and j < len(self.spawnTable):
             j += 1
-            
+            randval -= self.spawnTable[j][0]
+        
         if randval > 0 or j >= len(self.spawnTable):
             print("FAILURE in SimulationData.getRandomSymbol()")
             import pprint
@@ -65,9 +65,8 @@ class SimulationData:
         return self.opcodes.fetchBlock(symbol)
    
     
-    def addCheckedAddresses(self, addr):
-        for a in addr:
-            self.checkedAddresses.insert(a, 0)
+    def addCheckedAddress(self, pair):
+        self.checkedAddresses.insert(0, pair)
             
         while len(self.checkedAddresses) >= CHECKED_ADDRESS_STACK_SIZE:
             self.checkedAddresses.pop(-1)
@@ -203,7 +202,7 @@ class Simulation:
             
             if "checked address" in retval:
                 addresses = retval["checked address"]
-                self.data.addCheckedAddresses(addresses)
+                self.data.addCheckedAddress(addresses)
             
             # handle executor death, rebirth, and moving
             if "executor init" in retval:
@@ -211,7 +210,13 @@ class Simulation:
                 utils.awakenExecutor(self.data, retval["executor init"])
             if "executor deinit" in retval:
                 self.data.executorAddrList.remove(retval["executor deinit"])
-                utils.killExecutor(self.data, retval["executor deinit"])
+                try:
+                    utils.killExecutor(self.data, retval["executor deinit"])
+                except:
+                    print("weird funky stuff happened while attempting executor hibernation")
+                    print("Executor went dormant at address ", retval["executor deinit"], " due to instruction ", block)
+                    raise
+                    
                 print("Executor went dormant at address ", retval["executor deinit"], " due to instruction ", block)
             if "active executor move" in retval:
                 for pair in retval["active executor move"]:

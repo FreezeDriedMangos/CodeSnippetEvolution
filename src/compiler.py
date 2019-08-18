@@ -14,12 +14,20 @@ def readSpawnTableFromFile(filepath):
     if filepath is None or filepath == "":
         return None
     
-    spawnTableString = open(filepath, 'r').read()
-    spawnTableString = re.sub(r"(\/\/.*\n)|(\/\/.*)", "", spawnTableString)
-    
-    spawnTable = [e.split('\t') for e in spawnTableString.split('\n')]
-    spawnTable = [(int(e[1]), e[0],) for e in spawnTable]
-    return spawnTable
+    try:
+        spawnTableString = open(filepath, 'r').read()
+        spawnTableString = re.sub(r"(\/\/.*\n)|(\/\/.*)", "", spawnTableString)
+        
+        print(spawnTableString)
+        
+        spawnTable = [e.split('\t') for e in spawnTableString.split('\n')]
+        
+        print(spawnTable)
+        spawnTable = [(int(e[1]), e[0],) for e in spawnTable if len(e) == 2]
+        return spawnTable
+    except:
+        print("ERROR reading in spawn table from file ", filepath)
+        return None
 
 
 

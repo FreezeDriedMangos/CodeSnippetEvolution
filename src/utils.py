@@ -90,6 +90,20 @@ def registerWriteIgnoreDumpMechanics(simData, registerAddress, val):
 
 
 def registerWrite(simData, executorAddress, registerAddress, val):
+    assert(type(executorAddress) == int)
+    assert(type(registerAddress) == int)
+    assert(type(val) == int or type(val) == type(None))
+    
+    block = readBlock(simData, registerAddress)
+    try:
+        bbt = type(block["body"])
+        assert(bbt == int or bbt == type(None))
+    except:
+        print("attempted to registerwrite to non-register:")
+        print(block)
+        raise
+        
+    
     if val == None:
         val = readBlock(simData, registerAddress)["body"]
         

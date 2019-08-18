@@ -177,7 +177,7 @@ def unjoinedLineBreak(simString, lineLen=80):
     return [simString[i:i+lineLen] for i in range(0, len(simString), lineLen)]
        
        
-sim.init(ancestor)
+sim.init(ancestor, spawnTable)
 simString = [c for c in sim.symbolString()]
 
 app.initGrid(unjoinedLineBreak(simString))
