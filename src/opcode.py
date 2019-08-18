@@ -9,21 +9,6 @@ from const import *
 OPCODE_VER = 'v1.0'
 
 class Opcodes:
-    # the simulation's simulated RAM is segmented into blocks. Each block is made of a header and body
-    #
-    #   _ _ _ | _ _ _ _ _ _
-    #  header    body
-    #
-    # the header consists only of the flags listed below
-    # the meaning of each flag combination is listed below
-    #
-    # what the body is used for depends on the flags
-    # in an instruction block, the body is used to identify which instruction it represents
-    # in an executor block, the body is used to store the value of the instruction pointer
-    # in a register, the body is used to store the register's value
-
-    FLAG_NAMES = ["special", "isRegister", "isNonNull"]
-        
     BLOCK_TYPES = [
         {
             "symbol":         '░', 
@@ -32,7 +17,7 @@ class Opcodes:
             "name":           "uninitialized block", 
             "execute?":       False, 
             "interpret body": lambda self, s : None, 
-            "default body":   '0'*BODY_LEN
+            "default body":   None
         },
     
         {
@@ -42,7 +27,7 @@ class Opcodes:
             "name":           "register", 
             "execute?":       False, 
             "interpret body": lambda self, s : binaryToInt(s), 
-            "default body":   '0'*BODY_LEN
+            "default body":   0
         },
         {
             "symbol":         '_', 
@@ -51,7 +36,7 @@ class Opcodes:
             "name":           "register with a null value", 
             "execute?":       False, 
             "interpret body": lambda self, s : None, 
-            "default body":   '0'*BODY_LEN
+            "default body":   None
         },
     
         {
@@ -61,7 +46,7 @@ class Opcodes:
             "name":           "dump register", 
             "execute?":       False, 
             "interpret body": lambda self, s : binaryToInt(s, unsigned=True), 
-            "default body":   '1'*BODY_LEN
+            "default body":   99999
         },
         { # these should never exist in an actual simulation
             "symbol":         '█', 
@@ -70,7 +55,7 @@ class Opcodes:
             "name":           "dump register with a null value", 
             "execute?":       False, 
             "interpret body": lambda self, s : None, 
-            "default body":   '0'*BODY_LEN
+            "default body":   None
         }, 
     
         {
@@ -80,7 +65,7 @@ class Opcodes:
             "name":           "executor", 
             "execute?":       False, 
             "interpret body": lambda self, s : binaryToInt(s, unsigned=True), 
-            "default body":   '0'*BODY_LEN
+            "default body":   None
         }, # the core, driving life force of an organism. This is what makes the organism alive (it reads and executes instructions, basically)
         {
             "symbol":         '◇', 
@@ -89,7 +74,7 @@ class Opcodes:
             "name":           "dormant executor", 
             "execute?":       False, 
             "interpret body": lambda self, s : None, 
-            "default body":   '0'*BODY_LEN
+            "default body":   None
         }, # a dormant executor. May be part of a dead organism. Can be reawakened if moved or otherwise interacted with
     
         {
@@ -227,16 +212,19 @@ class Opcodes:
         retval = {"header": proto["header"].copy(), "body": body}
 
 
-    #TODO: THIS FUNCTION FAILS ON DECODING PUSH: 1000000101010
-    # also upsidedown ? 0000001010100
-    def decodeFunctionBody(self, s):
-        try:
-            index = binaryToInt(s, unsigned=True) % len(self.INSTRUCTIONS)
-            return self.INSTRUCTIONS[index]
-        except:
-            print("ERROR: opcode.py:decodeFuctionBody attempted decode of ", s, " as a function block")
-            #raise
-            return self.FAULT_INSTRUCTION
-            
-
+    def spawnNullRegister(self):
+        return fetchBlock("_")
+    
+    
+    def spawnRegister(self):
+        return fetchBlock("#")
+    
+    
+    def spawnDormantExecutor(self):
+        return fetchBlock("◇")
+    
+    
+    def spawnAwakeExecutor(self):
+        return fetchBlock("◈")
+    
     

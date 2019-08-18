@@ -2,117 +2,6 @@ import const
 from const import *
 import random
 
-def binaryToInt(string, unsigned=False):
-    signedPlace = len(string)-1
-    if unsigned:
-        signedPlace=-1
-        
-    placeValue = 1
-    value = 0
-    i = 0
-    
-    for bit in string[::-1]:
-        if i == signedPlace:
-            placeValue *= -1
-            
-        value += int(bit) * placeValue
-        placeValue *= 2
-        i += 1
-        
-    return value
-        
-    
-def intToBinary(val, length, unsigned=False):
-    assert(type(val) == int)
-    assert((val < 0 and not unsigned) or val >= 0) # can't have an unsigned negative number
-    
-    if not unsigned and val > (2**(length-1) - 1):
-        val = (2**(length-1) - 1)
-    
-    if val < 0 and not unsigned:
-        val -= -2**(length-1)
-        return '1' + intToBinaryUnsigned(val, length-1)
-    return intToBinaryUnsigned(val, length) 
-        
-    
-def intToBinaryUnsigned(val, length):    
-    if val > (2**length - 1):
-        val = (2**length - 1)
-    
-    placeValue = 2 ** (length-1)
-    retval = ""
-    
-    for i in range(length):
-        if val >= placeValue:
-            val -= placeValue
-            retval += "1"
-        else:
-            retval += "0"
-            
-        placeValue /= 2
-    return retval
-    
-    
-def bitwiseInverse(intVal, bitLen, unsigned=False):
-    assert(type(intVal) == int)    
-    binary = intToBinary(intVal, bitLen, unsigned=unsigned)
-    binary = ''.join('1' if bit == '0' else '0' for bit in binary)
-    
-    return binaryToInt(binary, unsigned=unsigned)
-    
-    
-def bitwiseShiftLeft(intVal, bitLen, unsigned=False):
-    assert(type(intVal) == int)    
-    binary = intToBinary(intVal, bitLen, unsigned=unsigned)
-    binary = binary[1:] + binary[-1]
-    
-    return binaryToInt(binary, unsigned=unsigned)
-    
-    
-def bitwiseShiftRight(intVal, bitLen, unsigned=False):
-    assert(type(intVal) == int)    
-    binary = intToBinary(intVal, bitLen, unsigned=unsigned)
-    binary = binary[0] + binary[0:-1]
-    
-    return binaryToInt(binary, unsigned=unsigned)
-    
-  
-def bitwiseAND(intVal1, intVal2, bitLen, unsigned=False):
-    assert(type(intVal1) == int)   
-    assert(type(intVal2) == int)    
-    
-    binary1 = [bit == '1' for bit in intToBinary(intVal1, bitLen, unsigned=unsigned)]
-    binary2 = [bit == '1' for bit in intToBinary(intVal2, bitLen, unsigned=unsigned)]
-    
-    binary = ''.join('1' if (a and b) else '0' for a, b in zip(binary1, binary2))
-    
-    return binaryToInt(binary, unsigned=unsigned)
-    
-   
-def bitwiseOR(intVal1, intVal2, bitLen, unsigned=False):
-    assert(type(intVal1) == int)   
-    assert(type(intVal2) == int)    
-    
-    binary1 = [bit == '1' for bit in intToBinary(intVal1, bitLen, unsigned=unsigned)]
-    binary2 = [bit == '1' for bit in intToBinary(intVal2, bitLen, unsigned=unsigned)]
-    
-    binary = ''.join('1' if (a or b) else '0' for a, b in zip(binary1, binary2))
-    
-    return binaryToInt(binary, unsigned=unsigned)
-    
-     
-def bitwiseXOR(intVal1, intVal2, bitLen, unsigned=False):
-    assert(type(intVal1) == int)   
-    assert(type(intVal2) == int)    
-    
-    binary1 = [bit == '1' for bit in intToBinary(intVal1, bitLen, unsigned=unsigned)]
-    binary2 = [bit == '1' for bit in intToBinary(intVal2, bitLen, unsigned=unsigned)]
-    
-    binary = ''.join('1' if (a != b) else '0' for a, b in zip(binary1, binary2))
-    
-    return binaryToInt(binary, unsigned=unsigned)
-    
-         
 #
 # Non-modifying utility functions
 #
@@ -194,30 +83,21 @@ def decodeArgs(simData, address, count):
 #
 # Modifying utility functions
 #
-def registerWriteIgnoreDumpMechanics(simData, registerAddress, val, unsigned=False):
-    binary = intToBinary(val, BODY_LEN, unsigned=unsigned)
-    #simData.soup.overwrite(binary, MEM_BLOCK_LEN*registerAddress+HEADER_LEN)
-    
-    #simData.logBlockUpdate(registerAddress, wholeBlock=False)
-    simData.setBlockBody(binary, registerAddress)
+def registerWriteIgnoreDumpMechanics(simData, registerAddress, val):
+    simData.setBlockBody(val, registerAddress)
     return 
 
 
-def registerWrite(simData, executorAddress, registerAddress, val, unsigned=False):
+def registerWrite(simData, executorAddress, registerAddress, val):
     if val == None:
         val = readBlock(simData, registerAddress)["body"]
         
         if val == None:
             return
+        
         # if the register wasn't already none
         addToDump(simData, executorAddress, abs(val))
-        
-        #binary = "0b" + '0'*BODY_LEN 
-        #simData.soup.overwrite(binary, MEM_BLOCK_LEN*registerAddress+HEADER_LEN)
-        #simData.soup.overwrite("0b"+'010', MEM_BLOCK_LEN*registerAddress)
-        
-        #simData.logBlockUpdate(registerAddress, wholeBlock=True)
-        simData.setBlock('010'+'0'*BODY_LEN, registerAddress)
+        simData.setBlock(simData.opcodes.spawnNullRegister(), registerAddress)
         return
     
     if REGISTER_WRITE_MUTATION_PROBABILITY > 0:
@@ -230,12 +110,8 @@ def registerWrite(simData, executorAddress, registerAddress, val, unsigned=False
     oldVal = readBlock(simData, registerAddress)["body"]
     if oldVal == None:
         oldVal = 0
-        initialize = True
-        #registerInitialize(simData, registerAddress)
-        #simData.logBlockUpdate(registerAddress, wholeBlock=True)
-    
-    #simData.logBlockUpdate(registerAddress, wholeBlock=False)
-    
+        simData.setBlock(simData.opcodes.spawnRegister(), registerAddress)
+        
     diff = abs(val) - abs(oldVal)
     success = takeFromDump(simData, executorAddress, diff)
     
@@ -243,26 +119,9 @@ def registerWrite(simData, executorAddress, registerAddress, val, unsigned=False
         return False
     
     # the actual writing
-    binary = intToBinary(val, BODY_LEN, unsigned=unsigned)
-    #simData.soup.overwrite(binary, MEM_BLOCK_LEN*registerAddress+HEADER_LEN)
-       
-    #print(oldVal, " -> ", readBlock(simData, registerAddress)["body"])   
-        
-    if initialize:
-        simData.setBlock('011'+binary, registerAddress)
-    else:
-        simData.setBlockBody(binary, registerAddress)
+    simData.setBlockBody(val, registerAddress)
         
     return True    
-
-
-#def registerInitialize(simData, registerAddress):
-    #simData.logBlockUpdate(registerAddress, wholeBlock=True)
-    
-    #block = readBlock(simData, registerAddress)
-    #assert(block["header"]["name"] == "register with a null value")
-    
-    #simData.soup.overwrite("0b"+'011' + ('0'*BODY_LEN), MEM_BLOCK_LEN*registerAddress)
 
 
 # returns False if there was an error
@@ -280,11 +139,8 @@ def takeFromDump(simData, executorAddress, val):
     if val > dump["body"]:
         return False
         
-    #simData.logBlockUpdate(dumpAddr, wholeBlock=False)
-    
-    binary = intToBinary(dump["body"] - val, BODY_LEN, unsigned=True)
-    #simData.soup.overwrite(binary, MEM_BLOCK_LEN*dumpAddr+HEADER_LEN)
-    simData.setBlockBody(binary, dumpAddr)
+    newVal = dump["body"] - val
+    simData.setBlockBody(newVal, dumpAddr)
     
     return True
 
@@ -299,13 +155,13 @@ def stackPush(simData, executorAddress, stackAddress, val):
     
     while block != None and block["header"]["type"] == "register":
         if block["name"] == "register with a null value":
-            registerInitialize(simData, addr)
-            return registerWrite(simData, executorAddress, val)
+            simData.setBlock(simData.opcodes.spawnRegister(), addr)
+            return registerWrite(simData, addr, val)
         addr += 1
         block = readBlock(simData, addr)
     return 'fail safe'
-        
-
+     
+     
 def stackPop(simData, executorAddress, stackAddress, registerAddress):
     addr = stackAddress+1
     block = readBlock(simData, addr)
@@ -317,7 +173,7 @@ def stackPop(simData, executorAddress, stackAddress, registerAddress):
         block = readBlock(simData, addr)
     
     addr -= 1
-    block = readBlock(simData, addr)
+    block = readBlock(simData, addr) 
 
     if block == None or block["header"]["name"] != "register":    
         return 'fail safe'
@@ -328,20 +184,13 @@ def stackPop(simData, executorAddress, stackAddress, registerAddress):
         
 
 def killExecutor(simData, executorAddress):
-    binary = '100'
-    #simData.soup.overwrite(binary, MEM_BLOCK_LEN*executorAddress)
-        
-    #simData.logBlockUpdate(executorAddress, wholeBlock=True)
-    simData.setBlockHeader(binary, executorAddress)
+    registerWrite(simData, executorAddress, executorAddress, None)
+    simData.setBlock(simData.opcodes.spawnDormantExecutor(), executorAddress)
     
 
 def awakenExecutor(simData, executorAddress):
-    # overwrite the header information (making this an active executor) and overwrite the body so the ip points to itself
-    binary = '101' + intToBinary(executorAddress, BODY_LEN, unsigned=True)
-    #simData.soup.overwrite(binary, MEM_BLOCK_LEN*executorAddress)
- 
-    #simData.logBlockUpdate(executorAddress, wholeBlock=True)
-    simData.setBlock(binary, executorAddress)
+    simData.setBlock(executorAddress, simData.opcodes.spawnAwakeExecutor())
+    simData.setBlockBody(executorAddress, executorAddress)
     
 
 def swapMemoryBlocks(simData, addr1, addr2):
@@ -349,21 +198,12 @@ def swapMemoryBlocks(simData, addr1, addr2):
         return False
     if addr2 < 0 or addr2 >= NUM_MEMORY_BLOCKS_IN_SOUP:
         return False
-
-    cut = list(simData.soup.cut(MEM_BLOCK_LEN))
     
-    block1 = cut[addr1]
-    block2 = cut[addr2]
+    block1 = simData.blocks[addr1]
+    block2 = simData.blocks[addr2]
     
-    #print("swapping ", addr1, addr2, " | ", block1, "<->", block2)
-    
-    #simData.soup.overwrite(block1, MEM_BLOCK_LEN*addr2)
-    #simData.soup.overwrite(block2, MEM_BLOCK_LEN*addr1)
-    
-    #simData.logBlockUpdate(addr1, wholeBlock=True)
-    #simData.logBlockUpdate(addr2, wholeBlock=True)
-    simData.setBlock(block1.bin, addr2)
-    simData.setBlock(block2.bin, addr1)
+    simData.setBlock(block1, addr2)
+    simData.setBlock(block2, addr1)
     
     return True
     
@@ -391,23 +231,15 @@ def keyCheck(key):
     if not key["header"]["type"] == "instruction":
         return False
         
-    keyName = key["body"]["code"]
-    if not (keyName[0:3] == "KEY" or keyName == "CLMk"):
-        return False
-        
-    return True
-    
+    return lock["body"]["type"] == "key"
+   
 
 # returns true if the lock really == a lock, false otherwise
 def lockCheck(lock):
     if not lock["header"]["type"] == "instruction":
         return False
         
-    lockName = lock["body"]["code"]
-    if not (lockName[0:3] == "LOK" or lockName == "CLAM"):
-        return False
-        
-    return True
+    return lock["body"]["type"] == "lock"
    
    
 def keyLockMatch(key, lock):
@@ -419,7 +251,10 @@ def keyLockMatch(key, lock):
         
     if key["body"]["code"] == "CLMk" and lock["body"]["code"] == "CLAM":
         return True
-        
+    
+    if key["body"]["code"] == "STCk" and lock["body"]["code"] == "STAC":
+        return True
+    
     return False
     
     
