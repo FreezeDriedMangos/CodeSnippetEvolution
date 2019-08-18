@@ -124,13 +124,15 @@ class Opcodes:
         {"code": "INCr", "symbol": '^', "type": "arithmetic", "arg count": 1, "function": increment, "description": "Increment register's contents ([r0]++)"},
         {"code": "DECr", "symbol": 'v', "type": "arithmetic", "arg count": 1, "function": decrement, "description": "Decrement register's contents ([r0]--)"},
         
-        {"code": "NOTr", "symbol": '!', "type": "bitwise", "arg count": 1, "function": bitwiseInverse,    "description": "Bitwise NOT register's contents ([r0] = ![r0])"},
-        {"code": "SHFL", "symbol": '«', "type": "bitwise", "arg count": 1, "function": bitwiseShiftLeft,  "description": "Bitwise left shift register's contents ([r0] = [r0] << 1)"},
-        {"code": "SHFR", "symbol": '»', "type": "bitwise", "arg count": 1, "function": bitwiseShiftRight, "description": "Bitwise right shift register's contents ([r0] = [r0] >> 1)"},
+        # deprecated as a part of the great debinarification
+        # may be brought back in the future with new functions
+        #{"code": "NOTr", "symbol": '!', "type": "bitwise", "arg count": 1, "function": bitwiseInverse,    "description": "Bitwise NOT register's contents ([r0] = ![r0])"},
+        #{"code": "SHFL", "symbol": '«', "type": "bitwise", "arg count": 1, "function": bitwiseShiftLeft,  "description": "Bitwise left shift register's contents ([r0] = [r0] << 1)"},
+        #{"code": "SHFR", "symbol": '»', "type": "bitwise", "arg count": 1, "function": bitwiseShiftRight, "description": "Bitwise right shift register's contents ([r0] = [r0] >> 1)"},
 
-        {"code": "ANDr", "symbol": '&', "type": "bitwise", "arg count": 3, "function": bitwiseAND, "description": "Bitwise AND register's contents ([r0] = [r1] & [r2])"},
-        {"code": "ORr-", "symbol": '|', "type": "bitwise", "arg count": 3, "function": bitwiseOR,  "description": "Bitwise OR register's contents ([r0] = [r1] | [r2])"},
-        {"code": "XORr", "symbol": '⊕', "type": "bitwise", "arg count": 3, "function": bitwiseXOR, "description": "Bitwise XOR register's contents ([r0] = [r1] ^ [r2])"},
+        #{"code": "ANDr", "symbol": '&', "type": "bitwise", "arg count": 3, "function": bitwiseAND, "description": "Bitwise AND register's contents ([r0] = [r1] & [r2])"},
+        #{"code": "ORr-", "symbol": '|', "type": "bitwise", "arg count": 3, "function": bitwiseOR,  "description": "Bitwise OR register's contents ([r0] = [r1] | [r2])"},
+        #{"code": "XORr", "symbol": '⊕', "type": "bitwise", "arg count": 3, "function": bitwiseXOR, "description": "Bitwise XOR register's contents ([r0] = [r1] ^ [r2])"},
         
         {"code": "ZERO", "symbol": 'z', "type": "set register", "arg count": 1, "function": setToZero, "description": "Set register contents to 0 ([r0] = 0)"},
         {"code": "UNIT", "symbol": 'u', "type": "set register", "arg count": 1, "function": setToOne,  "description": "Set register contents to 1 ([r0] = 1)"},
