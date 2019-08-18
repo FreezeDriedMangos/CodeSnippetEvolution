@@ -473,7 +473,7 @@ def monitor(simData, executorAddress, myAddress, arg0, arg1):
     addr0 = utils.findRegister(simData, executorAddress, arg0)
     addr1 = utils.findRegister(simData, executorAddress, arg1)
         
-    claim = utils.findClaim(simData, executorAddress)
+    claim = utils.getClaimBoundaries(simData, executorAddress)
     
     for check in simData.checkedAddresses:
         if claim[0] <= check[0] and check[0] <= claim[1]:
