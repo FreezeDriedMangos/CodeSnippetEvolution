@@ -13,7 +13,7 @@ def noOp(simData, executorAddress, myAddress):
     
     
 def jumpR(simData, executorAddress, myAddress, arg0):
-    reg = utils.readBlock(utils.findRegister(simData, executorAddress, arg0))
+    reg = utils.readBlock(simData, utils.findRegister(simData, executorAddress, arg0))
     if reg == None or reg["body"] < 0 or reg["body"] > NUM_MEM_BLOCKS_IN_SOUP:
         return {"fault": True}
     return {"jump": reg["body"]}
