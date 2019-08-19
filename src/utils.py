@@ -123,6 +123,7 @@ def findDump(simData, executorAddress):
         block = readBlock(simData, addr)
         if block["header"]["name"] == "dump register":
             return addr
+        addr += 1
         
     return -1
 
