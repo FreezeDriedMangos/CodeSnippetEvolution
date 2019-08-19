@@ -100,7 +100,7 @@ class SimulationData:
     def setBlockBody(self, content, address):
         assert(type(address) == int)
         bodyType = type(self.blocks[address]["body"])
-        assert(type(content) == int)
+        assert(type(content) == int or type(content) == type(None))
         assert(bodyType == int or bodyType == type(None))
         
         self.blocks[address]["body"] = content
