@@ -392,16 +392,13 @@ def swap(simData, executorAddress, myAddress, arg0, arg1):
     val1 = utils.readBlock(simData, addr1)["body"]   
     val2 = utils.readBlock(simData, addr1)["body"]   
 
-    success1 = utils.registerWriteIgnoreDumpMechanics(simData, executorAddress, addr1, val2) 
-    success2 = utils.registerWriteIgnoreDumpMechanics(simData, executorAddress, addr2, val1) 
+    # we're ignoring dump mechanics because we're simply swapping
+    # the values of two registers, not adding new value
+    utils.registerWriteIgnoreDumpMechanics(simData, addr1, val2) 
+    utils.registerWriteIgnoreDumpMechanics(simData, addr2, val1) 
     
-    success = success1 and success2
-    
-    if success:
-        return {}
-    else:
-        return {"fault": True, "executor deinit": executorAddress}
- 
+    return {}
+
  
 def push(simData, executorAddress, myAddress, arg0):
     # find the first matching lock after 

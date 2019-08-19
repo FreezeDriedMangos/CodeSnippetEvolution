@@ -35,9 +35,18 @@ class SimulationData:
         
         self._maxRandVal = sum(e[0] for e in self.spawnTable)-1
         
+        expectedDistribution = {a[1]: a[0]/self._maxRandVal for a in self.spawnTable}
+        distribution = {a[1]: 0 for a in self.spawnTable}
         # put a random memory block at each location
         for i in range(0, NUM_MEMORY_BLOCKS_IN_SOUP):
             self.blocks.append(self.spawnRandomBlock())
+            distribution[self.blocks[-1]["header"]['symbol']] += 1
+        
+        distribution = {s: distribution[s]/len(self.blocks) for s in distribution}
+        print("symbol\tspawn chance\tactual distribution (all in percentage)")
+        for symbol in distribution:
+            print(symbol, "\t", round(100*expectedDistribution[symbol], 2), "\t", round(100*distribution[symbol], 2))
+        print("Total error: ", sum(abs(expectedDistribution[s] - distribution[s]) for s in distribution))
         
     
     def getRandomSymbol(self):

@@ -30,4 +30,26 @@ def readSpawnTableFromFile(filepath):
         return None
 
 
+def spawnTableFromGenome(genomeString):
+    symbols = set(genomeString)
+    counts = {s: 0 for s in symbols}
+    
+    for s in genomeString:
+        counts[s] += 1
+        
+    return [(counts[s], s,) for s in counts]
+
+
+# unit testing
+if __name__ == "__main__":
+    import pprint
+    p = pprint.PrettyPrinter(indent=4)
+
+    g = genomeSymbolsFromFile("genomes/anc1_1.gne")
+    st = spawnTableFromGenome(g)
+    #p.pprint(st)
+    
+    for e in st:
+        print(e[1] + "\t" + str(e[0]))
+
 
