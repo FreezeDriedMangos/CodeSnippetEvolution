@@ -541,20 +541,25 @@ def monitor(simData, executorAddress, myAddress, arg0, arg1):
         
     claim = utils.getClaimBoundaries(simData, executorAddress)
     
+    checkMade = None
     for check in simData.checkedAddresses:
         if claim[0] <= check[0] and check[0] <= claim[1]:
             if not (claim[0] <= check[1] and check[1] <= claim[1]):
                 # if the check was within claim bounds and wasn't made from within bounds
-                success = utils.registerWrite(simData, executorAddress, addr0, claim[0]) and utils.registerWrite(simData, executorAddress, addr1, claim[1])
-                
-                if success:
-                    return {}
-                else:
-                    return {"fault": True, "executor deinit": executorAddress}
-                    
-    utils.registerWrite(simData, executorAddress, addr0, None)
-    utils.registerWrite(simData, executorAddress, addr1, None)
-    return {}
+                checkMade = check
+                break
+    
+    if checkMade is not None:
+        success = utils.registerWrite(simData, executorAddress, addr0, claim[0]) and utils.registerWrite(simData, executorAddress, addr1, claim[1])
+        
+        if success:
+            return {}
+        else:
+            return {"fault": True, "executor deinit": executorAddress}
+    else:
+        utils.registerWrite(simData, executorAddress, addr0, None)
+        utils.registerWrite(simData, executorAddress, addr1, None)
+        return {}
     
     
 def initializeExecutor(simData, executorAddress, myAddress, arg0):
