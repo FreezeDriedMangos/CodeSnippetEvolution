@@ -148,14 +148,14 @@
         <DetectChar char="8" attribute="Argument" context="#stay" />
         <DetectChar char="9" attribute="Argument" context="#stay" />
 
-        <DetectChar char="%" attribute="JumpAround" context="#stay" />
-        <DetectChar char="(" attribute="JumpAround" context="#stay" />
-        <DetectChar char=")" attribute="JumpAround" context="#stay" />
+        <DetectChar char="%" attribute="Jump" context="#stay" />
+        <DetectChar char="(" attribute="Jump" context="#stay" />
+        <DetectChar char=")" attribute="Jump" context="#stay" />
 
-        <DetectChar char="[" attribute="JumpAround" context="#stay" />
-        <DetectChar char="]" attribute="JumpAround" context="#stay" />
-        <DetectChar char="&lt;" attribute="JumpAround" context="#stay" />
-        <DetectChar char="&gt;" attribute="JumpAround" context="#stay" />
+        <DetectChar char="[" attribute="LookAround" context="#stay" />
+        <DetectChar char="]" attribute="LookAround" context="#stay" />
+        <DetectChar char="&lt;" attribute="LookAround" context="#stay" />
+        <DetectChar char="&gt;" attribute="LookAround" context="#stay" />
 
         <DetectChar char="?" attribute="Conditional" context="#stay" />
         <DetectChar char="‽" attribute="Conditional" context="#stay" />
@@ -255,12 +255,13 @@
       <itemData name="Normal Text" defStyleNum="dsError" />
       <itemData name="Comment"      defStyleNum="dsComment"/>
       
-      <itemData name="Argument"    defStyleNum="dsDecVal" />
+      <itemData name="Argument"    defStyleNum="dsFloat" />
       <itemData name="Key"         defStyleNum="dsFloat" />
       <itemData name="Lock"        defStyleNum="dsConstant" />
       <itemData name="Special"     defStyleNum="dsExtension" />
       <itemData name="Register"    defStyleNum="dsKeyword" />
-      <itemData name="JumpAround"  defStyleNum="dsDataType" />
+      <itemData name="Jump"        defStyleNum="dsDataType" />
+      <itemData name="LookAround"  defStyleNum="dsNormal" />
       <itemData name="Conditional" defStyleNum="dsControlFlow" />
       <itemData name="Operation"   defStyleNum="dsOperator" />
       <itemData name="Meta"        defStyleNum="dsBuiltIn" />
