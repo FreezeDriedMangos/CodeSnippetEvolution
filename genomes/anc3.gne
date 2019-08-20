@@ -69,8 +69,11 @@ $2      // swap mem[r2] and mem[r0] - adding another block onto the child
 
 D       // lock - marker of the awaken child function
 ^4      // increment r4 so it now points to the child's executor
+<04     // look backwards from the end of the child to find the second executor, store its address in r1
 :4      // awaken the child
+:1      // awaken the child's second executor
 (t      // start over and make a new child
+
 
 T       // end of the genome
 

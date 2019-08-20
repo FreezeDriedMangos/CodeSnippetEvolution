@@ -50,8 +50,5 @@ D       // lock - marker of the awaken child function
 
 T       // end of the genome
 
-// genome laid out linearly, without comments:
-// T◈▯#####[t]t1r2"23"24B⸘03)c^3(bC$32=)d^^2"23(bD^4:4(tT
-
 
 

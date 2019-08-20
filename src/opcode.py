@@ -110,9 +110,9 @@ class Opcodes:
         {"code": "SERB", "symbol": '<', "type": "lookaround", "arg count": 3, "function": addressOfInstructionB, "description": "Starting from [r0], look backwards for the first instruction matching the instruction at [r1], store its address in r2"},
         {"code": "SERF", "symbol": '>', "type": "lookaround", "arg count": 3, "function": addressOfInstructionF, "description": "Starting from [r0], look forwards for the first instruction matching the instruction at [r1], store its address in r2"},
         
-        {"code": "IFNZ", "symbol": '?', "type": "conditional", "arg count": 1, "function": skipIfZero, "description": "if [r0] is not 0, execute the following instruction, otherwise, skip to the next non-argument instruction"},
-        {"code": "IFNN", "symbol": '‽', "type": "conditional", "arg count": 1, "function": skipIfNull, "description": "if [r0] is not null, execute the following instruction, otherwise, skip to the next non-argument instruction"},
-        {"code": "IFDZ", "symbol": '¿', "type": "conditional", "arg count": 0, "function": skipIfDumpIsZero, "description": "if the instruction at the address in r0 is the same as the instruction at the address in r1 (or if they're both registers, dump registers, or executors), execute the next instruction, otherwise, skip to the next non-argument instruction"},
+        {"code": "IFrZ", "symbol": '?', "type": "conditional", "arg count": 1, "function": skipUnlessZero, "description": "if [r0] is 0, execute the following instruction, otherwise, skip to the next non-argument instruction"},
+        {"code": "IFrN", "symbol": '‽', "type": "conditional", "arg count": 1, "function": skipUnlessNull, "description": "if [r0] is null, execute the following instruction, otherwise, skip to the next non-argument instruction"},
+        {"code": "IFDL", "symbol": '¿', "type": "conditional", "arg count": 1, "function": skipUnlessDumpIsLessThan, "description": "if the dump register is less than [r0], execute the next instruction"},
         {"code": "IFBE", "symbol": '⸘', "type": "conditional", "arg count": 2, "function": skipUnlessEquiv, "description": "if the instruction at the address in r0 is the same as the instruction at the address in r1 (or if they're both registers, dump registers, or executors), execute the next instruction, otherwise, skip to the next non-argument instruction"},
         {"code": "IFEQ", "symbol": '=', "type": "conditional", "arg count": 2, "function": skipUnlessEqual, "description": "if [r0] == [r1], execute the next instruction, otherwise, skip to the next non-argument instruction"},
         
@@ -150,7 +150,7 @@ class Opcodes:
         
         {"code": "CLAM", "symbol": 'T', "type": "lock", "arg count": 0, "function": noOp,       "description": "A claim marker, used to stake an executor's territory; the boundaries of an organism. Also functions as lock."},
         {"code": "CLMk", "symbol": 't', "type": "key",  "arg count": 0, "function": noOp,       "description": "A claim marker key, matches to a claim marker."},
-        {"code": "MNTR", "symbol": '~', "type": "monitor", "arg count": 2, "function": monitor, "description": "Sets [r0] to the address most recently checked within this executor's claim boundaries, and [r1] to the address of the instruction that checked it. Both are set register to null if no checks have been recently made."},
+        {"code": "MNTR", "symbol": '~', "type": "monitor", "arg count": 2, "function": monitor, "description": "Sets [r0] to the address most recently checked within this executor's claim boundaries, and [r1] to the address of the instruction that checked it. Both are set to null if no checks have been recently made."},
         
         {"code": "ADRS", "symbol": '$', "type": "memwrite", "arg count": 2, "function": swapMemoryBlocks, "description": "Swap the memory block at [r0] with the block at [r1]"},
         # consider adding an "instruction to number" instruction that looks at an instruction at address [r0] and puts its numerical value in r1

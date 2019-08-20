@@ -26,7 +26,7 @@ UPDATE_COLOR_DECAY_SPEED = 0.01#0.0015
 
 
 chunkSize = 50
-ancestor = genomeSymbolsFromFile("genomes/anc1_1.gne")
+ancestor = genomeSymbolsFromFile("genomes/anc2.gne")#("genomes/anc1_1.gne")
 spawnTable = readSpawnTableFromFile("spawnTables/spawnTable1.spt")
 
 sim = Simulation()
