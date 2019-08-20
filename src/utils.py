@@ -56,7 +56,7 @@ def decodeArgs(simData, address, count):
     # any keys immediately after an instruction are ignored while decoding args
     start = 1
     block = readBlock(simData, address + start)
-    while block['header']['type'] == "instruction" and block["body"]["type"] == "key":
+    while block != None and block['header']['type'] == "instruction" and block["body"]["type"] == "key":
         start += 1
         block = readBlock(simData, address + start)
         
@@ -71,6 +71,12 @@ def decodeArgs(simData, address, count):
     for i in range(start, count+start):
         if acceptMemArgs:
             nextMemArg = readBlock(simData, address + i)
+            
+            if nextMemArg is None:
+                # we've hit the end of the soup
+                acceptMemArgs = False
+                continue
+            
             if nextMemArg["header"]["type"] == "instruction" and nextMemArg["body"]["code"][0:3] == "ARG":
                 arg = int(nextMemArg["body"]["code"][3])
                 arglist.append(arg)
@@ -103,7 +109,7 @@ def registerWrite(simData, executorAddress, registerAddress, val):
         bbt = type(block["body"])
         assert(bbt == int or bbt == type(None))
     except:
-        print("attempted to registerwrite to non-register:")
+        print("executor at ", executorAddress, " attempted to registerwrite to non-register:")
         print(block)
         raise
         
@@ -112,12 +118,12 @@ def registerWrite(simData, executorAddress, registerAddress, val):
         val = readBlock(simData, registerAddress)["body"]
         
         if val == None:
-            return
+            return True
         
-        # if the register wasn't already none
+        # if the register wasn't already holding null
         addToDump(simData, executorAddress, abs(val))
         simData.setBlock(simData.opcodes.spawnNullRegister(), registerAddress)
-        return
+        return True
     
     if REGISTER_WRITE_MUTATION_PROBABILITY > 0:
         if random.random() < REGISTER_WRITE_MUTATION_PROBABILITY:
@@ -203,11 +209,19 @@ def stackPop(simData, executorAddress, stackAddress, registerAddress):
         
 
 def killExecutor(simData, executorAddress):
+    block = readBlock(simData, executorAddress)
+    if block["header"]["type"] != "executor":
+        print("Attempted to hibernate non-executor ", block["header"]["symbol"], " at ", executorAddress)
+        return
     registerWrite(simData, executorAddress, executorAddress, None)
     simData.setBlock(simData.opcodes.spawnDormantExecutor(), executorAddress)
     
 
 def awakenExecutor(simData, executorAddress):
+    block = readBlock(simData, executorAddress)
+    if block["header"]["type"] != "executor":
+        print("Attempted to awaken non-executor ", block["header"]["symbol"], " at ", executorAddress)
+        return
     simData.setBlock(simData.opcodes.spawnAwakeExecutor(), executorAddress)
     simData.setBlockBody(executorAddress, executorAddress)
     

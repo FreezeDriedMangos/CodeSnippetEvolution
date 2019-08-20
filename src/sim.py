@@ -14,7 +14,7 @@ class SimulationData:
     
     opcodes = None
     
-    _initialized = False;
+    _initialized = False
     
     # recording updates
     _blockBodyUpdates = []
@@ -24,6 +24,7 @@ class SimulationData:
     
     _awakeningLocations = []   # executors activating and deactivating
     _hibernationLocations = []
+    _dissapearanceLocations = []
     
     
     def __init__(self, spawnTable):
@@ -47,6 +48,8 @@ class SimulationData:
         for symbol in distribution:
             print(symbol, "\t", round(100*expectedDistribution[symbol], 2), "\t", round(100*distribution[symbol], 2))
         print("Total error: ", sum(abs(expectedDistribution[s] - distribution[s]) for s in distribution))
+        
+        self._initialized = True
         
     
     def getRandomSymbol(self):
@@ -113,13 +116,13 @@ class SimulationData:
         else:
             self._blockBodyUpdates.append(address)
         
-        if self._initialized:
-            self.blocks[address] = self.readBlockFromBitsAtAddress(address)
-            
+        if self._initialized and wholeBlock:
             if self.blocks[address]["header"]["name"] == "executor":
                 self._logExecutorAwakening(address)
             elif self.blocks[address]["header"]["name"] == "dormant executor":
                 self._logExecutorHibernation(address)
+            elif address in self.executorAddrList and self.blocks[address]["header"]["type"] != "executor":
+                self._logExecutorDissapearance(address)
             
     
     def logMutation(self, address, soft=True):
@@ -128,22 +131,26 @@ class SimulationData:
         if self._initialized:
             self.blocks[address] = self.readBlockFromBitsAtAddress(address)
         
-            if self.blocks[address]["header"]["name"] == "executor":
-                self._logExecutorAwakening(address)
-            # we don't want to log a brand new dormant executor as if it were
-            # a previously active executor that suddenly
-            # went into hibernation
-            #elif self.blocks[address]["header"]["name"] == "dormant executor":
-                #self._logExecutorHibernation(address)
+            #if self.blocks[address]["header"]["name"] == "executor":
+                #self._logExecutorAwakening(address)
+            ## we don't want to log a brand new dormant executor as if it were
+            ## a previously active executor that suddenly
+            ## went into hibernation
+            ##elif self.blocks[address]["header"]["name"] == "dormant executor":
+                ##self._logExecutorHibernation(address)
             
         
     def _logExecutorAwakening(self, addr):
-        self._awakeningLocations.append(addr)   # executors activating and deactivating
+        self._awakeningLocations.append(addr) 
         
     
     def _logExecutorHibernation(self, addr):
         self._hibernationLocations.append(addr)
         
+    
+    def _logExecutorDissapearance(self, addr):
+        self._dissapearanceLocations.append(addr)
+    
     
     def clearLogs(self):
         self._mutationLocations.clear()
@@ -151,6 +158,7 @@ class SimulationData:
         self._blockUpdates.clear()
         self._awakeningLocations.clear()
         self._hibernationLocations.clear()
+        self._dissapearanceLocations.clear()
         self.cycle += 1
         
 
@@ -271,7 +279,9 @@ class Simulation:
             blockAddress+=1
             
         #print("\tsetting ip from ", bef, " to ", blockAddress)
-        utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress)
+        if self.data.blocks[executorAddress]["header"]["name"] == "executor":
+            # if this executor is still there and still alive
+            utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress)
         #print(*printArgs)
         return True
    

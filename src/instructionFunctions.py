@@ -79,19 +79,34 @@ def addressOfJumpF(simData, executorAddress, myAddress, arg0):
     
 def addressOfInstructionB(simData, executorAddress, myAddress, arg0, arg1, arg2): 
     storeAddress = utils.findRegister(simData, executorAddress, arg2)
-    addressOfSearchTarget = utils.readRegister(simData, executorAddress, arg1)["body"]
+    
+    reg0 = utils.readRegister(simData, executorAddress, arg0)
+    reg1 = utils.readRegister(simData, executorAddress, arg1)
+    
+    if reg0 == None or reg1 == None or storeAddress == -1:
+        return {"fault": True}
+    
+    addressOfSearchTarget = reg1["body"]
     searchTarget = utils.readBlock(simData, addressOfSearchTarget)
     
-    addr = utils.readRegister(simData, executorAddress, arg0)["body"]
+    addr = reg0["body"]
     block = utils.readBlock(simData, addr)
+    
+    if searchTarget is None or block is None or type(addr) != int:
+        return {"fault": True}
     
     while not utils.blocksEquivalent(block, searchTarget):
         addr -= 1
-        block = utils.readBlock(simData, addr)
+        try:
+            block = utils.readBlock(simData, addr)
+        except:
+            print("failed attempted read at ", addr)
+            raise
         
         if block is None:
-            success = utils.registerWrite(simData, executorAddress, storeAddress, None)
-            return {}   
+            # writing null is always successful
+            utils.registerWrite(simData, executorAddress, storeAddress, None)
+            return {}
     
     success = utils.registerWrite(simData, executorAddress, storeAddress, addr)
     
@@ -99,19 +114,25 @@ def addressOfInstructionB(simData, executorAddress, myAddress, arg0, arg1, arg2)
         return {}
     else:
         return {"fault": True, "executor deinit": executorAddress, "details": "Register write failed due to lack of material in dump"}
-        
+  
     
 def addressOfInstructionF(simData, executorAddress, myAddress, arg0, arg1, arg2): 
     storeAddress = utils.findRegister(simData, executorAddress, arg2)
-    #print("store address: ", storeAddress, " is register number ", arg2)
-    addressOfSearchTarget = utils.readRegister(simData, executorAddress, arg1)["body"]
+    
+    reg0 = utils.readRegister(simData, executorAddress, arg0)
+    reg1 = utils.readRegister(simData, executorAddress, arg1)
+    
+    if reg0 == None or reg1 == None or storeAddress == -1:
+        return {"fault": True}
+    
+    addressOfSearchTarget = reg1["body"]
     searchTarget = utils.readBlock(simData, addressOfSearchTarget)
-    #print("search target: ", searchTarget["header"]["symbol"], " at address ", addressOfSearchTarget, " from register ", arg1)
     
-    addr = utils.readRegister(simData, executorAddress, arg0)["body"]
+    addr = reg0["body"]
     block = utils.readBlock(simData, addr)
-    #print("starting search forward from: ", addr, " from register ", arg0)
     
+    if searchTarget is None or block is None or type(addr) != int:
+        return {"fault": True}
     
     while not utils.blocksEquivalent(block, searchTarget):
         addr += 1
@@ -122,11 +143,9 @@ def addressOfInstructionF(simData, executorAddress, myAddress, arg0, arg1, arg2)
             raise
         
         if block is None:
-            #print("found nothing, went out of bounds")
-            success = utils.registerWrite(simData, executorAddress, storeAddress, None)
+            # writing null is always successful
+            utils.registerWrite(simData, executorAddress, storeAddress, None)
             return {}
-    
-    #print("found ", block["header"]["symbol"], " at ", addr)
     
     success = utils.registerWrite(simData, executorAddress, storeAddress, addr)
     
@@ -351,7 +370,7 @@ def setToNull(simData, executorAddress, myAddress, arg0):
     if success:
         return {}
     else:
-        return {"fault": True, "executor deinit": executorAddress}
+        return {"fault": True, "executor deinit": executorAddress, "details": "This failure was unexpected. "}
         
 
 

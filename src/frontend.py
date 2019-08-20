@@ -228,7 +228,9 @@ while app.running:
         updateFade.update({update: (1, COLORS["block update"])})
     
     # update any executor awakenings or hibernations
-    for hibernation in sim.data._hibernationLocations:
+    hibernations = sim.data._hibernationLocations.copy()
+    hibernations.extend(sim.data._dissapearanceLocations)
+    for hibernation in hibernations:
         claim = utils.getClaimData(sim.data, hibernation)
         exe = [e for e in claim["executors"] if e["active"]]
         
@@ -243,7 +245,6 @@ while app.running:
     
     for awakening in sim.data._awakeningLocations:
         claim = utils.getClaimData(sim.data, awakening)
-        print("\n===============================\ntrying to set color for awakening claim ", claim["range bounds"])
         for i in range(*claim["range bounds"]):
             #app.baseColors[i] = COLORS["life"]
             #updateFade.update({i: (1, COLORS["background"])})
