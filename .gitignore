@@ -1,1 +1,2 @@
-runLogs/*
+runLogs/*.txt
+src/__pycache__/*
