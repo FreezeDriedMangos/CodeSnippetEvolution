@@ -175,8 +175,20 @@ class Simulation:
             try:
                 self.execute(exeAddr)
             except Exception as e:
+                print("\n\n\n")
                 print("Executor at ", exeAddr, " had a serious error, resulting in it going into dormancy:")
                 print(e)
+                insAddr = self.data.blocks[exeAddr]["body"]
+                if type(insAddr) == int:
+                    print("Cause: ", self.data.blocks[insAddr]["header"]["symbol"])
+                    print("surrounding symbols: ", "@" + ''.join(self.data.blocks[i]["header"]["symbol"] for i in range(insAddr-4, insAddr+5)) + "@")
+                else:
+                    print("Cause: symbol at ", exeAddr, " is not an executor or has an improper body: ")
+                    print(self.data.blocks[exeAddr])
+                print("exception stack trace:")
+                import traceback
+                traceback.print_exc()
+                print("\n\n\n")
                 utils.killExecutor(self.data, exeAddr)
                 removeList.append(exeAddr)
                 raise
@@ -191,8 +203,7 @@ class Simulation:
         executor = self.data.blocks[executorAddress]
         if executor["header"]["name"] != "executor":
             print("Executor dissappeared at ", executorAddress, " became ", executor)
-            self.data.executorAddrList.remove(executorAddress)
-            return
+            raise Exception("Called execute on something other than an executor: " + executor["header"]["symbol"] + "@" + str(executorAddress))
         
         blockAddress = executor["body"]
         try:
@@ -226,7 +237,9 @@ class Simulation:
                     print("Executor went dormant at address ", retval["executor deinit"], " due to instruction ", block)
                     raise
                     
-                print("Executor went dormant at address ", retval["executor deinit"], " due to instruction ", block)
+                print("Executor went dormant at address ", retval["executor deinit"], " due to instruction ", block["header"]["symbol"])
+                if "details" in retval:
+                    print("\t", retval["details"])
             if "active executor move" in retval:
                 for pair in retval["active executor move"]:
                     self.data.executorAddrList.remove(pair[0])
@@ -260,6 +273,7 @@ class Simulation:
         #print("\tsetting ip from ", bef, " to ", blockAddress)
         utils.registerWrite(self.data, executorAddress, executorAddress, blockAddress)
         #print(*printArgs)
+        return True
    
    
     def spawnCreature(self, creatureString):

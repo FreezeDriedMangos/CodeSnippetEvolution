@@ -23,6 +23,9 @@ def findRegister(simData, executorAddress, regNum):
     
     while addr < NUM_MEMORY_BLOCKS_IN_SOUP:
         block = readBlock(simData, addr)
+        if block is None:
+            return -1
+        
         if block["header"]["type"] == "register":
             regCount += 1
         
@@ -71,7 +74,8 @@ def decodeArgs(simData, address, count):
             if nextMemArg["header"]["type"] == "instruction" and nextMemArg["body"]["code"][0:3] == "ARG":
                 arg = int(nextMemArg["body"]["code"][3])
                 arglist.append(arg)
-                queue.remove(arg)
+                if arg in queue:
+                    queue.remove(arg)
             else:
                 acceptMemArgs = False
                 arglist.append(queue.pop(0))
@@ -228,8 +232,11 @@ def swapMemoryBlocks(simData, addr1, addr2):
 #
 
 def blocksEquivalent(block1, block2):
-    if block1 == None and block2 == None:
-        return True
+    if block1 == None or block2 == None:
+        if block1 == None and block2 == None:
+            return True
+        else:
+            return False
         
     if block1["header"]["type"] == "instruction" and block2["header"]["type"] == "instruction":
         if block1["header"]["symbol"] == block2["header"]["symbol"]:

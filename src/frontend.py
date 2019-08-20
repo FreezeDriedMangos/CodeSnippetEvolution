@@ -243,7 +243,7 @@ while app.running:
     
     for awakening in sim.data._awakeningLocations:
         claim = utils.getClaimData(sim.data, awakening)
-        print("trying to set color for awakening claim ", claim["range bounds"])
+        print("\n===============================\ntrying to set color for awakening claim ", claim["range bounds"])
         for i in range(*claim["range bounds"]):
             #app.baseColors[i] = COLORS["life"]
             #updateFade.update({i: (1, COLORS["background"])})

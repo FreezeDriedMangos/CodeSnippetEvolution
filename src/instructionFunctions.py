@@ -98,7 +98,7 @@ def addressOfInstructionB(simData, executorAddress, myAddress, arg0, arg1, arg2)
     if success:
         return {}
     else:
-        return {"fault": True, "executor deinit": executorAddress}
+        return {"fault": True, "executor deinit": executorAddress, "details": "Register write failed due to lack of material in dump"}
         
     
 def addressOfInstructionF(simData, executorAddress, myAddress, arg0, arg1, arg2): 
@@ -133,7 +133,7 @@ def addressOfInstructionF(simData, executorAddress, myAddress, arg0, arg1, arg2)
     if success:
         return {}
     else:
-        return {"fault": True, "executor deinit": executorAddress}
+        return {"fault": True, "executor deinit": executorAddress, "details": "Register write failed due to lack of material in dump"}
         
     
 def skipIfZero(simData, executorAddress, myAddress, arg0):
@@ -234,11 +234,16 @@ def bitwiseXOR(simData, executorAddress, myAddress, arg0, arg1, arg2):
 
 def simpleOp(simData, executorAddress, myAddress, arg0, arg1, arg2, operation):
     addr = utils.findRegister(simData, executorAddress, arg0)
-    reg1 = utils.readBlock(simData, addr)
     reg2 = utils.readRegister(simData, executorAddress, arg1)
     reg3 = utils.readRegister(simData, executorAddress, arg2)
     
-    val = operation(reg2["body"], reg3["body"])
+    val = None
+    try:
+        val = operation(reg2["body"], reg3["body"])
+    except:
+        print("SimpleOp error, failed safe: ", operation, " on vals ", reg2["body"], reg3["body"])
+        val = None
+        
     success = utils.registerWrite(simData, executorAddress, addr, val)
     
     if success:
@@ -251,6 +256,9 @@ def increment(simData, executorAddress, myAddress, arg0):
     addr = utils.findRegister(simData, executorAddress, arg0)
     reg  = utils.readBlock(simData, addr)
     
+    if reg["body"] is None:
+        return {"fault": True}
+    
     success = utils.registerWrite(simData, executorAddress, addr, reg["body"]+1)
     
     if success:
@@ -262,6 +270,9 @@ def increment(simData, executorAddress, myAddress, arg0):
 def decrement(simData, executorAddress, myAddress, arg0):
     addr = utils.findRegister(simData, executorAddress, arg0)
     reg  = utils.readBlock(simData, addr)
+    
+    if reg["body"] is None:
+        return {"fault": True}
     
     success = utils.registerWrite(simData, executorAddress, addr, reg["body"]-1)
     
