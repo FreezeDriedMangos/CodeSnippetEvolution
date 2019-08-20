@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<language name="Symbolic Evolution Gene" version="1" kateversion="5.0" priority="10" section="Sources" extensions="*.gne">
+<!DOCTYPE language SYSTEM "language.dtd">
+<language name="Symbolic Evolution Gene" version="1" kateversion="5.0" section="Sources" mimetype="text/x-csrc" extensions="*.gne">
   <highlighting>
     <list name="uninitialized">
       <item>░</item>
@@ -121,7 +122,9 @@
       <item>.</item>
     </list>
     <contexts>
-      <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text" >
+      <context attribute="Normal Text" lineEndContext="#stay" name="Normal Text" >
+        <Detect2Chars attribute="Comment" context="Comment" char="/" char1="/"/>
+          
         <keyword attribute="Argument" context="#stay" String="arg" />
 		<keyword attribute="Key" context="#stay" String="key" />
 		<keyword attribute="Lock" context="#stay" String="lock" />
@@ -147,16 +150,21 @@
 		<keyword attribute="Modification" context="#stay" String="init" />
 		<keyword attribute="Modification" context="#stay" String="deinit" />
       </context>
+      <context attribute="Comment" lineEndContext="#pop" name="Comment">
+        <LineContinue attribute="Comment" context="#stay"/>
+        <IncludeRules context="##Alerts" />
+      </context>
     </contexts>
     <itemDatas>
       <itemData name="Normal Text" defStyleNum="dsError" />
+      <itemData name="Comment"      defStyleNum="dsComment"/>
       
       <itemData name="Argument"    defStyleNum="dsDecVal" />
-      <itemData name="Key"         defStyleNum="dsSpecialChar" />
+      <itemData name="Key"         defStyleNum="dsFloat" />
       <itemData name="Lock"        defStyleNum="dsConstant" />
       <itemData name="Special"     defStyleNum="dsKeyword" />
       <itemData name="Register"    defStyleNum="dsKeyword" />
-      <itemData name="JumpAround"  defStyleNum="dsNormal" />
+      <itemData name="JumpAround"  defStyleNum="dsControlFlow" />
       <itemData name="Conditional" defStyleNum="dsControlFlow" />
       <itemData name="Operation"   defStyleNum="dsOperator" />
       <itemData name="Meta"        defStyleNum="dsBuiltIn" />
@@ -167,6 +175,6 @@
     <comments>
       <comment name="singleLine" start="//"/>
     </comments>
-    <keywords casesensitive="1"/>
+    <keywords casesensitive="1" weakDeliminator=".():!+,-&lt;=&gt;%&amp;*/;?[]^{|}~\"/>
   </general>
 </language>
