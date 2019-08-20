@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
-<language name="Symbolic Evolution Gene" version="1" kateversion="5.0" section="Sources" mimetype="text/x-csrc" extensions="*.gne">
+<language name="Symbolic Evolution Gene" version="1.2" kateversion="5.0" section="Sources" mimetype="text/x-csrc" extensions="*.gne">
   <highlighting>
     <contexts>
       <context attribute="Normal Text" lineEndContext="#stay" name="Normal Text" >
@@ -93,11 +93,8 @@
         <DetectChar char="m" attribute="Key" context="#stay" />
 
         <DetectChar char="~" attribute="Meta" context="#stay" />
-
         <DetectChar char="$" attribute="Modification" context="#stay" />
-
         <DetectChar char=":" attribute="Modification" context="#stay" />
-
         <DetectChar char="." attribute="Modification" context="#stay" />
       </context>
       <context attribute="Comment" lineEndContext="#pop" name="Comment">
@@ -106,7 +103,7 @@
       </context>
     </contexts>
     <itemDatas>
-      <itemData name="Normal Text" defStyleNum="dsError" />
+      <itemData name="Normal Text"  defStyleNum="dsError" />
       <itemData name="Comment"      defStyleNum="dsComment"/>
       
       <itemData name="Argument"    defStyleNum="dsFloat" />
@@ -120,6 +117,7 @@
       <itemData name="Operation"   defStyleNum="dsOperator" />
       <itemData name="Meta"        defStyleNum="dsBuiltIn" />
       <itemData name="Modification" defStyleNum="dsBuiltIn" />
+      <itemData name="Stack Operation"  defStyleNum="dsOperator" />
     </itemDatas>
   </highlighting>
   <general>
