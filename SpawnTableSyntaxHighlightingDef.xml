@@ -1,172 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<language name="Symbolic Evolution Spawn Table" version="1" kateversion="5.0" section="Sources" extensions="*.spt">
+<!DOCTYPE language SYSTEM "language.dtd">
+<language name="Symbolic Evolution Spawn Table" priority="100" version="1.2" kateversion="5.0" mimetype="text/x-csrc" section="Sources" extensions="*.spt">
   <highlighting>
-        <list name="uninitialized">
-      <item>░</item>
-    </list>
-    <list name="register">
-      <item>#</item>
-      <item>_</item>
-    </list>
-    <list name="dumpregister">
-      <item>▯</item>
-      <item>█</item>
-    </list>
-    <list name="executor">
-      <item>◈</item>
-      <item>◇</item>
-    </list>
-    <list name="arg">
-      <item>0</item>
-      <item>1</item>
-      <item>2</item>
-      <item>3</item>
-      <item>4</item>
-      <item>5</item>
-      <item>6</item>
-      <item>7</item>
-      <item>8</item>
-      <item>9</item>
-    </list>
-    <list name="jump">
-      <item>%</item>
-      <item>(</item>
-      <item>)</item>
-    </list>
-    <list name="lookaround">
-      <item>[</item>
-      <item>]</item>
-      <item>&lt;</item>
-      <item>&gt;</item>
-    </list>
-    <list name="conditional">
-      <item>?</item>
-      <item>‽</item>
-      <item>¿</item>
-      <item>⸘</item>
-      <item>=</item>
-    </list>
-    <list name="arithmetic">
-      <item>+</item>
-      <item>-</item>
-      <item>*</item>
-      <item>÷</item>
-      <item>^</item>
-      <item>v</item>
-    </list>
-    <list name="bitwise">
-      <item>!</item>
-      <item>«</item>
-      <item>»</item>
-      <item>&amp;</item>
-      <item>|</item>
-      <item>⊕</item>
-    </list>
-    <list name="setregister">
-      <item>z</item>
-      <item>u</item>
-      <item>r</item>
-      <item>n</item>
-    </list>
-    <list name="miscregister">
-      <item>&quot;</item>
-      <item>x</item>
-    </list>
-    <list name="stack">
-      <item>↑</item>
-      <item>↓</item>
-    </list>
-    <list name="lock">
-      <item>T</item>
-      <item>A</item>
-      <item>B</item>
-      <item>C</item>
-      <item>D</item>
-      <item>E</item>
-      <item>F</item>
-      <item>G</item>
-      <item>H</item>
-      <item>I</item>
-      <item>J</item>
-      <item>K</item>
-      <item>L</item>
-      <item>M</item>
-    </list>
-    <list name="key">
-      <item>t</item>
-      <item>a</item>
-      <item>b</item>
-      <item>c</item>
-      <item>d</item>
-      <item>e</item>
-      <item>f</item>
-      <item>g</item>
-      <item>h</item>
-      <item>i</item>
-      <item>j</item>
-      <item>k</item>
-      <item>l</item>
-      <item>m</item>
-    </list>
-    <list name="monitor">
-      <item>~</item>
-    </list>
-    <list name="memwrite">
-      <item>$</item>
-    </list>
-    <list name="init">
-      <item>:</item>
-    </list>
-    <list name="deinit">
-      <item>.</item>
-    </list>
     <contexts>
       <context attribute="Normal Text" lineEndContext="#pop" name="Normal Text" >
-        <keyword attribute="Argument" context="#stay" String="arg" />
-		<keyword attribute="Key" context="#stay" String="key" />
-		<keyword attribute="Lock" context="#stay" String="lock" />
+        <Detect2Chars attribute="Comment" context="Comment" char="/" char1="/"/>
+          
         
-		<keyword attribute="Special" context="#stay" String="executor" />
-		<keyword attribute="Special" context="#stay" String="dumpregister" />
-		<keyword attribute="Register" context="#stay" String="register" />
-		
-        <keyword attribute="JumpAround" context="#stay" String="jump" />
-		<keyword attribute="JumpAround" context="#stay" String="lookaround" />
-		
-        <keyword attribute="Conditional" context="#stay" String="conditional" />
-		
-        <keyword attribute="Operation" context="#stay" String="arithmetic" />
-		<keyword attribute="Operation" context="#stay" String="bitwise" />
-		<keyword attribute="Operation" context="#stay" String="setregister" />
-		
-        <keyword attribute="Stack Operation" context="#stay" String="stack" />
-		
-        <keyword attribute="Meta" context="#stay" String="monitor" />
-        
-		<keyword attribute="Modification" context="#stay" String="memwrite" />
-		<keyword attribute="Modification" context="#stay" String="init" />
-		<keyword attribute="Modification" context="#stay" String="deinit" />
-		
-        <DetectChar attribute="Weight" context="weight" char="\t" />
+        <DetectChar char="░" attribute="uninitialized" context="#stay" />
+
+        <DetectChar char="#" attribute="Register" context="#stay" />
+        <DetectChar char="_" attribute="Register" context="#stay" />
+
+        <DetectChar char="▯" attribute="Special" context="#stay" />
+        <DetectChar char="█" attribute="Special" context="#stay" />
+
+        <DetectChar char="◈" attribute="Special" context="#stay" />
+        <DetectChar char="◇" attribute="Special" context="#stay" />
+
+        <DetectChar char="0" attribute="Argument" context="#stay" />
+        <DetectChar char="1" attribute="Argument" context="#stay" />
+        <DetectChar char="2" attribute="Argument" context="#stay" />
+        <DetectChar char="3" attribute="Argument" context="#stay" />
+        <DetectChar char="4" attribute="Argument" context="#stay" />
+        <DetectChar char="5" attribute="Argument" context="#stay" />
+        <DetectChar char="6" attribute="Argument" context="#stay" />
+        <DetectChar char="7" attribute="Argument" context="#stay" />
+        <DetectChar char="8" attribute="Argument" context="#stay" />
+        <DetectChar char="9" attribute="Argument" context="#stay" />
+
+        <DetectChar char="%" attribute="Jump" context="#stay" />
+        <DetectChar char="(" attribute="Jump" context="#stay" />
+        <DetectChar char=")" attribute="Jump" context="#stay" />
+
+        <DetectChar char="[" attribute="LookAround" context="#stay" />
+        <DetectChar char="]" attribute="LookAround" context="#stay" />
+        <DetectChar char="&lt;" attribute="LookAround" context="#stay" />
+        <DetectChar char="&gt;" attribute="LookAround" context="#stay" />
+
+        <DetectChar char="?" attribute="Conditional" context="#stay" />
+        <DetectChar char="‽" attribute="Conditional" context="#stay" />
+        <DetectChar char="¿" attribute="Conditional" context="#stay" />
+        <DetectChar char="⸘" attribute="Conditional" context="#stay" />
+        <DetectChar char="=" attribute="Conditional" context="#stay" />
+
+        <DetectChar char="+" attribute="Operation" context="#stay" />
+        <DetectChar char="-" attribute="Operation" context="#stay" />
+        <DetectChar char="*" attribute="Operation" context="#stay" />
+        <DetectChar char="÷" attribute="Operation" context="#stay" />
+        <DetectChar char="^" attribute="Operation" context="#stay" />
+        <DetectChar char="v" attribute="Operation" context="#stay" />
+
+        <DetectChar char="z" attribute="Operation" context="#stay" />
+        <DetectChar char="u" attribute="Operation" context="#stay" />
+        <DetectChar char="r" attribute="Operation" context="#stay" />
+        <DetectChar char="n" attribute="Operation" context="#stay" />
+
+        <DetectChar char="&quot;" attribute="Operation" context="#stay" />
+        <DetectChar char="x" attribute="Operation" context="#stay" />
+
+        <DetectChar char="↑" attribute="Stack Operation" context="#stay" />
+        <DetectChar char="↓" attribute="Stack Operation" context="#stay" />
+
+        <DetectChar char="T" attribute="Lock" context="#stay" />
+        <DetectChar char="A" attribute="Lock" context="#stay" />
+        <DetectChar char="B" attribute="Lock" context="#stay" />
+        <DetectChar char="C" attribute="Lock" context="#stay" />
+        <DetectChar char="D" attribute="Lock" context="#stay" />
+        <DetectChar char="E" attribute="Lock" context="#stay" />
+        <DetectChar char="F" attribute="Lock" context="#stay" />
+        <DetectChar char="G" attribute="Lock" context="#stay" />
+        <DetectChar char="H" attribute="Lock" context="#stay" />
+        <DetectChar char="I" attribute="Lock" context="#stay" />
+        <DetectChar char="J" attribute="Lock" context="#stay" />
+        <DetectChar char="K" attribute="Lock" context="#stay" />
+        <DetectChar char="L" attribute="Lock" context="#stay" />
+        <DetectChar char="M" attribute="Lock" context="#stay" />
+
+        <DetectChar char="t" attribute="Key" context="#stay" />
+        <DetectChar char="a" attribute="Key" context="#stay" />
+        <DetectChar char="b" attribute="Key" context="#stay" />
+        <DetectChar char="c" attribute="Key" context="#stay" />
+        <DetectChar char="d" attribute="Key" context="#stay" />
+        <DetectChar char="e" attribute="Key" context="#stay" />
+        <DetectChar char="f" attribute="Key" context="#stay" />
+        <DetectChar char="g" attribute="Key" context="#stay" />
+        <DetectChar char="h" attribute="Key" context="#stay" />
+        <DetectChar char="i" attribute="Key" context="#stay" />
+        <DetectChar char="j" attribute="Key" context="#stay" />
+        <DetectChar char="k" attribute="Key" context="#stay" />
+        <DetectChar char="l" attribute="Key" context="#stay" />
+        <DetectChar char="m" attribute="Key" context="#stay" />
+
+        <DetectChar char="~" attribute="Meta" context="#stay" />
+        <DetectChar char="$" attribute="Modification" context="#stay" />
+        <DetectChar char=":" attribute="Modification" context="#stay" />
+        <DetectChar char="." attribute="Modification" context="#stay" />
+      
+        <DetectChar attribute="Weight" context="weight" char="	" />
       </context>
       <context attribute="Weight" lineEndContext="#pop" name="weight" >
+        <LineContinue attribute="Weight" context="#stay"/>
+      </context>
+      <context attribute="Comment" lineEndContext="#pop" name="Comment">
+        <LineContinue attribute="Comment" context="#stay"/>
+        <IncludeRules context="##Alerts" />
       </context>
     </contexts>
     <itemDatas>
       <itemData name="Normal Text" defStyleNum="dsError" />
-      
-      <itemData name="Argument"    defStyleNum="dsDecVal" />
-      <itemData name="Key"         defStyleNum="dsSpecialChar" />
+      <itemData name="Comment"     defStyleNum="dsComment"/>
+      <itemData name="Weight"      defStyleNum="dsString" />
+    
+      <itemData name="Argument"    defStyleNum="dsFloat" />
+      <itemData name="Key"         defStyleNum="dsFloat" />
       <itemData name="Lock"        defStyleNum="dsConstant" />
-      <itemData name="Special"     defStyleNum="dsKeyword" />
+      <itemData name="Special"     defStyleNum="dsExtension" />
       <itemData name="Register"    defStyleNum="dsKeyword" />
-      <itemData name="JumpAround"  defStyleNum="dsNormal" />
+      <itemData name="Jump"        defStyleNum="dsDataType" />
+      <itemData name="LookAround"  defStyleNum="dsOperator" />
       <itemData name="Conditional" defStyleNum="dsControlFlow" />
       <itemData name="Operation"   defStyleNum="dsOperator" />
       <itemData name="Meta"        defStyleNum="dsBuiltIn" />
       <itemData name="Modification" defStyleNum="dsBuiltIn" />
-      
-      <itemData name="Weight" defStyleNum="dsString" />
+      <itemData name="Stack Operation"  defStyleNum="dsOperator" />
     </itemDatas>
   </highlighting>
   <general>
