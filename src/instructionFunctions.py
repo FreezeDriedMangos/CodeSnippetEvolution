@@ -165,6 +165,17 @@ def skipIfZero(simData, executorAddress, myAddress, arg0):
         return {"skip": 1}
     return {}    
         
+
+def skipUnlessZero(simData, executorAddress, myAddress, arg0):
+    register = utils.readRegister(simData, executorAddress, arg0)
+    
+    if register == None:
+        return {"fault": True}
+    
+    if register["body"] == 0:
+        return {}
+    return {"skip": 1}          
+
         
 def skipIfNull(simData, executorAddress, myAddress, arg0):
     register = utils.readRegister(simData, executorAddress, arg0)
@@ -177,6 +188,17 @@ def skipIfNull(simData, executorAddress, myAddress, arg0):
     return {}    
 
 
+def skipUnlessNull(simData, executorAddress, myAddress, arg0):
+    register = utils.readRegister(simData, executorAddress, arg0)
+    
+    if register == None:
+        return {"fault": True}
+    
+    if register["body"] == None:
+        return {}
+    return {"skip": 1}    
+
+
 def skipIfDumpIsZero(simData, executorAddress, myAddress):
     addr = utils.findDump(simData, executorAddress)
     dump = utils.readBlock(simData, addr)
@@ -187,6 +209,23 @@ def skipIfDumpIsZero(simData, executorAddress, myAddress):
     if dump["body"] == 0:
         return {"skip": 1}
     return {}    
+           
+           
+def skipUnlessDumpIsLessThan(simData, executorAddress, myAddress, arg0):
+    register = utils.readRegister(simData, executorAddress, arg0)
+    
+    if register == None or type(register["body"]) != int:
+        return {"fault": True}
+    
+    addr = utils.findDump(simData, executorAddress)
+    dump = utils.readBlock(simData, addr)
+    
+    if dump == None:
+        return {"fault": True}
+    
+    if dump["body"] < register["body"]:
+        return {}
+    return {"skip": 1}    
                 
     
 def skipUnlessEquiv(simData, executorAddress, myAddress, arg0, arg1):
